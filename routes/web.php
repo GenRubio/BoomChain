@@ -24,7 +24,7 @@ Route::prefix('metamask')->group(function () {
     Route::post('/', [MetamaskController::class, 'login'])->name('metamask.login');
 });
 
-Route::post('/log-out', [LoginController::class, 'undefined'])->name('logOut');
+Route::get('/log-out', [PlayController::class, 'logOut'])->name('logOut');
 
 Route::prefix('launcher')->group(function () {
     Route::get('/play', [PlayController::class, 'index'])->name('launcher.play');

@@ -27,16 +27,16 @@
 @section('content')
     <div id="flash_content_play">
         @auth
-            @include('launcher.components.flash-content-play', ['user' => auth()->user()])
+            @include('launcher.components-web.flash-content-play', ['user' => auth()->user()])
         @else
-            @include('launcher.components.modal-auth-error')
+            @include('launcher.components-web.login')
         @endauth
     </div>
 @endsection
 
 @section('personal-script')
     <script>
-       
+
     </script>
 
 @endsection
