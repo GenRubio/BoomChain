@@ -2,7 +2,7 @@
     setTimeout(function() {
         $('[data-toggle="tooltip"]').tooltip();
         
-        $(document).on("click", ".log-out-button", function() {
+       $(document).on("click", ".log-out-button", function() {
            location.href = "{{ route('logOut') }}";
         });
 

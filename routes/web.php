@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Auth\MetamaskController;
+use App\Http\Controllers\Launcher\PlayController;
+use Backpack\CRUD\app\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +17,18 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('pages.home');
+})->name('home');
+
+Route::prefix('metamask')->group(function () {
+    Route::post('/', [MetamaskController::class, 'login'])->name('metamask.login');
+});
+
+Route::post('/log-out', [LoginController::class, 'undefined'])->name('logOut');
+
+Route::prefix('launcher')->group(function () {
+    Route::get('/play', [PlayController::class, 'index'])->name('launcher.play');
+});
+
+Route::middleware('auth')->group(function () { 
 });

@@ -458,3 +458,11 @@ D:\BoomBang-Emulador-C-\obj\Debug\BoomBang.exe
 D:\BoomBang-Emulador-C-\obj\Debug\BoomBang.pdb
 D:\BoomBang-Emulador-C-\obj\Debug\BoomBang.Forms.Emulator.resources
 D:\BoomBang-Emulador-C-\obj\Debug\BoomBang.csproj.GenerateResource.cache
+D:\LARAVEL\BoomChain\netFramework\bin\Debug\BoomBang.exe.config
+D:\LARAVEL\BoomChain\netFramework\bin\Debug\BoomBang.exe
+D:\LARAVEL\BoomChain\netFramework\bin\Debug\BoomBang.pdb
+D:\LARAVEL\BoomChain\netFramework\obj\Debug\BoomBang.csprojAssemblyReference.cache
+D:\LARAVEL\BoomChain\netFramework\obj\Debug\BoomBang.Forms.Emulator.resources
+D:\LARAVEL\BoomChain\netFramework\obj\Debug\BoomBang.csproj.GenerateResource.cache
+D:\LARAVEL\BoomChain\netFramework\obj\Debug\BoomBang.exe
+D:\LARAVEL\BoomChain\netFramework\obj\Debug\BoomBang.pdb
