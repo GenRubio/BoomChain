@@ -466,3 +466,12 @@ D:\LARAVEL\BoomChain\netFramework\obj\Debug\BoomBang.Forms.Emulator.resources
 D:\LARAVEL\BoomChain\netFramework\obj\Debug\BoomBang.csproj.GenerateResource.cache
 D:\LARAVEL\BoomChain\netFramework\obj\Debug\BoomBang.exe
 D:\LARAVEL\BoomChain\netFramework\obj\Debug\BoomBang.pdb
+D:\01.Programacion\BoomChain\netFramework\bin\Debug\BoomBang.exe.config
+D:\01.Programacion\BoomChain\netFramework\bin\Debug\BoomBang.exe
+D:\01.Programacion\BoomChain\netFramework\bin\Debug\BoomBang.pdb
+D:\01.Programacion\BoomChain\netFramework\obj\Debug\BoomBang.csproj.AssemblyReference.cache
+D:\01.Programacion\BoomChain\netFramework\obj\Debug\BoomBang.Forms.Emulator.resources
+D:\01.Programacion\BoomChain\netFramework\obj\Debug\BoomBang.csproj.GenerateResource.cache
+D:\01.Programacion\BoomChain\netFramework\obj\Debug\BoomBang.csproj.CoreCompileInputs.cache
+D:\01.Programacion\BoomChain\netFramework\obj\Debug\BoomBang.exe
+D:\01.Programacion\BoomChain\netFramework\obj\Debug\BoomBang.pdb
