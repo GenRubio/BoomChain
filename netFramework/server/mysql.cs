@@ -1,4 +1,4 @@
-﻿using MySql.Data.MySqlClient;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -116,7 +116,7 @@ namespace BoomBang.server
             ConnectionStringBuilder.Port = 3306;
             ConnectionStringBuilder.UserID = "root";
             ConnectionStringBuilder.Password = "";//password
-            ConnectionStringBuilder.Database = "boombang_org";//boombang_old
+            ConnectionStringBuilder.Database = "boom_chain";//boombang_old
             ConnectionStringBuilder.ConnectionTimeout = 900000;
             return ConnectionStringBuilder.ToString();
         }

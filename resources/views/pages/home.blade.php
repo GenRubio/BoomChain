@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
+@section('personal-style')
+
+@endsection
+
 @section('content')
+    @include('components.nav-bar')
     <h1>Hola</h1>
 @endsection
 
