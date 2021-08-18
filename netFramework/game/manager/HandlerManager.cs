@@ -1,14 +1,7 @@
 using BoomBang.game.handler;
 using BoomBang.game.instances;
-using BoomBang.game.instances.manager;
-using BoomBang.game.manager.daily_reward;
-using BoomBang.server;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BoomBang.Forms;
 
 namespace BoomBang.game.manager
@@ -39,7 +32,6 @@ namespace BoomBang.game.manager
                 MiniGamesHandler.Start();
                 PingHandler.Start();
                 npcHandler.Start();
-                codigos_promocionales.Iniciar();
               
                 string console = "Se han registrado " + Handlers.Count + " handlers.";
                 Emulator.Form.WriteLine(console);

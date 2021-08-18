@@ -81,10 +81,8 @@
     <Compile Include="game\instances\ItemConcursoInstance.cs" />
     <Compile Include="game\listas.cs" />
     <Compile Include="game\manager\BuyObjectDAO.cs" />
-    <Compile Include="game\manager\daily_reward\codigos_promocionales.cs" />
     <Compile Include="game\manager\Interfazmanager.cs" />
     <Compile Include="game\manager\npcManager.cs" />
-    <Compile Include="game\manager\pathfinding\BaneoManager.cs" />
     <Compile Include="game\manager\pathfinding\PathFinder.cs" />
     <Compile Include="game\manager\pathfinding\Posicion.cs" />
     <Compile Include="game\manager\pathfinding\SearchParameters.cs" />
@@ -121,7 +119,6 @@
     <Compile Include="game\instances\UsuarioEnObjeto.cs" />
     <Compile Include="game\packets\Packets.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="server\BCrypt.cs" />
     <Compile Include="server\mysql.cs" />
     <Compile Include="server\ServerThreads.cs" />
     <Compile Include="SocketsWeb\CallPackage.cs" />

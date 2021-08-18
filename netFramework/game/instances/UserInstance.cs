@@ -1,4 +1,4 @@
-﻿using BoomBang.game.instances.manager.pathfinding;
+using BoomBang.game.instances.manager.pathfinding;
 using BoomBang.game.manager;
 using System;
 using System.Collections.Generic;
