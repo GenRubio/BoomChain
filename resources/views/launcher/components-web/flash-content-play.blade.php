@@ -10,7 +10,7 @@
             sw5: '0',
             lang: 'e',
             locale: 'es_ES',
-            ver: '4828183719',
+            ver: '4828183823',
             u: '{{ $user->nombre }}',
             p: '{{ $user->password }}'
 

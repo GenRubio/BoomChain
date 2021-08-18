@@ -106,7 +106,7 @@ namespace BoomBang.game.manager
                     server.AppendParameter(Session.User.end_vip);
                     server.AppendParameter((Session.User.ValidarEmail == 0 ? 0 : 1));///Validar email / 1 Cambiar Email
                     server.AppendParameter((Session.User.timespam_desc_cambios == 0 ? Session.User.security != "" ? 1 : 0 : 2));
-                    server.AppendParameter(1);//Noticia derecha                            
+                    server.AppendParameter(0);//Noticia derecha                            
                     server.AppendParameter(0);
                     server.AppendParameter(new object[] { 1, 0 });
                     server.AppendParameter(0);

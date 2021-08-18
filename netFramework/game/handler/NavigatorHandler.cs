@@ -23,61 +23,7 @@ namespace BoomBang.game.handler
             HandlerManager.RegisterHandler(128125, new ProcessHandler(GoRoom));
             HandlerManager.RegisterHandler(128121, new ProcessHandler(LoadObjects));
             HandlerManager.RegisterHandler(128124, new ProcessHandler(SalirSala));
-            HandlerManager.RegisterHandler(191, new ProcessHandler(Favoritos));
-            HandlerManager.RegisterHandler(192, new ProcessHandler(AñadirFavorito));
-            HandlerManager.RegisterHandler(193, new ProcessHandler(MisIslas));
-            HandlerManager.RegisterHandler(194, new ProcessHandler(IslasPorUsuario));
-            HandlerManager.RegisterHandler(195, new ProcessHandler(IslasPorNombre));
-            HandlerManager.RegisterHandler(196, new ProcessHandler(EliminarFavorito));
             HandlerManager.RegisterHandler(187, new ProcessHandler(Islas));
-        }
-        static void EliminarFavorito(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                if (Session.User.id != int.Parse(Parameters[0, 0])) return;
-                mysql client = new mysql();
-                if (client.ExecuteQueryRow("SELECT * FROM escenarios_favoritos WHERE user_id = '" + Session.User.id + "' AND sala_id = '" + int.Parse(Parameters[1, 0]) + "'") != null)
-                {
-                    client.ExecuteNonQuery("DELETE FROM escenarios_favoritos WHERE user_id = '" + Session.User.id + "' AND sala_id = '" + int.Parse(Parameters[1, 0]) + "'");
-                }
-            }
-        }
-        static void IslasPorNombre(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                Packet_195(Session, Parameters[1, 0]);
-            }   
-        }
-        static void IslasPorUsuario(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                Packet_194(Session, Parameters[1, 0]);
-            }
-        }
-        static void AñadirFavorito(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                mysql client = new mysql();
-                DataRow favoritos = client.ExecuteQueryRow("SELECT * FROM escenarios_favoritos WHERE user_id = '" + Session.User.id + "' AND sala_id = '" + int.Parse(Parameters[1, 0]) + "'");
-                if (favoritos != null) return;
-                client.ExecuteNonQuery("INSERT INTO escenarios_favoritos (`user_id`, `sala_id`) VALUES ('" + Session.User.id + "', '" + int.Parse(Parameters[1, 0]) + "')");
-            }
-        }
-        static void Favoritos(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                Packet_191(Session);
-            }
         }
         static void Islas(SessionInstance Session, string[,] Parameters)
         {
@@ -85,14 +31,6 @@ namespace BoomBang.game.handler
             {
                 if (Session.User.Sala != null) return;
                 Packet_187(Session);
-            }
-        }
-        static void MisIslas(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                Packet_193(Session);
             }
         }
         static void SalirSala(SessionInstance Session, string[,] Parameters)
@@ -204,150 +142,10 @@ namespace BoomBang.game.handler
                 new Thread(() => Packet_154_32(Session)).Start();
             }
         }
-        private static void Packet_195(SessionInstance Session, string Nombre)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(195);
-            foreach (IslaInstance Isla in IslasManager.ObtenerIslasNombre(Nombre))
-            {
-                if (Isla.noverlo_1.Contains(Session.User.nombre) || Isla.noverlo_2.Contains(Session.User.nombre) || Isla.noverlo_3.Contains(Session.User.nombre) || Isla.noverlo_4.Contains(Session.User.nombre) || Isla.noverlo_5.Contains(Session.User.nombre) || Isla.noverlo_6.Contains(Session.User.nombre) || Isla.noverlo_7.Contains(Session.User.nombre) || Isla.noverlo_8.Contains(Session.User.nombre)) return;
-                server.AppendParameter(0);
-                server.AppendParameter(0);
-                server.AppendParameter(Isla.id);
-                server.AppendParameter(0);
-                server.AppendParameter(0);
-                server.AppendParameter(0);
-                server.AppendParameter(Isla.nombre);
-                server.AppendParameter(0);
-                server.AppendParameter(IslasManager.Visitantes(Isla));//Visitantes
-                server.AppendParameter(0);
-            }
-            foreach(EscenarioInstance Escenario in CasasManager.ObtenerCasasNombre(Nombre))
-            {
-                server.AppendParameter(4);
-                server.AppendParameter(0);
-                server.AppendParameter(Escenario.id);
-                server.AppendParameter(0);
-                server.AppendParameter(Escenario.id);
-                server.AppendParameter(0);
-                server.AppendParameter(Escenario.nombre);
-                server.AppendParameter(0);
-                server.AppendParameter(CasasManager.UsuariosEnSala(Escenario)); //visitantes
-                server.AppendParameter(0);
-            }
-            Session.SendData(server);
-        }
-        private static void Packet_194(SessionInstance Session, string Nombre)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(194);
-            foreach (IslaInstance Isla in IslasManager.ObtenerIslas(Nombre))
-            {
-                if (Isla.noverlo_1.Contains(Session.User.nombre) || Isla.noverlo_2.Contains(Session.User.nombre) || Isla.noverlo_3.Contains(Session.User.nombre) || Isla.noverlo_4.Contains(Session.User.nombre) || Isla.noverlo_5.Contains(Session.User.nombre) || Isla.noverlo_6.Contains(Session.User.nombre) || Isla.noverlo_7.Contains(Session.User.nombre) || Isla.noverlo_8.Contains(Session.User.nombre)) return;
-                server.AppendParameter(0);
-                server.AppendParameter(0);
-                server.AppendParameter(Isla.id);
-                server.AppendParameter(0);
-                server.AppendParameter(0);
-                server.AppendParameter(0);
-                server.AppendParameter(Isla.nombre);
-                server.AppendParameter(0);
-                server.AppendParameter(IslasManager.Visitantes(Isla));//Visitantes
-                server.AppendParameter(0);
-            }
-            foreach(EscenarioInstance Escenario in CasasManager.ObtenerCasas(Nombre))
-            {
-                server.AppendParameter(4);
-                server.AppendParameter(0);
-                server.AppendParameter(Escenario.id);
-                server.AppendParameter(0);
-                server.AppendParameter(Escenario.id);
-                server.AppendParameter(0);
-                server.AppendParameter(Escenario.nombre);
-                server.AppendParameter(0);
-                server.AppendParameter(CasasManager.UsuariosEnSala(Escenario)); //visitantes
-                server.AppendParameter(0);
-            }
-            Session.SendData(server);
-        }
-        private static void Packet_191(SessionInstance Session)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(191);
-            foreach (IslaInstance Isla in IslasManager.ObtenerIslasFavoritos(Session.User.id))
-            {
-                server.AppendParameter(0);
-                server.AppendParameter(0);
-                server.AppendParameter(Isla.id);
-                server.AppendParameter(0);
-                server.AppendParameter(0);
-                server.AppendParameter(0);
-                server.AppendParameter(Isla.nombre);
-                server.AppendParameter(0);
-                server.AppendParameter(IslasManager.Visitantes(Isla));//Visitantes
-                server.AppendParameter(0);
-            }
-            foreach (EscenarioInstance Escenario in CasasManager.ObtenerCasasFavoritos(Session.User.id))
-            {
-                server.AppendParameter(4);
-                server.AppendParameter(0);
-                server.AppendParameter(Escenario.id);
-                server.AppendParameter(0);
-                server.AppendParameter(Escenario.id);
-                server.AppendParameter(0);
-                server.AppendParameter(Escenario.nombre);
-                server.AppendParameter(0);
-                server.AppendParameter(CasasManager.UsuariosEnSala(Escenario)); //visitantes
-                server.AppendParameter(0);
-            }
-            Session.SendDataProtected(server);
-        }
-        private static void Packet_187(SessionInstance Session)
+        private static void Packet_187(SessionInstance Session) //Islas publicas
         {
             ServerMessage server = new ServerMessage();
             server.AddHead(187);
-            foreach (SalaInstance Sala in SalasManager.Salas_Privadas.Values)
-            {
-                if (Sala.Escenario.categoria != 4) continue;
-                if (Sala.Escenario.modelo != 25) continue;
-                if (CasasManager.UsuariosEnSala(Sala.Escenario) <= 0) continue;
-                server.AppendParameter(4);
-                server.AppendParameter(0);
-                server.AppendParameter(Sala.Escenario.id);
-                server.AppendParameter(0);
-                server.AppendParameter(Sala.Escenario.id);
-                server.AppendParameter(0);
-                server.AppendParameter(Sala.Escenario.nombre);
-                server.AppendParameter(0);
-                server.AppendParameter(CasasManager.UsuariosEnSala(Sala.Escenario)); //visitantes
-                server.AppendParameter(0);
-            }
-            foreach (var IslaID in IslasManager.IslasActivas.Values)
-            {
-                IslaInstance Isla = IslasManager.ObtenerIsla(IslaID);
-                if (Isla != null)
-                {
-                    if (IslasManager.Visitantes(Isla) > 0)
-                    {
-                        server.AppendParameter(0);
-                        server.AppendParameter(0);
-                        server.AppendParameter(Isla.id);
-                        server.AppendParameter(0);
-                        server.AppendParameter(0);
-                        server.AppendParameter(0);
-                        server.AppendParameter(Isla.nombre);
-                        server.AppendParameter(0);
-                        server.AppendParameter(IslasManager.Visitantes(Isla)); //visitantes
-                        server.AppendParameter(0);
-                    }
-                }
-            }
-            Session.SendDataProtected(server);
-        }
-        private static void Packet_193(SessionInstance Session)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(193);
             foreach (IslaInstance Isla in IslasManager.ObtenerIslas(Session.User.id))
             {
                 server.AppendParameter(0);
