@@ -65,15 +65,14 @@
     <Compile Include="game\handler\FlowerHandler.cs" />
     <Compile Include="game\handler\IntercambiosHandler.cs" />
     <Compile Include="game\handler\InterfazHandler.cs" />
+    <Compile Include="game\handler\IslaObjetosHandler.cs" />
     <Compile Include="game\handler\IslasHandler.cs" />
     <Compile Include="game\handler\LoginHandler.cs" />
     <Compile Include="game\handler\MiniGamesHandler.cs" />
     <Compile Include="game\handler\NavigatorHandler.cs" />
-    <Compile Include="game\handler\NoticiasHandler.cs" />
     <Compile Include="game\handler\npcHandler.cs" />
     <Compile Include="game\handler\PathfindingHandler.cs" />
     <Compile Include="game\handler\PingHandler.cs" />
-    <Compile Include="game\handler\PocionesHandler.cs" />
     <Compile Include="game\instances\BuyObjectInstance.cs" />
     <Compile Include="game\instances\CatalogObjectInstance.cs" />
     <Compile Include="game\instances\EscenarioInstance.cs" />
@@ -143,9 +142,6 @@
       <DependentUpon>Emulator.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MySql.Data.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="DB\boombang_org.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,4 +1,4 @@
-﻿using BoomBang.game.handler;
+using BoomBang.game.handler;
 using BoomBang.game.instances;
 using BoomBang.game.instances.manager;
 using BoomBang.game.manager.daily_reward;
@@ -27,10 +27,8 @@ namespace BoomBang.game.manager
 
                 LoginHandler.Start();
                 FlowerHandler.Start();
-                PocionesHandler.Start();
                 CasasHandler.Start();
                 NavigatorHandler.Start();
-                NoticiasHandler.Start();
                 BPadHandler.Start();
                 CatalogoHandler.Start();
                 ConcursosHandler.Start();
@@ -51,7 +49,7 @@ namespace BoomBang.game.manager
             }
             catch(Exception e)
             {
-            
+                Emulator.Form.WriteLine(e.Message, "error");
             }
         }
         public static void RegisterHandler(int Header, ProcessHandler Handler)

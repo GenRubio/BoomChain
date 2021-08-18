@@ -382,7 +382,7 @@ namespace BoomBang.game.instances
             }
             catch (Exception ex)
             {
-               
+                Emulator.Form.WriteLine(ex.Message, "error");
             }
         }
         public bool Caminable(Posicion Posicion)

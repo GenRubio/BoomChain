@@ -1,4 +1,4 @@
-﻿using BoomBang.game.handler;
+using BoomBang.game.handler;
 using BoomBang.game.instances.manager;
 using BoomBang.game.manager;
 using BoomBang.server;
@@ -416,8 +416,6 @@ namespace BoomBang.game.instances.MiniGames
             server.AppendParameter(0);
             server.AppendParameter(Precio_Silver);//Precio Silver
             Session.SendData(server);
-
-            RankingsManager.cartel_ranking(Session, 3, 2, ServerThreads.Fecha_Ranking_Semanal);
         }
         public static void BuscarParticipantes(int type)
         {

@@ -1,4 +1,4 @@
-﻿using BoomBang.game.instances;
+using BoomBang.game.instances;
 using BoomBang.game.manager;
 using BoomBang.game.packets;
 using BoomBang.server;
@@ -202,7 +202,6 @@ namespace BoomBang.game.handler
             {
                 if (Session.User.Sala != null) return;
                 new Thread(() => Packet_154_32(Session)).Start();
-                FlowerHandler.Noticia(Session);
             }
         }
         private static void Packet_195(SessionInstance Session, string Nombre)

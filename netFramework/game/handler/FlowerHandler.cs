@@ -1,4 +1,4 @@
-﻿using BoomBang.game.instances;
+using BoomBang.game.instances;
 using BoomBang.game.instances.manager;
 using BoomBang.game.manager;
 using BoomBang.game.packets;
@@ -23,25 +23,12 @@ namespace BoomBang.game.handler
             HandlerManager.RegisterHandler(120134, handler_120134);//Concursos
             HandlerManager.RegisterHandler(210120, handler_210120);
             HandlerManager.RegisterHandler(120132, Actualizar_avatar);
-            HandlerManager.RegisterHandler(148122, Validar_Email);
-            HandlerManager.RegisterHandler(148128, Cambiar_Email);
-            HandlerManager.RegisterHandler(148131, cambiar_contraseña_1);
-            HandlerManager.RegisterHandler(148126, cambiar_contraseña_2);
-            HandlerManager.RegisterHandler(148132, opciones_conexion);
-            HandlerManager.RegisterHandler(148127, desactivar_cuenta);
-            HandlerManager.RegisterHandler(148120, activar_clave_seguridad);
-            HandlerManager.RegisterHandler(148125, validar_clave_seguridad);
-            HandlerManager.RegisterHandler(148121, Desactivar_Seguridad);
-            HandlerManager.RegisterHandler(148123, Cancelar_Desactivacion_Seguridad);
-            HandlerManager.RegisterHandler(126122, comprar_vip);
-            HandlerManager.RegisterHandler(126123, detalles_vip);
-            //HandlerManager.RegisterHandler(164, ComprarCreditos);
             HandlerManager.RegisterHandler(120147120, handler_120147120Gen);//Regalo Grande
             HandlerManager.RegisterHandler(120147121, handler_120147121);//Abrir Regalo Grande
             HandlerManager.RegisterHandler(120137, handler_120137);//Abrir regalo peque
             HandlerManager.RegisterHandler(120146, handler_120146);//Cambiar nombre de usuario
         }
-        static void handler_120146(SessionInstance Session, string[,] Parameters)//Cambiar nombre de usuario
+        private static void handler_120146(SessionInstance Session, string[,] Parameters)//Cambiar nombre de usuario
         {
             if (Session.User != null)
             {
@@ -50,7 +37,7 @@ namespace BoomBang.game.handler
                  handler_120146(Session, Parameters[0, 0]);
             }
         }
-        static void handler_120137(SessionInstance Session, string[,] Parameters)//Abrir regalo peque premio 50 oro
+        private static void handler_120137(SessionInstance Session, string[,] Parameters)//Abrir regalo peque premio 50 oro
         {
             if (Session.User != null)
             {
@@ -63,23 +50,7 @@ namespace BoomBang.game.handler
         {
              Packet_132_127(Session, Parameters);
         }
-        static void Cancelar_Desactivacion_Seguridad(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                 Packet_148_123(Session, Parameters[0, 0]);
-            }
-        }
-        static void Desactivar_Seguridad(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                 Packet_148_121(Session);
-            }
-        }
-        static void handler_120147121(SessionInstance Session, string[,] Parameters)//Abrir Regalo Grande
+        private static void handler_120147121(SessionInstance Session, string[,] Parameters)//Abrir Regalo Grande
         {
             if (Session.User != null)
             {
@@ -87,7 +58,7 @@ namespace BoomBang.game.handler
                 handler_120147121(Session);  
             }
         }
-        static void handler_120147120Gen(SessionInstance Session, string[,] Parameters)//Regalo Grande
+        private static void handler_120147120Gen(SessionInstance Session, string[,] Parameters)//Regalo Grande
         {
             if (Session.User != null)
             {
@@ -97,7 +68,7 @@ namespace BoomBang.game.handler
                 SocketIO.sendData(SocketIO.WebSocket, "entrarFlowerPower", Session.User.token_uid);
             }
         }
-        public static void Noticia(SessionInstance Session)
+        private static void Noticia(SessionInstance Session)
         {
             if (Session.User != null)
             {
@@ -107,85 +78,7 @@ namespace BoomBang.game.handler
                  Packet_209_128(Session);
             }
         }
-        static void detalles_vip(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                 Packet_126_123(Session);
-            }
-        }
-        static void comprar_vip(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                 Packet_126_122(Session, int.Parse(Parameters[0, 0]));
-            }
-        }
-        static void validar_clave_seguridad(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                 Packet_148_125(Session, Parameters[0, 0], int.Parse(Parameters[1, 0]));
-            }
-        }
-        static void activar_clave_seguridad(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                 Packet_148_120(Session, Parameters[0, 0]);
-            }
-        }
-        static void desactivar_cuenta(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                Packet_148_127(Session, Parameters[0, 0]);
-            }
-        }
-        static void opciones_conexion(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                 Packet_148_132(Session);
-            }
-        }
-        static void cambiar_contraseña_2(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                 Packet_148_126(Session, Parameters[0, 0], Parameters[2, 0], Parameters[1, 0]);
-            }
-        }
-        static void cambiar_contraseña_1(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                 Packet_148_131(Session, Parameters[0, 0]);
-            }
-        }
-        static void Validar_Email(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                 Packet_148_122(Session);
-            }
-        }
-        static void Cambiar_Email(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                 Packet_148_128(Session, Parameters[0, 0]);
-            }
-        }
-        static void Actualizar_avatar(SessionInstance Session, string[,] Parameters)
+        private static void Actualizar_avatar(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
             {
@@ -200,7 +93,7 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        static void handler_210120(SessionInstance Session, string[,] Parameters)
+        private static void handler_210120(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
             {
@@ -208,7 +101,7 @@ namespace BoomBang.game.handler
                  Packet_210_120(Session);
             }
         }
-        static void handler_120134(SessionInstance Session, string[,] Parameters)///Concurso?
+        private static void handler_120134(SessionInstance Session, string[,] Parameters)///Concurso?
         {
             if (Session.User != null)
             {
@@ -216,7 +109,7 @@ namespace BoomBang.game.handler
                  Packet_120_134(Session);
             }
         }
-        static void handler_120141(SessionInstance Session, string[,] Parameters)
+        private static void handler_120141(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
             {
@@ -285,59 +178,6 @@ namespace BoomBang.game.handler
             server.AppendParameter(2);
             Session.SendData(server);
         }
-        private static void Packet_148_123(SessionInstance Session, string security)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(148);
-            server.AddHead(123);
-            try
-            {
-                if (Session.User.security == security)
-                {
-                    if (Session.User.timespam_desc_cambios != 0)
-                    {
-                        Session.User.timespam_desc_cambios = 0;
-                        UserManager.ActualizarEstadisticas(Session.User);
-                        server.AppendParameter(1);
-                    }
-                    else
-                    {
-                        server.AppendParameter(-1);
-                    }
-                }
-                else
-                {
-                    server.AppendParameter(0);
-                }
-            }
-            catch
-            {
-                server.AppendParameter(-1);
-            }
-            Session.SendData(server);
-        }
-        private static void Packet_148_121(SessionInstance Session)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(148);
-            server.AddHead(121);
-            try
-            {
-                if (Session.User.timespam_desc_cambios == 0)
-                {
-                    Session.User.timespam_desc_cambios = Time.GetCurrentAndAdd(AddType.Dias, 7);
-                    UserManager.ActualizarEstadisticas(Session.User);
-                    server.AppendParameter(1);
-                    Packet_132_127(Session, "Has iniciado el proceso de desactivación de la clave de seguridad en tu cuenta, este proceso toma 7 días en realizarse a partir de ahora.");
-                    Packet_132_127(Session, "Recuerda que puedes cancelar la desactivación en cualquier momento introduciendo tu clave de seguridad actual.");
-                }
-            }
-            catch
-            {
-                server.AppendParameter(-1);
-            }
-            Session.SendData(server);
-        }
         private static void Packet_120_147_120(SessionInstance Session)
         {
             Thread.Sleep(new TimeSpan(0, 0, 0, 0, 500));
@@ -358,217 +198,6 @@ namespace BoomBang.game.handler
             server.AppendParameter(0);
             Session.SendData(server);
         }
-        private static void Packet_126_123(SessionInstance Session)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(126);
-            server.AddHead(123);
-            server.AppendParameter(0);
-            Session.SendDataProtected(server);
-        }
-        private static void Packet_126_120(SessionInstance Session)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(126);
-            server.AddHead(120);
-            server.AppendParameter(Session.User.id);
-            server.AppendParameter(1);
-            Session.SendData(server);
-        }
-        private static void Packet_126_122(SessionInstance Session, int type)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(126);
-            server.AddHead(122);
-            if (Session.User.oro >= 10000)
-            {
-                if (ComprarVip(Session, Session.User, server, type))
-                {
-                    Packet_126_120(Session);
-                }
-            }
-            else
-            {
-                server.AppendParameter(0);
-            }
-            Session.SendData(server);
-        }
-        private static void Packet_148_125(SessionInstance Session, string contraseña, int modulo)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(148);
-            server.AddHead(125);
-            if (contraseña == Session.User.security)
-            {
-                switch (modulo)
-                {
-                    case 1://Dar de baja la cuenta
-                        server.AppendParameter(1);
-                        break;
-                    case 2://Cambios
-                        server.AppendParameter(1);
-                        break;
-                    case 3://Cambiar Email
-                        server.AppendParameter(1);
-                        break;
-                    case 4://Cambiar Contraseña
-                        server.AppendParameter(1);
-                        break;
-                    case 5://Opciones de conexion
-                        server.AppendParameter(1);
-                        break;
-                    default:
-                        server.AppendParameter(-1);
-                        break;
-                }
-                server.AppendParameter(0);
-                server.AppendParameter(Session.User.security);
-            }
-            else
-            {
-                server.AppendParameter(0);
-            }
-            Session.SendData(server);
-        }
-        private static void Packet_148_120(SessionInstance Session, string clave)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(148);
-            server.AddHead(120);
-            if (string.IsNullOrEmpty(Session.User.security))
-            {
-                if (UserManager.ActivarClaveSeguridad(Session.User, clave))
-                {
-                    server.AppendParameter(1);
-                }
-                else
-                {
-                    server.AppendParameter(0);
-                }
-            }
-            else
-            {
-                server.AppendParameter(0);
-            }
-            Session.SendData(server);
-        }
-        private static void Packet_148_127(SessionInstance Session, string security)
-        {
-            try
-            {
-                if (Session.User.security != security) return;
-                using (mysql client = new mysql())
-                {
-                    client.SetParameter("id", Session.User.id);
-                    client.SetParameter("name", Session.User.nombre);
-                    client.SetParameter("time", DateTime.Now);
-                    if (client.ExecuteNonQuery("INSERT INTO cuentas_desactivadas (`id`, `Nombre`, `Fecha_Desactivacion`) VALUES (@id, @name, @time)") == 1)
-                    {
-                        Packet_174(Session);
-                        UserManager.Desactivar_Usuario(Session);
-                    }
-                }
-            }
-            catch
-            {
-                ServerMessage server = new ServerMessage();
-                server.AddHead(148);
-                server.AddHead(127);
-                server.AppendParameter(-1);
-                Session.SendData(server);
-            }
-        }
-        //³²0³²1³²0
-        private static void Packet_174(SessionInstance Session)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(174);
-            server.AppendParameter("Has dado de baja esta cuenta.");
-            Session.SendData(server);
-        }
-        private static void Packet_148_132(SessionInstance Session)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(148);
-            server.AddHead(132);
-            server.AppendParameter(-1);
-            Session.SendData(server);
-        }
-        private static void Packet_148_126(SessionInstance Session, string old, string seguridad, string nueva)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(148);
-            server.AddHead(126);
-            if (UserManager.Coincidencia_Contraseña(Session.User, UserManager.PasswordEncryptada(old)))
-            {
-                if (seguridad == Session.User.security)
-                {
-                    if (UserManager.Actualizar_Contraseña(Session.User, UserManager.PasswordEncryptada(nueva)))
-                    {
-                        server.AppendParameter(1);
-                    }
-                    else
-                    {
-                        server.AppendParameter(0);
-                    }
-                }
-                else
-                {
-                    server.AppendParameter(0);
-                }
-            }
-            else
-            {
-                server.AppendParameter(0);
-            }
-            Session.SendData(server);
-        }
-        private static void Packet_148_131(SessionInstance Session, string password)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(148);
-            server.AddHead(131);
-            if (UserManager.Coincidencia_Contraseña(Session.User, UserManager.PasswordEncryptada(password)))
-            {
-                server.AppendParameter(1);
-            }
-            else
-            {
-                server.AppendParameter(0);
-            }
-            Session.SendData(server);
-        }
-        private static void Packet_148_122(SessionInstance Session)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(148);
-            server.AddHead(122);
-            if (Session.User.ValidarEmail == 0)
-            {
-                server.AppendParameter(1);
-                Session.User.ValidarEmail = 1;
-                UserManager.ActualizarEstadisticas(Session.User);
-            }
-
-            Session.SendData(server);
-        }
-        private static void Packet_148_128(SessionInstance Session, string email)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(148);
-            server.AddHead(128);
-            if (Session.User.ValidarEmail == 1 && Session.User.email != email)
-            {
-                Session.User.email = email;
-                UserManager.ActualizarEstadisticas(Session.User);
-                server.AppendParameter(1);
-            }
-            else
-            {
-                server.AppendParameter(2);
-            }
-            Session.SendData(server);
-        }
         private static void Packet_210_120(SessionInstance Session)
         {
             ServerMessage server = new ServerMessage();
@@ -587,11 +216,8 @@ namespace BoomBang.game.handler
             server.AppendParameter(new object[] { 0, 1 });
             Session.SendDataProtected(server);         
         }
-        static void handler_120133(SessionInstance Session, string[,] Parameters)
+        private static void handler_120133(SessionInstance Session, string[,] Parameters)
         {
-            //Console.WriteLine(Parameters[1, 0]);
-            //string tam = Parameters[1, 0];
-            //int id = int.Parse(Parameters[0, 0]);
             ServerMessage server = new ServerMessage();
             server.AddHead(120);
             server.AddHead(133);
@@ -640,73 +266,6 @@ namespace BoomBang.game.handler
             server.AppendParameter(Item);
             server.AppendParameter(1);
             Session.SendData(server);
-        }
-        protected static bool ComprarVip(SessionInstance Session, UserInstance User, ServerMessage server, int type)
-        {
-            if (User.vip == 0)
-            {
-                using (mysql client = new mysql())
-                {
-                    switch (type)
-                    {
-                        case 1:
-                            if (User.oro >= 10000)
-                            {
-                                User.vip_double = Time.GetCurrentAndAdd(AddType.Meses, 1);
-                                User.end_vip = Convert.ToString(DateTime.Now.AddMonths(1));
-                                UserManager.Creditos(User, true, false, 10000);
-                                FlowerHandler.BoomBangTeam(Session, "¡Felicidades " + Session.User.nombre + " Ahora eres un habitante de BurBian! \r\rTe notificaremos cuando tu suscripción termine faltando 15 días para que puedas renovar tu Membresía.");
-                                server.AppendParameter(1);
-                                server.AppendParameter(User.end_vip);
-                            }
-                            else
-                            {
-                                server.AppendParameter(0);
-                                return false;
-                            }
-                            break;
-                        case 2:
-                            if (User.oro >= 25000)
-                            {
-                                User.vip_double = Time.GetCurrentAndAdd(AddType.Meses, 3);
-                                User.end_vip = Convert.ToString(DateTime.Now.AddMonths(3));
-                                UserManager.Creditos(User, true, false, 25000);
-                                FlowerHandler.BoomBangTeam(Session, "¡Felicidades " + Session.User.nombre + " Ahora eres un habitante de BurBian! \r\rTe notificaremos cuando tu suscripción termine faltando 15 días para que puedas renovar tu Membresía.");
-                                server.AppendParameter(1);
-                                server.AppendParameter(User.end_vip);
-                            }
-                            else
-                            {
-                                server.AppendParameter(0);
-                                return false;
-                            }
-                            break;
-
-                        case 3:
-                            if (User.oro >= 45000)
-                            {
-                                User.vip_double = Time.GetCurrentAndAdd(AddType.Meses, 6);
-                                User.end_vip = Convert.ToString(DateTime.Now.AddMonths(6));
-                                UserManager.Creditos(User, true, false, 45000);
-                                FlowerHandler.BoomBangTeam(Session, "¡Felicidades " + Session.User.nombre + " Ahora eres un habitante de BurBian! \r\rTe notificaremos cuando tu suscripción termine faltando 15 días para que puedas renovar tu Membresía.");
-                                server.AppendParameter(1);
-                                server.AppendParameter(User.end_vip);
-                            }
-                            else
-                            {
-                                server.AppendParameter(0);
-                                return false;
-                            }
-                            break;
-                    }
-                    client.SetParameter("id", User.id);
-                    client.SetParameter("vip_double", User.vip_double);
-                    client.SetParameter("end_vip", User.end_vip);
-                    client.ExecuteNonQuery("UPDATE usuarios SET vip = @vip_double, end_vip = @end_vip WHERE id = @id");
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }

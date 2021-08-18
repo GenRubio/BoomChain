@@ -1,4 +1,4 @@
-﻿using BoomBang.game.handler;
+using BoomBang.game.handler;
 using BoomBang.game.instances.manager;
 using BoomBang.game.manager;
 using BoomBang.server;
@@ -299,8 +299,6 @@ namespace BoomBang.game.instances.MiniGames
             server.AppendParameter(Precio_Golden);//Precio Golden
             server.AppendParameter(0);
             Session.SendData(server);
-
-            RankingsManager.cartel_ranking(Session, 2, 2, ServerThreads.Fecha_Ranking_Semanal);
 
         }
         public static bool FiltroDePago(SessionInstance Session, int type)///Hay que activarlo despues

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -111,13 +111,6 @@ namespace BoomBang.SocketsWeb
                     case "change-ficha-user":
                         CallPackage.changeFichaUser(session, parameters);
                         break;
-                }
-            }
-            else
-            {
-                switch (idType)
-                {
-             
                 }
             }
         }

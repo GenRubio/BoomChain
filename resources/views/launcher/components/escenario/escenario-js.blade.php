@@ -44,8 +44,8 @@
     function entrarSala() {
         setTimeout(function() {
 
-            addUserFichasLeftDiv();
-            addPlusNinjas();
+            //addUserFichasLeftDiv();
+            //addPlusNinjas();
             removeSettingsButton();
 
         }, 460);
@@ -69,8 +69,8 @@
     }
 
     function salirSala() {
-        removeUserFichasLeftDiv();
-        removePlusNinjas();
+        //removeUserFichasLeftDiv();
+        //removePlusNinjas();
 
         function removePlusNinjas() {
             $(".plus-ninjas").removeClass("block");

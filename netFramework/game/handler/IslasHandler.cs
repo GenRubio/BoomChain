@@ -1,4 +1,4 @@
-﻿using BoomBang.game.instances;
+using BoomBang.game.instances;
 using BoomBang.game.manager;
 using BoomBang.game.packets;
 using BoomBang.server;
@@ -27,113 +27,8 @@ namespace BoomBang.game.handler
             HandlerManager.RegisterHandler(189126, new ProcessHandler(CambiarDescripcion));
             HandlerManager.RegisterHandler(189147, new ProcessHandler(ExpulsarUsuario));
             HandlerManager.RegisterHandler(189146, new ProcessHandler(CambiarColores));
-            HandlerManager.RegisterHandler(189125, new ProcessHandler(CambiarUppercut));
-            HandlerManager.RegisterHandler(189150, new ProcessHandler(NoVerlo));
-            HandlerManager.RegisterHandler(189127, new ProcessHandler(MAmigos));
-            HandlerManager.RegisterHandler(189131, new ProcessHandler(Poner_Clave));
-            HandlerManager.RegisterHandler(189123, new ProcessHandler(Validar_Clave_Acceso));
         }
-        static void Validar_Clave_Acceso(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.PreLock__Proteccion_SQL == true) return;
-                if (Session.User.Sala != null) return;
-                mysql client = new mysql();
-                DataRow row = client.ExecuteQueryRow("SELECT * FROM escenarios_privados WHERE id = '" + int.Parse(Parameters[0, 0]) + "'");
-                if (row != null)
-                {
-                    EscenarioInstance Escenario = new EscenarioInstance(row);
-                    if (Escenario.categoria != 2) return;
-                    if (!string.IsNullOrEmpty(Escenario.Clave))
-                    {
-                        if (Escenario.Clave != Parameters[1, 0])
-                        {
-                            Packet_189_123(Session);
-                            return;
-                        }
-                    }
-                    SalasManager.IrAlli(Session, Escenario.es_categoria, Escenario.id, null, true);
-                }
-                Session.User.PreLock__Proteccion_SQL = true;
-            }
-        }
-        static void Poner_Clave(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.PreLock__Proteccion_SQL == true) return;
-                if (Session.User.Sala != null) return;
-                mysql client = new mysql();
-                DataRow row = client.ExecuteQueryRow("SELECT * FROM escenarios_privados WHERE id = '" + int.Parse(Parameters[1, 0]) + "'");
-                if (row != null)
-                {
-                    EscenarioInstance Escenario = new EscenarioInstance(row);
-                    if (Escenario.Creador.id == Session.User.id || Session.User.admin == 1)
-                    {
-                        if (client.ExecuteNonQuery("UPDATE escenarios_privados SET clave = '" + Parameters[2, 0] + "' WHERE id = '" + Escenario.id + "'") == 1)
-                        {
-                            if (SalasManager.Salas_Privadas.ContainsKey(int.Parse(Parameters[1, 0])))
-                            {
-                                SalaInstance Sala = SalasManager.Salas_Privadas[int.Parse(Parameters[1, 0])];
-                                Sala.Escenario.Clave = Parameters[2, 0];
-                            }
-                        }
-                    }
-                }
-                Session.User.PreLock__Proteccion_SQL = true;
-            }
-        }
-        static void MAmigos(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                IslaInstance Isla = IslasManager.ObtenerIsla(int.Parse(Parameters[0, 0]));
-                if (Isla != null)
-                {
-                    if (IslasManager.ControlDeSeguridad(Session.User, Isla))
-                    {
-                        if (Parameters[1, 0] == Session.User.nombre) { Parameters[1, 0] = ""; }
-                        if (Parameters[2, 0] == Session.User.nombre) { Parameters[2, 0] = ""; }
-                        if (Parameters[3, 0] == Session.User.nombre) { Parameters[3, 0] = ""; }
-                        if (Parameters[4, 0] == Session.User.nombre) { Parameters[4, 0] = ""; }
-                        if (Parameters[5, 0] == Session.User.nombre) { Parameters[5, 0] = ""; }
-                        if (Parameters[6, 0] == Session.User.nombre) { Parameters[6, 0] = ""; }
-                        if (Parameters[7, 0] == Session.User.nombre) { Parameters[7, 0] = ""; }
-                        if (Parameters[8, 0] == Session.User.nombre) { Parameters[8, 0] = ""; }
-                        new Thread(() => IslasManager.AñadirMAmigos(Isla, Parameters[1, 0], Parameters[2, 0], Parameters[3, 0], Parameters[4, 0],
-                            Parameters[5, 0], Parameters[6, 0], Parameters[7, 0], Parameters[8, 0])).Start();
-                    }
-                }
-            }
-        }
-        static void NoVerlo(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                IslaInstance Isla = IslasManager.ObtenerIsla(int.Parse(Parameters[0, 0]));
-                if (Isla != null)
-                {
-                    if (IslasManager.ControlDeSeguridad(Session.User, Isla))
-                    {
-                        if (Parameters[1, 0] == Session.User.nombre) { Parameters[1, 0] = ""; }
-                        if (Parameters[2, 0] == Session.User.nombre) { Parameters[2, 0] = ""; }
-                        if (Parameters[3, 0] == Session.User.nombre) { Parameters[3, 0] = ""; }
-                        if (Parameters[4, 0] == Session.User.nombre) { Parameters[4, 0] = ""; }
-                        if (Parameters[5, 0] == Session.User.nombre) { Parameters[5, 0] = ""; }
-                        if (Parameters[6, 0] == Session.User.nombre) { Parameters[6, 0] = ""; }
-                        if (Parameters[7, 0] == Session.User.nombre) { Parameters[7, 0] = ""; }
-                        if (Parameters[8, 0] == Session.User.nombre) { Parameters[8, 0] = ""; }
-                        new Thread(() => IslasManager.AñadirNoVerlo(Isla, Parameters[1, 0], Parameters[2, 0], Parameters[3, 0], 
-                            Parameters[4, 0], Parameters[5, 0], Parameters[6, 0], Parameters[7, 0], Parameters[8, 0])).Start();
-                        
-                    }
-                }
-            }
-        }
-        static void Tutorial_Islas(SessionInstance Session, string[,] Parameters)
+        private static void Tutorial_Islas(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
             {
@@ -146,7 +41,7 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        static void CambiarDescripcion(SessionInstance Session, string[,] Parameters)
+        private static void CambiarDescripcion(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
             {
@@ -166,24 +61,7 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        static void CambiarUppercut(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.PreLock__Proteccion_SQL == true) return;
-                if (Session.User.Sala != null) return;
-                IslaInstance Isla = IslasManager.ObtenerIsla(int.Parse(Parameters[0, 0]));
-                if (Isla != null)
-                {
-                    if (IslasManager.ControlDeSeguridad(Session.User, Isla))
-                    {
-                        new Thread(() => IslasManager.CambiarUppert(Isla, int.Parse(Parameters[1, 0]))).Start();
-                        Session.User.PreLock__Proteccion_SQL = true;
-                    }
-                }
-            }
-        }
-        static void CambiarColores(SessionInstance Session, string[,] Parameters)
+        private static void CambiarColores(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
             {
@@ -199,7 +77,7 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        static void ExpulsarUsuario(SessionInstance Session, string[,] Parameters)
+        private static void ExpulsarUsuario(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
             {
@@ -223,7 +101,7 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        static void RenombrarIsla(SessionInstance Session, string[,] Parameters)
+        private static void RenombrarIsla(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
             {
@@ -243,7 +121,7 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        static void RenombrarZona(SessionInstance Session, string[,] Parameters)
+        private static void RenombrarZona(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
             {
@@ -263,7 +141,7 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        static void EliminarZona(SessionInstance Session, string[,] Parameters)
+        private static void EliminarZona(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
             {
@@ -278,7 +156,7 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        static void EliminarIsla(SessionInstance Session, string[,] Parameters)
+        private static void EliminarIsla(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
             {
@@ -293,7 +171,7 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        static void CrearZona(SessionInstance Session, string[,] Parameters)
+        private static void CrearZona(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
             {
@@ -325,7 +203,7 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        static void MostrarIsla(SessionInstance Session, string[,] Parameters)
+        private static void MostrarIsla(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
             {
@@ -333,7 +211,7 @@ namespace BoomBang.game.handler
                 Packet_189_124(Session, int.Parse(Parameters[0, 0]));
             }
         }
-        static void CrearIsla(SessionInstance Session, string[,] Parameters)
+        private static void CrearIsla(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
             {
@@ -342,14 +220,6 @@ namespace BoomBang.game.handler
                 Packet_189_120(Session, Parameters[0, 0], int.Parse(Parameters[1, 0]));
                 Session.User.PreLock__Proteccion_SQL = true;
             }
-        }
-        private static void Packet_189_123(SessionInstance Session)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(189);
-            server.AddHead(123);
-            server.AppendParameter(0);
-            Session.SendData(server);
         }
         private static void Packet_189_146(SessionInstance Session, string HEX, string Dec)
         {
