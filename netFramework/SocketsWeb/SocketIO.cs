@@ -36,11 +36,19 @@ namespace BoomBang.SocketsWeb
 
         public static void sendData(Socket client, string idType, string parameters)
         {
-            if (Emulator.WebSockets)
+            try
             {
-                var buffer = Encoding.UTF8.GetBytes(idType + "|" + parameters);
-                client.Send(buffer, 0, buffer.Length, 0);
+                if (Emulator.WebSockets)
+                {
+                    var buffer = Encoding.UTF8.GetBytes(idType + "|" + parameters);
+                    client.Send(buffer, 0, buffer.Length, 0);
+                }
             }
+            catch(Exception e)
+            {
+                Emulator.Form.WriteLine(e.Message, "error");
+            }
+           
         }
 
         private static void reciveData(Socket client)

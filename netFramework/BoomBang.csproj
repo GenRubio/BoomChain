@@ -63,7 +63,6 @@
     <Compile Include="game\handler\CatalogoHandler.cs" />
     <Compile Include="game\handler\ConcursosHandler.cs" />
     <Compile Include="game\handler\FlowerHandler.cs" />
-    <Compile Include="game\handler\IntercambiosHandler.cs" />
     <Compile Include="game\handler\InterfazHandler.cs" />
     <Compile Include="game\handler\IslaObjetosHandler.cs" />
     <Compile Include="game\handler\IslasHandler.cs" />

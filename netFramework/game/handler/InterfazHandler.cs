@@ -39,7 +39,6 @@ namespace BoomBang.game.handler
             HandlerManager.RegisterHandler(167, new ProcessHandler(Votos_Restantes));
             HandlerManager.RegisterHandler(155, new ProcessHandler(Votos));
             HandlerManager.RegisterHandler(210125, new ProcessHandler(None_210_125));
-            HandlerManager.RegisterHandler(202120, new ProcessHandler(ver_informacion_user));
             HandlerManager.RegisterHandler(142, new ProcessHandler(None_142));
             HandlerManager.RegisterHandler(138, new ProcessHandler(None_138));
         }
@@ -52,20 +51,6 @@ namespace BoomBang.game.handler
         static void None_142(SessionInstance Session, string[,] Parameter)
         {
 
-        }
-        static void ver_informacion_user(SessionInstance Session, string[,] Parameter)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.PreLock__Proteccion_SQL == true) return;
-                if (Session.User.Sala != null)
-                {
-                    if (Session.User.id == Convert.ToInt32(Parameter[0, 0])) return;
-                    ver_informacion_user_Manager(Session, Parameter);
-                    Packet_202_120(Session);
-                    Session.User.PreLock__Proteccion_SQL = true;
-                }
-            }
         }
         static void None_210_125(SessionInstance Session, string[,] Parameter)
         {
@@ -107,10 +92,6 @@ namespace BoomBang.game.handler
                     Packet_167(Session);
                 }
             }
-        }
-        public static void Desactivar_Usuario_Conexion(SessionInstance Session)
-        {
-            Session.FinalizarConexion("Desactivar_Usuario_Conexion");
         }
         static void remuneracion_plata(SessionInstance Session, string[,] Parameters)
         {
@@ -795,31 +776,25 @@ namespace BoomBang.game.handler
         }
         private static void ActivarTraje_Manager(SessionInstance Session, string[,] Parameters)
         {
-            //string colores = Parameters[0, 3];
-            //Console.WriteLine(Parameters);
             Session.User.ModoNinja = true;
-            if (Session.User.avatar == 13 || Session.User.avatar == 14) { Session.User.avatar = Session.User.avatar_anterior; }
+
+            if (Session.User.avatar == 13 || Session.User.avatar == 14) {
+                Session.User.avatar = Session.User.avatar_anterior;
+            }
+
             Session.User.Trayectoria.DetenerMovimiento();
             Session.User.PreLock_Disfraz = true;
-            if (Session.User.Sala.Escenario.tipo_evento == 2 && Session.User.nivel_ninja < 1 && Session.User.Traje_Ninja_Principal == 0 || Session.User.Sala.Escenario.tipo_evento_isla == 2 && Session.User.nivel_ninja < 1 && Session.User.Traje_Ninja_Principal == 0)
-            {
-                Session.User.NinjaColores_Sala = Session.User.Colores_traje_blanco(Session);
-            }
+
             if (Session.User.nivel_ninja >= 1 && Session.User.Traje_Ninja_Principal == 0)
             {
                 Session.User.NinjaColores_Sala = Session.User.Colores_traje(Session);
             }
-            if (Session.User.Traje_Ninja_Principal != 0)
-            {
-                if (Session.User.Traje_Ninja_Principal == 1) { Session.User.NinjaColores_Sala = Session.User.Colores_traje_oscuro(Session); }
-                if (Session.User.Traje_Ninja_Principal == 2) { Session.User.NinjaColores_Sala = Session.User.Colores_traje_purpura(Session); }
-                if (Session.User.Traje_Ninja_Principal == 3) { Session.User.NinjaColores_Sala = Session.User.Colores_traje_rosa(Session); }
-                if (Session.User.Traje_Ninja_Principal == 4) { Session.User.NinjaColores_Sala = Session.User.Colores_traje_verde(Session); }
-                if (Session.User.Traje_Ninja_Principal == 5) { Session.User.NinjaColores_Sala = Session.User.Colores_traje_ninja_copiador_de_color(Session); Session.User.Ninja_Copi_color = true; }
-                if (Session.User.Traje_Ninja_Principal == 6) { Session.User.NinjaColores_Sala = Session.User.Colores_traje_selestial(Session); Session.User.ninja_celestial_puesto = true; }
-            }
             PathfindingHandler.Reprar_Mirada_Z(Session);
-            if (Session.User.ModoNinja == true && Session.User.NinjaColores_Sala == "") { Session.User.ModoNinja = false; return; }
+            if (Session.User.ModoNinja == true && Session.User.NinjaColores_Sala == "")
+            {
+                Session.User.ModoNinja = false;
+                return;
+            }
             Packet_125_120(Session, Session.User.id, 12, Session.User.NinjaColores_Sala, true);
         }
         private static void DesactivarTraje(SessionInstance Session)
@@ -851,10 +826,6 @@ namespace BoomBang.game.handler
                     Packet_125_120(Session, OtherSession.User.id, OtherSession.User.avatar, OtherSession.User.colores, false);
                     NotificacionesManager.NotifiChat(Session, "Sabio: Usuario " + OtherSession.User.nombre + " tiene anti upper activado.");
                 }
-                if (OtherSession.User.ModoNinja == true && OtherSession.User.ninja_celestial_puesto == true)
-                {
-                    Packet_125_120(Session, OtherSession.User.id, 12, OtherSession.User.Colores_traje_selestial(OtherSession), false);
-                }
             }
         }
         private static void Votos(SessionInstance Session, SessionInstance OtherSession, string[,] Parameter)
@@ -881,127 +852,6 @@ namespace BoomBang.game.handler
                     client.ExecuteNonQuery("UPDATE usuarios SET votos_simpatico = @votos_simpatico WHERE id = @id");
                     break;
             }
-        }
-        static void ver_informacion_user_Manager(SessionInstance Session, string[,] Parameter)
-        {
-            mysql client = new mysql();
-            SessionInstance OtherSession = UserManager.ObtenerSession(Convert.ToInt32(Parameter[0, 0]));
-            //////////Head
-            string rango = "Error";
-            string titulo = "Error";
-            if (OtherSession.User.admin == 1)
-            {
-                titulo = OtherSession.User.nombre + " - BoomBang Team - Moderador\n";
-                rango = "Moderador";
-            }
-            else
-            {
-                titulo = "Usuario: " + OtherSession.User.nombre + " información:\n";
-                if (Time.GetDifference(OtherSession.User.vip_double) > 0)
-                {
-                    rango = "VIP";
-                }
-                else
-                {
-                    rango = "Visitante";
-                }
-            }
-            ////////Body
-            string body = "";
-            if (Time.GetDifference(OtherSession.User.Sala.Escenario.tiempo_evento) > 0)
-            {
-                string t_evento = "Error";
-                int posicion_usuario = 0;
-                int puntos_usuario = 0;
-                bool usuario_clasificado_evento = false;
-                if (OtherSession.User.Sala.Escenario.tipo_evento == 1)//Evento cocos
-                {
-                    t_evento = "Evento Coco: ";
-                }
-                else { t_evento = "Evento Shurikens: "; }//Shurikens
-                body = t_evento;
-                foreach (DataRow eventos in client.ExecuteQueryTable("SELECT * FROM rankings WHERE id_ranking = 6 ORDER BY puntos desc").Rows)
-                {
-                    posicion_usuario++;
-                    if (OtherSession.User.id == (int)eventos["id_usuario"])
-                    {
-                        puntos_usuario = (int)eventos["puntos"];
-                        usuario_clasificado_evento = true;
-                        break;
-                    }
-                }
-                if (usuario_clasificado_evento == true)
-                {
-                    body = body + "Top : " + posicion_usuario + " Puntos: " + puntos_usuario + " | ";
-                }
-                else { body = body + "N.C. | "; }
-            }
-            int posicion = 0;
-            int puntos = 0;
-            bool usuario_clasificado = false;
-            foreach (DataRow ring in client.ExecuteQueryTable("SELECT * FROM rankings WHERE id_ranking = 1 AND tipo_ranking	= 2 ORDER BY puntos desc").Rows)
-            {
-                posicion++;
-                if (OtherSession.User.id == (int)ring["id_usuario"])
-                {
-                    puntos = (int)ring["puntos"];
-                    usuario_clasificado = true;
-                    body = body + "Semanal Ring: Top: " + posicion + " Puntos: " + puntos + " | ";
-                    break;
-                }
-            }
-            posicion = 0;
-            puntos = 0;
-            if (usuario_clasificado == false)
-            {
-                body = body + "Semanal Ring: N.C | ";
-            }
-            foreach (DataRow cocos in client.ExecuteQueryTable("SELECT * FROM rankings WHERE id_ranking = 2 AND tipo_ranking = 2 ORDER BY puntos desc").Rows)
-            {
-                posicion++;
-                if (OtherSession.User.id == (int)cocos["id_usuario"])
-                {
-                    puntos = (int)cocos["puntos"];
-                    usuario_clasificado = true;
-                    body = body + "Semanal Cocos: Top: " + posicion + " Puntos: " + puntos + " | ";
-                    break;
-                }
-            }
-            posicion = 0;
-            puntos = 0;
-            if (usuario_clasificado == false)
-            {
-                body = body + "Semanal Cocos: N.C | ";
-            }
-            foreach (DataRow sendero in client.ExecuteQueryTable("SELECT * FROM rankings WHERE id_ranking = 3 AND tipo_ranking	= 2 ORDER BY puntos desc").Rows)
-            {
-                posicion++;
-                if (OtherSession.User.id == (int)sendero["id_usuario"])
-                {
-                    puntos = (int)sendero["puntos"];
-                    usuario_clasificado = true;
-                    body = body + "Semanal Sendero: Top: " + posicion + " Puntos: " + puntos + "\n";
-                    break;
-                }
-            }
-            posicion = 0;
-            puntos = 0;
-            if (usuario_clasificado == false)
-            {
-                body = body + "Semanal Sendero: N.C\n";
-            }
-            ////footer
-            string footer = "Comandos: ' /casa " + OtherSession.User.nombre + " ' Rango: " + rango;
-            Packet_183(Session, titulo + body + footer);
-        }
-        public static void Sistema_Ninja_Celestial(SessionInstance Session, int x, int y)
-        {
-            Packet_125_120(Session, Session.User.id, 12, Session.User.Colores_traje_selestial(Session), true);
-            Session.User.Sala.Map[Session.User.Posicion.y, Session.User.Posicion.x].FijarSession(null);
-            Packet_135(Session, x, y, 4);
-            Session.User.Posicion.x = x;
-            Session.User.Posicion.y = y;
-            Session.User.ninja_celestial = false;
         }
         public static void Coco_Thread(SessionInstance Session, TimeSpan Tiempo, int modelo, SalaInstance Sala, Posicion Posicion = null)
         {
@@ -1070,14 +920,6 @@ namespace BoomBang.game.handler
             Session.User.PreLock_Disfraz = true;
 
             Packet_125_120(Session, Session.User.id, 12, Session.User.NinjaColores_Sala, true);
-        }
-        private static void Packet_202_120(SessionInstance Session)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(202);
-            server.AddHead(120);
-            server.AppendParameter(1);
-            Session.SendData(server);
         }
         private static void Packet_210_125(SessionInstance Session)
         {
@@ -1257,40 +1099,6 @@ namespace BoomBang.game.handler
             server.AppendParameter(OtherSession.User.Posicion.y);
             Session.User.Sala.SendData(server, Session);
         }
-        private static void Packet_183()
-        {
-            foreach (SessionInstance Session in UserManager.UsuariosOnline.Values)
-            {
-                ServerMessage alerta = new ServerMessage();
-                alerta.AddHead(183);
-                alerta.AppendParameter("" + Session.User.nombre + ": \r " + "BurBian estará en mantenimiento");
-                Session.SendData(alerta);
-            }
-        }
-        private static void Packet_185(string msg)
-        {
-            string[] array = Regex.Split(msg, " ");
-            foreach (SessionInstance Session in UserManager.UsuariosOnline.Values)
-            {
-                if (Session.User.nombre == array[1].ToString())
-                {
-                    Session.User.baneo = Time.GetCurrentAndAdd(AddType.Minutos, 5);
-                    using (mysql client = new mysql())
-                    {
-                        client.ExecuteNonQuery("UPDATE usuarios SET baneo = '" + Session.User.baneo + "' WHERE id = '" + Session.User.id + "'");
-                    }
-                    ServerMessage ban = new ServerMessage();
-                    ban.AddHead(185);
-                    ban.AddHead(0);
-                    ban.AppendParameter("baneado por puta");
-                    Session.SendData(ban);
-                    Session.User.Contar_Auto = 0;
-                    Session.User.contador_baneo++;
-                    UserManager.ActualizarEstadisticas(Session.User);
-                    UserManager.Desactivar_Usuario(Session);
-                }
-            }
-        }
         private static void Packet_184_120(SessionInstance Session, SessionInstance OtherSession, int coco)
         {
             ServerMessage server = new ServerMessage();
@@ -1299,19 +1107,6 @@ namespace BoomBang.game.handler
             server.AppendParameter(OtherSession.User.id);
             server.AppendParameter(0);
             server.AppendParameter(coco);
-            Session.User.Sala.SendData(server, Session);
-        }
-        private static void Packet_189_173(SessionInstance Session, BuyObjectInstance Compra)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(189);
-            server.AddHead(173);
-            server.AppendParameter(Compra.id);
-            server.AppendParameter((86400 - Time.GetDifference(Compra.Planta_agua)) / 12);
-            server.AppendParameter(Time.GetDifference(Compra.Planta_agua));
-            server.AppendParameter((604800 - Time.GetDifference(Compra.Planta_sol)) / 4);
-            server.AppendParameter(Time.GetDifference(Compra.Planta_sol));
-            server.AppendParameter(1);
             Session.User.Sala.SendData(server, Session);
         }
         private static void Packet_139(SessionInstance Session, SessionInstance OtherSession, int InteraccionID)
@@ -1344,13 +1139,6 @@ namespace BoomBang.game.handler
             server.AppendParameter(0);
             Session.SendData(server);
         }
-        private static void Packet_183(SessionInstance Session, string mensaje)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(183);
-            server.AppendParameter(mensaje);
-            Session.SendData(server);
-        }
         private static void Packet_135(SessionInstance Session, int x, int y, int z)
         {
             ServerMessage server = new ServerMessage();
@@ -1369,16 +1157,6 @@ namespace BoomBang.game.handler
             cocold.AppendParameter(Session.User.IDEspacial);
             cocold.AppendParameter(1);
             Session.User.Sala.SendData(cocold);
-        }
-        private static void Packet_184_120(SessionInstance Session, int modelo)
-        {
-            ServerMessage coco = new ServerMessage();
-            coco.AddHead(184);
-            coco.AddHead(120);
-            coco.AppendParameter(Session.User.id);
-            coco.AppendParameter(0);
-            coco.AppendParameter(modelo);
-            Session.User.Sala.SendData(coco);
         }
         private static void Packet_184_121(SessionInstance Session, int modelo)
         {

@@ -26,7 +26,6 @@ namespace BoomBang.game.manager
                 CatalogoHandler.Start();
                 ConcursosHandler.Start();
                 PathfindingHandler.Start();
-                IntercambiosHandler.Start();
                 InterfazHandler.Start();
                 IslasHandler.Start();
                 MiniGamesHandler.Start();

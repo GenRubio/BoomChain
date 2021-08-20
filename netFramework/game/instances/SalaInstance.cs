@@ -695,11 +695,7 @@ namespace BoomBang.game.instances
                 server.AppendParameter(OtherSession.User.IDEspacial);
                 server.AppendParameter(OtherSession.User.nombre);
                 server.AppendParameter((OtherSession.User.ModoNinja ? 12 : OtherSession.User.avatar));
-                if (Escenario.tipo_evento == 2 && OtherSession.User.nivel_ninja == 0 && OtherSession.User.NinjaColores_Sala == "" || Escenario.tipo_evento_isla == 2 && OtherSession.User.nivel_ninja == 0 && OtherSession.User.NinjaColores_Sala == "")
-                {
-                    server.AppendParameter((OtherSession.User.ModoNinja ? OtherSession.User.Colores_traje_blanco(Session) : OtherSession.User.colores));
-                }
-                else if (OtherSession.User.NinjaColores_Sala != "")
+                if (OtherSession.User.NinjaColores_Sala != "")
                 {
                     server.AppendParameter((OtherSession.User.ModoNinja ? OtherSession.User.NinjaColores_Sala : OtherSession.User.colores));
                 }
@@ -782,11 +778,7 @@ namespace BoomBang.game.instances
             server.AppendParameter(Session.User.IDEspacial);
             server.AppendParameter(Session.User.nombre);
             server.AppendParameter((Session.User.ModoNinja ? 12 : Session.User.avatar));
-            if (Escenario.tipo_evento == 2 && Session.User.nivel_ninja == 0 && Session.User.NinjaColores_Sala == "" || Escenario.tipo_evento_isla == 2 && Session.User.nivel_ninja == 0 && Session.User.NinjaColores_Sala == "")
-            {
-                server.AppendParameter((Session.User.ModoNinja ? Session.User.Colores_traje_blanco(Session) : Session.User.colores));
-            }
-            else if (Session.User.NinjaColores_Sala != "")
+            if (Session.User.NinjaColores_Sala != "")
             {
                 server.AppendParameter((Session.User.ModoNinja ? Session.User.NinjaColores_Sala : Session.User.colores));
             }
