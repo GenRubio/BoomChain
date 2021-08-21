@@ -658,34 +658,7 @@ namespace BoomBang.game.instances
                     server.AppendParameter(Item.colores_rgb);//color_2
                     server.AppendParameter("0");//Data
                     server.AppendParameter("0");//Other
-                    if (Item.objeto_id == 370)//Contador de visitas de islas
-                    {
-                        mysql client = new mysql();
-                        int contador_islas = Convert.ToInt32(Item.data) + 1;
-                        Item.data = Convert.ToString(contador_islas);
-                        client.SetParameter("id", Item.id);
-                        client.SetParameter("data", Item.data);
-                        client.ExecuteNonQuery("UPDATE objetos_comprados SET data = @data WHERE id = @id");
-                        server.AppendParameter(Item.data);
-                    }
-                    else if (listas.Objetos_Area.Contains(Item.objeto_id))
-                    {
-                        mysql client = new mysql();
-                        client.SetParameter("id", Item.id);
-                        DataRow objeto = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE id = @id");
-                        if (objeto != null)
-                        {
-                            client.SetParameter("id", Item.id);
-                            DataRow row = client.ExecuteQueryRow("SELECT * FROM escenarios_privados WHERE objeto_id = @id");
-                            if (row != null)
-                            {
-                                Item.open = (int)objeto["open"];
-                                server.AppendParameter(new object[] { Item.id, 0, Item.data, Item.open == 0 ? "": "1",
-                                Item.data, 12, SalasManager.UsuariosEnSala(new EscenarioInstance(row)) });
-                            }
-                        }
-                    }
-                    else {  server.AppendParameter(Item.data); }
+                    server.AppendParameter(Item.data);
                 }
                 server.AppendParameter(0);
                 server.AppendParameter(Usuarios.Count);
@@ -695,14 +668,7 @@ namespace BoomBang.game.instances
                 server.AppendParameter(OtherSession.User.IDEspacial);
                 server.AppendParameter(OtherSession.User.nombre);
                 server.AppendParameter((OtherSession.User.ModoNinja ? 12 : OtherSession.User.avatar));
-                if (OtherSession.User.NinjaColores_Sala != "")
-                {
-                    server.AppendParameter((OtherSession.User.ModoNinja ? OtherSession.User.NinjaColores_Sala : OtherSession.User.colores));
-                }
-                else
-                {
-                    server.AppendParameter((OtherSession.User.ModoNinja ? OtherSession.User.Colores_traje(Session) : OtherSession.User.colores));
-                }
+                server.AppendParameter((OtherSession.User.ModoNinja ? OtherSession.User.Colores_traje(Session) : OtherSession.User.colores));
                 server.AppendParameter(OtherSession.User.Posicion.x);
                 server.AppendParameter(OtherSession.User.Posicion.y);
                 server.AppendParameter(OtherSession.User.Posicion.z);
@@ -710,14 +676,7 @@ namespace BoomBang.game.instances
                 server.AppendParameter(OtherSession.User.edad);
                 server.AppendParameter(MonthDifference(Convert.ToDateTime(OtherSession.User.fecha_registro), DateTime.Now));//Tiempo registrado   MonthDifference(DateTime.Now, Convert.ToDateTime(Session.User.fecha_registro))
                 server.AppendParameter((OtherSession.User.ModoNinja == true ? 1 : 0));
-                if (Session.User.Sala.Escenario.tipo_evento == 2 && OtherSession.User.puntos_ninja < 400 || Escenario.tipo_evento_isla == 2 && OtherSession.User.puntos_ninja < 400)
-                {
-                    server.AppendParameter(12);//traje ninja
-                }
-                else
-                {
-                    server.AppendParameter((OtherSession.User.puntos_ninja >= 400 || OtherSession.User.Traje_Ninja_Principal != 0 ? 12 : 0));//traje ninja
-                }
+                server.AppendParameter((OtherSession.User.puntos_ninja >= 400 || OtherSession.User.Traje_Ninja_Principal != 0 ? 12 : 0));//traje ninja
                 server.AppendParameter(OtherSession.User.UppertSelect);
                 server.AppendParameter(OtherSession.User.UppertLevel());
                 server.AppendParameter(OtherSession.User.CocoSelect);
@@ -778,14 +737,7 @@ namespace BoomBang.game.instances
             server.AppendParameter(Session.User.IDEspacial);
             server.AppendParameter(Session.User.nombre);
             server.AppendParameter((Session.User.ModoNinja ? 12 : Session.User.avatar));
-            if (Session.User.NinjaColores_Sala != "")
-            {
-                server.AppendParameter((Session.User.ModoNinja ? Session.User.NinjaColores_Sala : Session.User.colores));
-            }
-            else
-            {
-                server.AppendParameter((Session.User.ModoNinja ? Session.User.Colores_traje(Session) : Session.User.colores));
-            }
+            server.AppendParameter((Session.User.ModoNinja ? Session.User.Colores_traje(Session) : Session.User.colores));
             server.AppendParameter(Session.User.Posicion.x);
             server.AppendParameter(Session.User.Posicion.y);
             server.AppendParameter(Session.User.Posicion.z);
@@ -793,14 +745,7 @@ namespace BoomBang.game.instances
             server.AppendParameter(Session.User.edad);
             server.AppendParameter(MonthDifference(Convert.ToDateTime(Session.User.fecha_registro), DateTime.Now));//Tiempo registrado   MonthDifference(DateTime.Now, Convert.ToDateTime(Session.User.fecha_registro))
             server.AppendParameter((Session.User.ModoNinja == true ? 1 : 0));
-            if (Session.User.Sala.Escenario.tipo_evento == 2 && Session.User.puntos_ninja < 400 || Escenario.tipo_evento_isla == 2 && Session.User.puntos_ninja < 400)
-            {
-                server.AppendParameter(12);//traje ninja
-            }
-            else
-            {
-                server.AppendParameter((Session.User.puntos_ninja >= 400 || Session.User.Traje_Ninja_Principal != 0 ? 12 : 0));//traje ninja
-            }
+            server.AppendParameter((Session.User.puntos_ninja >= 400 || Session.User.Traje_Ninja_Principal != 0 ? 12 : 0));//traje ninja
             server.AppendParameter(Session.User.UppertSelect);
             server.AppendParameter(Session.User.UppertLevel());
             server.AppendParameter(Session.User.CocoSelect);
