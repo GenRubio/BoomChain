@@ -1,6 +1,5 @@
 using BoomBang.game.instances;
 using BoomBang.game.manager;
-using BoomBang.game.packets;
 using BoomBang.server;
 using System;
 using System.Collections.Generic;
@@ -43,16 +42,16 @@ namespace BoomBang.game.handler
         }
         private static void CambiarDescripcion(SessionInstance Session, string[,] Parameters)
         {
-            if (Session.User != null)
+            if (Session.User != null
+                && Session.User.PreLock__Proteccion_SQL != true
+                && Session.User.Sala != null)
             {
-                if (Session.User.PreLock__Proteccion_SQL == true) return;
-                if (Session.User.Sala != null) return;
                 IslaInstance Isla = IslasManager.ObtenerIsla(int.Parse(Parameters[0, 0]));
                 if (Isla != null)
                 {
                     if (IslasManager.ControlDeSeguridad(Session.User, Isla))
                     {
-                        if (Session.ValidarEntrada(Parameters[1, 0], false))
+                        if (Utils.checkValidCharacters(Parameters[1, 0], false))
                         {
                             new Thread(() => IslasManager.CambiarDescripcion(Isla, Parameters[1, 0])).Start();
                         }
@@ -112,7 +111,7 @@ namespace BoomBang.game.handler
                 {
                     if (IslasManager.ControlDeSeguridad(Session.User, Isla))
                     {
-                        if (Session.ValidarEntrada(Parameters[1, 0], false))
+                        if (Utils.checkValidCharacters(Parameters[1, 0], false))
                         {
                             Packet_189_129(Session, Isla, Parameters[1, 0]);
                         }
@@ -132,7 +131,7 @@ namespace BoomBang.game.handler
                 {
                     if (EscenariosManager.ControlDeSeguridad(Session.User, Escenario))
                     {
-                        if (Session.ValidarEntrada(Parameters[2, 0], false))
+                        if (Utils.checkValidCharacters(Parameters[2, 0], false))
                         {
                             EscenariosManager.RenombrarEscenario(Escenario, Parameters[2, 0]);
                         }
@@ -184,7 +183,7 @@ namespace BoomBang.game.handler
                     {
                         if (IslasManager.ZonasIsla(Isla).Count <= 4)
                         {
-                            if (Session.ValidarEntrada(Parameters[1, 0], false))
+                            if (Utils.checkValidCharacters(Parameters[1, 0], false))
                             {
                                 int ZonaID = IslasManager.Crear_Zona(Isla, Session.User, Parameters[1, 0], int.Parse(Parameters[6, 0]), 
                                     Parameters[7, 0], Parameters[8, 0]);
@@ -341,7 +340,7 @@ namespace BoomBang.game.handler
             if (IslasManager.IslasCreadas(Session.User) < 25)
             {
                 if (Nombre == "") { Session.FinalizarConexion("Packet_189_120"); return; }
-                if (Session.ValidarEntrada(Nombre, false))
+                if (Utils.checkValidCharacters(Nombre, false))
                 {
                     if (IslasManager.ObtenerIsla(Nombre) == null)
                     {

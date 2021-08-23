@@ -35,8 +35,6 @@ namespace BoomBang.game.manager
                 string console = "Se han registrado " + Handlers.Count + " handlers.";
                 Emulator.Form.WriteLine(console);
                 listas.automatic_lists_row();
-
-                UserManager.obtenerUsuariosRegistrados();
             }
             catch(Exception e)
             {

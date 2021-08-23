@@ -58,6 +58,9 @@
     <Compile Include="Forms\Emulator.Designer.cs">
       <DependentUpon>Emulator.cs</DependentUpon>
     </Compile>
+    <Compile Include="game\dao\AvatarDAO.cs" />
+    <Compile Include="game\dao\EscenarioDAO.cs" />
+    <Compile Include="game\dao\UserDAO.cs" />
     <Compile Include="game\handler\BPadHandler.cs" />
     <Compile Include="game\handler\CasasHandler.cs" />
     <Compile Include="game\handler\CatalogoHandler.cs" />
@@ -72,12 +75,14 @@
     <Compile Include="game\handler\npcHandler.cs" />
     <Compile Include="game\handler\PathfindingHandler.cs" />
     <Compile Include="game\handler\PingHandler.cs" />
+    <Compile Include="game\instances\Avatar.cs" />
     <Compile Include="game\instances\BuyObjectInstance.cs" />
     <Compile Include="game\instances\CatalogObjectInstance.cs" />
     <Compile Include="game\instances\EscenarioInstance.cs" />
     <Compile Include="game\instances\IntercambioInstance.cs" />
     <Compile Include="game\instances\IslaInstance.cs" />
     <Compile Include="game\instances\ItemConcursoInstance.cs" />
+    <Compile Include="game\instances\User.cs" />
     <Compile Include="game\listas.cs" />
     <Compile Include="game\manager\BuyObjectDAO.cs" />
     <Compile Include="game\manager\Interfazmanager.cs" />
@@ -87,7 +92,6 @@
     <Compile Include="game\manager\pathfinding\SearchParameters.cs" />
     <Compile Include="game\manager\pathfinding\Trayectoria.cs" />
     <Compile Include="game\manager\PlantasManager.cs" />
-    <Compile Include="game\manager\RankingsManager.cs" />
     <Compile Include="game\manager\RegalosManager.cs" />
     <Compile Include="game\instances\MiniGames\CaminoInstance.cs" />
     <Compile Include="game\instances\MiniGames\CocosInstance.cs" />
@@ -105,7 +109,6 @@
     <Compile Include="game\manager\ConcursosManager.cs" />
     <Compile Include="game\manager\EscenariosManager.cs" />
     <Compile Include="game\manager\HandlerManager.cs" />
-    <Compile Include="game\manager\IntercambiosManager.cs" />
     <Compile Include="game\manager\InvokerManager.cs" />
     <Compile Include="game\manager\IslasManager.cs" />
     <Compile Include="game\manager\MiniGamesManager.cs" />
@@ -116,7 +119,7 @@
     <Compile Include="game\manager\TrampasManager.cs" />
     <Compile Include="game\manager\UserManager.cs" />
     <Compile Include="game\instances\UsuarioEnObjeto.cs" />
-    <Compile Include="game\packets\Packets.cs" />
+    <Compile Include="game\Utils.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="server\mysql.cs" />
     <Compile Include="server\ServerThreads.cs" />

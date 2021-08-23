@@ -2,7 +2,6 @@ using BoomBang.game.handler;
 using BoomBang.game.instances.manager;
 using BoomBang.game.instances.MiniGames;
 using BoomBang.game.manager;
-using BoomBang.game.packets;
 using BoomBang.server;
 using System;
 using System.Collections.Generic;
@@ -685,10 +684,37 @@ namespace BoomBang.game.instances
                 server.AppendParameter(new object[] { OtherSession.User.deseo_1, OtherSession.User.deseo_2, OtherSession.User.deseo_3 });
                 server.AppendParameter(new object[] { OtherSession.User.Votos_Legal, OtherSession.User.Votos_Sexy, OtherSession.User.Votos_Simpatico});
                 server.AppendParameter(OtherSession.User.bocadillo);
-                server.AppendParameter(new object[] { OtherSession.User.besos_enviados, OtherSession.User.besos_recibidos, OtherSession.User.jugos_enviados, OtherSession.User.jugos_recibidos, OtherSession.User.flores_enviadas, OtherSession.User.flores_recibidas, OtherSession.User.uppers_enviados, OtherSession.User.uppers_recibidos, OtherSession.User.cocos_enviados, OtherSession.User.cocos_recibidos, "0³" + OtherSession.User.rings_ganados + "³1³1³1³" + Session.User.senderos_ganados + "³1³1³" + (OtherSession.User.nivel_coco + 1) + "³" + OtherSession.User.puntos_cocos + "³1³" + OtherSession.User.puntos_coco_limite + "³" + OtherSession.User.nivel_ninja + "³" + OtherSession.User.puntos_ninja + "³1³" + OtherSession.User.puntos_ninja_limite });
-                server.AppendParameter((OtherSession.User.toneos_ring >= 2000 && OtherSession.User.vip <= 0 ? 1: OtherSession.User.admin));//Ficha dorada para las personas con mas de 2k torneos
-                server.AppendParameter(OtherSession.User.vip);//vip
-                server.AppendParameter(OtherSession.User.Cambios);//cambios
+                server.AppendParameter(new object[] {
+                    OtherSession.User.besos_enviados,
+                    OtherSession.User.besos_recibidos,
+                    OtherSession.User.jugos_enviados,
+                    OtherSession.User.jugos_recibidos,
+                    OtherSession.User.flores_enviadas,
+                    OtherSession.User.flores_recibidas,
+                    OtherSession.User.uppers_enviados,
+                    OtherSession.User.uppers_recibidos,
+                    OtherSession.User.cocos_enviados,
+                    OtherSession.User.cocos_recibidos,
+                    "0³"
+                    + OtherSession.User.rings_ganados
+                    + "³1³1³1³"
+                    + Session.User.senderos_ganados
+                    + "³1³1³"
+                    + (OtherSession.User.nivel_coco + 1)
+                    + "³"
+                    + OtherSession.User.puntos_cocos
+                    + "³1³"
+                    + OtherSession.User.puntos_coco_limite
+                    + "³"
+                    + OtherSession.User.nivel_ninja
+                    + "³"
+                    + OtherSession.User.puntos_ninja
+                    + "³1³"
+                    + OtherSession.User.puntos_ninja_limite
+                });
+                server.AppendParameter(OtherSession.User.admin);
+                server.AppendParameter(OtherSession.User.vip);
+                server.AppendParameter(OtherSession.User.Cambios);
                 server.AppendParameter(Escenario.id == 2 || OtherSession.User.Sala.Ring != null || OtherSession.User.Sala.Cocos != null || OtherSession.User.Sala.Sendero != null || OtherSession.User.Sala.Camino != null ? 0 : OtherSession.User.Efecto);
                 server.AppendParameter(OtherSession.User.id);
             }
@@ -750,11 +776,50 @@ namespace BoomBang.game.instances
             server.AppendParameter(Session.User.UppertLevel());
             server.AppendParameter(Session.User.CocoSelect);
             server.AppendParameter(Session.User.nivel_coco);
-            server.AppendParameter(new object[] { Session.User.hobby_1, Session.User.hobby_2, Session.User.hobby_3 });
-            server.AppendParameter(new object[] { Session.User.deseo_1, Session.User.deseo_2, Session.User.deseo_3 });
-            server.AppendParameter(new object[] { Session.User.Votos_Legal, Session.User.Votos_Sexy, Session.User.Votos_Simpatico });
+            server.AppendParameter(new object[] {
+                Session.User.hobby_1,
+                Session.User.hobby_2,
+                Session.User.hobby_3
+            });
+            server.AppendParameter(new object[] {
+                Session.User.deseo_1,
+                Session.User.deseo_2,
+                Session.User.deseo_3
+            });
+            server.AppendParameter(new object[] {
+                Session.User.Votos_Legal,
+                Session.User.Votos_Sexy,
+                Session.User.Votos_Simpatico
+            });
             server.AppendParameter(Session.User.bocadillo);
-            server.AppendParameter(new object[] { Session.User.besos_enviados, Session.User.besos_recibidos, Session.User.jugos_enviados, Session.User.jugos_recibidos, Session.User.flores_enviadas, Session.User.flores_recibidas, Session.User.uppers_enviados, Session.User.uppers_recibidos, Session.User.cocos_enviados, Session.User.cocos_recibidos, "0³" + Session.User.rings_ganados + "³1³1³1³" + Session.User.senderos_ganados + "³1³1³" + (Session.User.nivel_coco + 1) + "³" + Session.User.puntos_cocos + "³1³" + Session.User.puntos_coco_limite + "³" + Session.User.nivel_ninja + "³" + Session.User.puntos_ninja + "³1³" + Session.User.puntos_ninja_limite });
+            server.AppendParameter(new object[] {
+                Session.User.besos_enviados,
+                Session.User.besos_recibidos,
+                Session.User.jugos_enviados,
+                Session.User.jugos_recibidos,
+                Session.User.flores_enviadas,
+                Session.User.flores_recibidas,
+                Session.User.uppers_enviados,
+                Session.User.uppers_recibidos,
+                Session.User.cocos_enviados,
+                Session.User.cocos_recibidos,
+                "0³"
+                + Session.User.rings_ganados
+                + "³1³1³1³"
+                + Session.User.senderos_ganados
+                + "³1³1³"
+                + (Session.User.nivel_coco + 1)
+                + "³"
+                + Session.User.puntos_cocos
+                + "³1³"
+                + Session.User.puntos_coco_limite
+                + "³"
+                + Session.User.nivel_ninja
+                + "³"
+                + Session.User.puntos_ninja
+                + "³1³"
+                + Session.User.puntos_ninja_limite
+            });
             server.AppendParameter((Session.User.toneos_ring >= 2000 && Session.User.vip <= 0 ? 1 : Session.User.admin));//Ficha dorada para las personas con mas de 2k torneos
             server.AppendParameter(Session.User.vip);//vip
             server.AppendParameter(Session.User.Cambios);//cambios

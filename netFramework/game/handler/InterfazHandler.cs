@@ -1,7 +1,8 @@
+using BoomBang.Forms;
+using BoomBang.game.dao;
 using BoomBang.game.instances;
 using BoomBang.game.instances.manager;
 using BoomBang.game.manager;
-using BoomBang.game.packets;
 using BoomBang.server;
 using System;
 using System.Collections.Generic;
@@ -30,56 +31,73 @@ namespace BoomBang.game.handler
             HandlerManager.RegisterHandler(141, new ProcessHandler(Cancelar_Interaccion));
             HandlerManager.RegisterHandler(140, new ProcessHandler(Rechazar_Interaccion));
             HandlerManager.RegisterHandler(139, new ProcessHandler(Aceptar_Interaccion));
-            HandlerManager.RegisterHandler(158, new ProcessHandler(Bocadillo));
-            HandlerManager.RegisterHandler(156, new ProcessHandler(Hobbies));
-            HandlerManager.RegisterHandler(157, new ProcessHandler(Deseos));
-            HandlerManager.RegisterHandler(152, new ProcessHandler(remuneracion_plata));
+            HandlerManager.RegisterHandler(158, new ProcessHandler(updateDescription));
+            HandlerManager.RegisterHandler(156, new ProcessHandler(updateHobbies));
+            HandlerManager.RegisterHandler(157, new ProcessHandler(updateDeseos));
             HandlerManager.RegisterHandler(125120, new ProcessHandler(ActivarTraje));
             HandlerManager.RegisterHandler(125121, new ProcessHandler(DesactivarTraje));
             HandlerManager.RegisterHandler(167, new ProcessHandler(Votos_Restantes));
             HandlerManager.RegisterHandler(155, new ProcessHandler(Votos));
             HandlerManager.RegisterHandler(210125, new ProcessHandler(None_210_125));
-            HandlerManager.RegisterHandler(142, new ProcessHandler(None_142));
-            HandlerManager.RegisterHandler(138, new ProcessHandler(None_138));
+            HandlerManager.RegisterHandler(142, new ProcessHandler(unknown));
+            HandlerManager.RegisterHandler(138, new ProcessHandler(unknown));
         }
-        public static string Fecha_Evento_Semanal = "";
-        public static string Fecha_Evento_Global = "";
-        static void None_138(SessionInstance Session, string[,] Parameter)
-        {
-
-        }
-        static void None_142(SessionInstance Session, string[,] Parameter)
-        {
-
-        }
+        private static void unknown(SessionInstance Session, string[,] Parameter){}
         static void None_210_125(SessionInstance Session, string[,] Parameter)
         {
              Packet_210_125(Session);
         }
-        static void Votos(SessionInstance Session, string[,] Parameters)
+        private static void Votos(SessionInstance Session, string[,] Parameters)
         {
-            if (Session != null)
+            if (Session != null
+                && Session.User != null
+                && Session.User.Sala != null
+                && Session.User.VotosRestantes >= 1)
             {
-                if (Session.User != null)
+                int userId = int.Parse(Parameters[0, 0]);
+                int tipoVoto = int.Parse(Parameters[1, 0]);
+                int cantidad = int.Parse(Parameters[2, 0]);
+
+                SessionInstance OtherSession = Session.User.Sala.ObtenerSession(userId);
+
+                if (OtherSession != null
+                    && OtherSession.User.Sala != null
+                    && Session.User.Sala.Escenario.id == OtherSession.User.Sala.Escenario.id
+                    && Session.User.id != OtherSession.User.id)
                 {
-                    if (Session.User.Sala != null)
-                    {
-                        if (Session.User.VotosRestantes >= 1)
-                        {
-                            SessionInstance OtherSession = Session.User.Sala.ObtenerSession(int.Parse(Parameters[0, 0]));
-                            if (OtherSession != null)
-                            {
-                                if (OtherSession.User.Sala != null)
-                                {
-                                    if (Session.User.Sala.Escenario.id != OtherSession.User.Sala.Escenario.id) return;
-                                    if (Session.User.id == OtherSession.User.id) { Session.FinalizarConexion("Votos"); return; }
-                                    Votos(Session, OtherSession, Parameters);
-                                    Packet_155(Session, int.Parse(Parameters[0, 0]), int.Parse(Parameters[1, 0]), int.Parse(Parameters[2, 0]));
-                                }
-                            }
-                        }
-                    }
+                    updateVotos(OtherSession, Parameters);
+                    sendVotosPacket(Session, userId, tipoVoto, cantidad);
                 }
+            }
+        }
+        private static void sendVotosPacket(SessionInstance Session, int UserID, int Box_ID, int Value)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(155);
+            server.AppendParameter(UserID);
+            server.AppendParameter(Box_ID);
+            server.AppendParameter(Value);
+            Session.User.Sala.SendData(server, Session);
+        }
+        private static void updateVotos(SessionInstance Session, string[,] Parameter)
+        {
+            int tipoVoto = int.Parse(Parameter[1, 0]);
+            int cantidad = int.Parse(Parameter[2, 0]);
+
+            switch (tipoVoto)
+            {
+                case 1:
+                    Session.User.Votos_Legal += int.Parse(Parameter[2, 0]);
+                    new Thread(() => AvatarDAO.updateVotosLegal(Session.User.id, Session.User.Votos_Legal)).Start();
+                    break;
+                case 2:
+                    Session.User.Votos_Sexy += int.Parse(Parameter[2, 0]);
+                    new Thread(() => AvatarDAO.updateVotosSexy(Session.User.id, Session.User.Votos_Sexy)).Start();
+                    break;
+                case 3:
+                    Session.User.Votos_Simpatico += int.Parse(Parameter[2, 0]);
+                    new Thread(() => AvatarDAO.updateVotosSimpatico(Session.User.id, Session.User.Votos_Simpatico)).Start();
+                    break;
             }
         }
         static void Votos_Restantes(SessionInstance Session, string[,] Parameters)
@@ -91,14 +109,6 @@ namespace BoomBang.game.handler
                     Votos_Restantes(Session);
                     Packet_167(Session);
                 }
-            }
-        }
-        static void remuneracion_plata(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                remuneracion_plata(Session);
-                 Packet_152(Session);
             }
         }
         static void DesactivarTraje(SessionInstance Session, string[,] Parameters)
@@ -131,42 +141,120 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        static void Deseos(SessionInstance Session, string[,] Parameters)
+        private static void updateDeseos(SessionInstance Session, string[,] Parameters)
         {
-            if (Session.User != null)
+            int deseo = int.Parse(Parameters[1, 0]);
+            string value = Parameters[2, 0];
+
+            if (Session.User != null
+                && Session.User.Sala != null
+                && Session.User.PreLock_Ficha != true
+                && Utils.checkValidCharacters(value, false) == true)
             {
-                if (Session.User.Sala != null)
+                switch (deseo)
                 {
-                    if (Session.User.PreLock_Ficha == true) return;
-                    Deseos_Manager(Session, Parameters);
-                     Packet_157(Session, int.Parse(Parameters[1, 0]), Parameters[2, 0]);
-                    Session.User.PreLock_Ficha = true;
+                    case 1:
+                        new Thread(() => AvatarDAO.updateDeseo1(Session.User.id, value)).Start();
+                        Session.User.deseo_1 = value;
+                        break;
+                    case 2:
+                        new Thread(() => AvatarDAO.updateDeseo2(Session.User.id, value)).Start();
+                        Session.User.deseo_2 = value;
+                        break;
+                    case 3:
+                        new Thread(() => AvatarDAO.updateDeseo3(Session.User.id, value)).Start();
+                        Session.User.deseo_3 = value;
+                        break;
+                    default:
+                        return;
                 }
+
+                updateUserDeseosPacket(Session, value, deseo);
+                Session.User.PreLock_Ficha = true;
             }
         }
-        static void Hobbies(SessionInstance Session, string[,] Parameters)
+        private static void updateUserDeseosPacket(SessionInstance Session, string value, int deseo)
         {
-            if (Session.User != null)
+            ServerMessage server = new ServerMessage();
+            server.AddHead(157);
+            server.AppendParameter(Session.User.IDEspacial);
+            server.AppendParameter(deseo);
+            server.AppendParameter(value);
+            Session.User.Sala.SendData(server, Session);
+        }
+
+        private static void updateHobbies(SessionInstance Session, string[,] Parameters)
+        {
+            int hobby = int.Parse(Parameters[1, 0]);
+            string value = Parameters[2, 0];
+
+            if (Session.User != null
+                && Session.User.Sala != null
+                && Session.User.PreLock_Ficha != true
+                && Utils.checkValidCharacters(value, false) == true)
             {
-                if (Session.User.Sala != null)
+                switch (hobby)
                 {
-                    if (Session.User.PreLock_Ficha == true) return;
-                    Hobbies_Manager(Session, Parameters);
-                     Packet_156(Session, int.Parse(Parameters[1, 0]), Parameters[2, 0]);
-                    Session.User.PreLock_Ficha = true;
+                    case 1:
+                        new Thread(() => AvatarDAO.updateHobby1(Session.User.id, value)).Start();
+                        Session.User.hobby_1 = value;
+                        break;
+                    case 2:
+                        new Thread(() => AvatarDAO.updateHobby2(Session.User.id, value)).Start();
+                        Session.User.hobby_2 = value;
+                        break;
+                    case 3:
+                        new Thread(() => AvatarDAO.updateHobby3(Session.User.id, value)).Start();
+                        Session.User.hobby_3 = value;
+                        break;
+                    default:
+                        return;
                 }
+                updateUserHobbysPacket(Session, value, hobby);
+                Session.User.PreLock_Ficha = true;
+            }
+            else
+            {
+                Utils.errorMessage(Session);
             }
         }
-        static void Bocadillo(SessionInstance Session, string[,] Parameters)
+        private static void updateUserHobbysPacket(SessionInstance Session, string value, int hobby)
         {
-            if (Session.User != null)
+            ServerMessage server = new ServerMessage();
+            server.AddHead(156);
+            server.AppendParameter(Session.User.IDEspacial);
+            server.AppendParameter(hobby);
+            server.AppendParameter(value);
+            Session.User.Sala.SendData(server, Session);
+        }
+        private static void updateDescription(SessionInstance Session, string[,] Parameters)
+        {
+            string description = Parameters[1, 0];
+
+            if (Session.User != null
+                && Session.User.Sala != null
+                && Session.User.PreLock_Ficha != true
+                && Utils.checkValidCharacters(description, false) == true)
             {
-                if (Session.User.Sala != null)
-                {
-                    if (Session.User.PreLock_Ficha == true) return;
-                    Bocadillo_Manager(Session, Parameters);
-                }
+                new Thread(() => AvatarDAO.updateDescription(Session.User.id, description)).Start();
+
+                Session.User.bocadillo = description;
+                Session.User.PreLock_Ficha = true;
+
+                updateUserDescriptionPacket(Session);
             }
+            else
+            {
+                Utils.errorMessage(Session);
+            }
+        }
+        private static void updateUserDescriptionPacket(SessionInstance Session)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(158);
+            server.AppendParameter(Session.User.IDEspacial);
+            server.AppendParameter(Session.User.bocadillo);
+            Session.User.Sala.SendData(server, Session);
         }
         static void Aceptar_Interaccion(SessionInstance Session, string[,] Parameters)
         {
@@ -329,12 +417,6 @@ namespace BoomBang.game.handler
                 {
                     if (Session.User.Sala != null)
                     {
-                        Session.User.Clicks_Upper++;
-                        if (Session.User.Clicks_Upper > 9)
-                        {
-                            Packet_144(Session);
-                            return;
-                        }
                         if (Session.User.Sala.Usuarios.ContainsKey(int.Parse(Parameters[1, 0])) && Session.User.Sala.Usuarios.ContainsKey(int.Parse(Parameters[4, 0])))
                         {
                             SessionInstance OtherSession = Session.User.Sala.Usuarios[int.Parse(Parameters[4, 0])];
@@ -377,127 +459,107 @@ namespace BoomBang.game.handler
                 return;
             }
         }
-        static void Acciones(SessionInstance Session, string[,] Parameters)
+        private static void Acciones(SessionInstance Session, string[,] Parameters)
         {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null)
-                {
-                    if (Session.User.contar_pasos > 0) return;
-                    if (Session.User.PreLock_Acciones_Ficha == true) return;
+            int accion = int.Parse(Parameters[1, 0]);
 
-                    int accion = int.Parse(Parameters[1, 0]);
-                    if (accion == 1) { Session.User.Time_Acciones_Ficha = Time.GetCurrentAndAdd(AddType.Segundos, 2);}
-                    if (accion == 2) { Session.User.Time_Acciones_Ficha = Time.GetCurrentAndAdd(AddType.Segundos, 3);}
-                    if (accion == 3) { Session.User.Time_Acciones_Ficha = Time.GetCurrentAndAdd(AddType.Segundos, 3);}
-                    if (accion == 4) { Session.User.Time_Acciones_Ficha = Time.GetCurrentAndAdd(AddType.Segundos, 2);}
-                    if (accion == 5) { Session.User.Time_Acciones_Ficha = Time.GetCurrentAndAdd(AddType.Segundos, 2);}
-                    if (accion == 6) { Session.User.Time_Acciones_Ficha = Time.GetCurrentAndAdd(AddType.Segundos, 4);}
-                    if (accion == 7) { Session.User.Time_Acciones_Ficha = Time.GetCurrentAndAdd(AddType.Segundos, 3);}
-                    if (accion == 8) { Session.User.Time_Acciones_Ficha = Time.GetCurrentAndAdd(AddType.Segundos, 8);}
-                    Session.User.Trayectoria.DetenerMovimiento();
-                    Packet_134(Session, accion);
+            if (Session.User != null
+                && Session.User.Sala != null
+                && Session.User.contar_pasos == 0
+                && Session.User.PreLock_Acciones_Ficha != true
+                && accion >= 1 && accion <= 8)
+            {
+                switch (accion)
+                {
+                    case 1:
+                        Session.User.Time_Acciones_Ficha = Time.GetCurrentAndAdd(AddType.Segundos, 2);
+                        break;
+                    case 2:
+                        Session.User.Time_Acciones_Ficha = Time.GetCurrentAndAdd(AddType.Segundos, 3);
+                        break;
+                    case 3:
+                        Session.User.Time_Acciones_Ficha = Time.GetCurrentAndAdd(AddType.Segundos, 3);
+                        break;
+                    case 4:
+                        Session.User.Time_Acciones_Ficha = Time.GetCurrentAndAdd(AddType.Segundos, 2);
+                        break;
+                    case 5:
+                        Session.User.Time_Acciones_Ficha = Time.GetCurrentAndAdd(AddType.Segundos, 2);
+                        break;
+                    case 6:
+                        Session.User.Time_Acciones_Ficha = Time.GetCurrentAndAdd(AddType.Segundos, 4);
+                        break;
+                    case 7:
+                        Session.User.Time_Acciones_Ficha = Time.GetCurrentAndAdd(AddType.Segundos, 3);
+                        break;
+                    case 8:
+                        Session.User.Time_Acciones_Ficha = Time.GetCurrentAndAdd(AddType.Segundos, 8);
+                        break;
                 }
+                sendAvatarAccionPacket(Session, accion);
             }
         }
-        static void ChatPrivado(SessionInstance Session, string[,] Parameters)
+        private static void sendAvatarAccionPacket(SessionInstance Session, int accion)
         {
-            if (Session.User.PreLock_BloqueoChat) return;
-            Session.User.PreLock_BloqueoChat = true;
-            int OtherUserID = int.Parse(Parameters[0, 0]);
+            ServerMessage server = new ServerMessage();
+            server.AddHead(134);
+            server.AppendParameter(Session.User.IDEspacial);
+            server.AppendParameter(accion);
+            Session.User.Sala.SendData(server, Session);
+        }
+        private static void ChatPrivado(SessionInstance Session, string[,] Parameters)
+        {
+            int userId = int.Parse(Parameters[0, 0]);
             string mensaje = Parameters[1, 0];
-             Packet_136(Session, mensaje, OtherUserID);
-        }
-        static void ChatPublico(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User.PreLock_BloqueoChat) return;
-            Session.User.PreLock_BloqueoChat = true;
-            if (Session.User.Sala != null)
+
+            if (Session.User.Sala != null
+               && Session.User.PreLock_BloqueoChat == false
+               && Utils.checkValidCharacters(mensaje, false))
             {
-                string mensaje = Parameters[1, 0];
-               
-                if (Session.User.Efecto == 4) { NotificacionesManager.NotifiChat(Session, "Sabio: No podras escribir hasta que se acabe el efecto"); return; }
-                if (Session.User.Efecto == 5)
-                {
-                    if (mensaje.Contains("a")) { mensaje = mensaje.Replace("a", "ñ"); }
-                    if (mensaje.Contains("A")) { mensaje = mensaje.Replace("A", "!"); }
-                    if (mensaje.Contains("S")) { mensaje = mensaje.Replace("S", "."); }
-                    if (mensaje.Contains("s")) { mensaje = mensaje.Replace("s", "@"); }
-                    if (mensaje.Contains("R")) { mensaje = mensaje.Replace("R", "-"); }
-                    if (mensaje.Contains("r")) { mensaje = mensaje.Replace("r", "("); }
-                    if (mensaje.Contains("N")) { mensaje = mensaje.Replace("N", ")"); }
-                    if (mensaje.Contains("n")) { mensaje = mensaje.Replace("n", "*"); }
-                    if (mensaje.Contains("D")) { mensaje = mensaje.Replace("D", "ñ"); }
-                    if (mensaje.Contains("d")) { mensaje = mensaje.Replace("d", ";"); }
-                    if (mensaje.Contains("L")) { mensaje = mensaje.Replace("L", "{"); }
-                    if (mensaje.Contains("l")) { mensaje = mensaje.Replace("l", "#"); }
-                    if (mensaje.Contains("C")) { mensaje = mensaje.Replace("C", "+"); }
-                    if (mensaje.Contains("c")) { mensaje = mensaje.Replace("c", "_"); }
-                    if (mensaje.Contains("t")) { mensaje = mensaje.Replace("t", "%"); }
-                    if (mensaje.Contains("m")) { mensaje = mensaje.Replace("m", "&"); }
-                     Packet_133(Session, mensaje);
-                    return;
-                }
-                if (Session.User.Efecto == 6)
-                {
-                    string mensaje_new = "";
-                    for (int x = mensaje.Length - 1;x >= 0; x--)
-                    {
-                        mensaje_new += mensaje[x];
-                    }
-                     Packet_133(Session, mensaje_new);
-                    return;
-                }
-                if (Session.User.contador_frase == 0) { Session.User.contador_frase++; Session.User.primera_frase = mensaje; }
-                if (mensaje != Session.User.primera_frase) { Session.User.contador_frase = 0; }
-                else if (mensaje == Session.User.primera_frase) { Session.User.contador_frase++; }
-                 Packet_133(Session, mensaje);
-                if (Session.User.contador_frase == 7) { Session.FinalizarConexion("ChatPublico"); }
+                sendPrivateMessagePacket(Session, mensaje, userId);
+                Session.User.PreLock_BloqueoChat = true;
             }
         }
-        //Codigo Luis
-        private static void SendUppercut(SessionInstance Session, SessionInstance OtherSession)
+        private static void sendPrivateMessagePacket(SessionInstance Session, string message, int userId)
         {
-            if (Session.User.oro >= Session.User.Sala.Escenario.uppert)
+            ServerMessage server = new ServerMessage();
+            server.AddHead(136);
+            server.AppendParameter(Session.User.IDEspacial);
+            server.AppendParameter(message);
+            server.AppendParameter((Session.User.admin == 1 ? 2 : 1));
+            Session.SendData(server);
+
+            SessionInstance userSession = Session.User.Sala.ObtenerSession(userId);
+            if (userSession != null)
             {
-                if (Session.User.PreLock_Interactuando != true && OtherSession.User.PreLock_Interactuando != true)
-                {
-                    Session.User.Time_Interactuando = Time.GetCurrentAndAdd(AddType.Segundos, 14);
-                    OtherSession.User.Time_Interactuando = Time.GetCurrentAndAdd(AddType.Segundos, 17);
-                    Session.User.Trayectoria.DetenerMovimiento();
-                    OtherSession.User.Trayectoria.DetenerMovimiento();
-                    if (Session.User.Sala.Escenario.es_categoria == 2)
-                    {
-                        if (Session.User.Sala.Ring != null)
-                        {
-                            if (Session.User.Sala.Ring.Iniciado == false) return;
-                            Session.User.Sala.Ring.Descalificar(OtherSession);
-                            new Thread(() => Uppert_Kick(OtherSession, Session.User.Sala, false)).Start();
-                        }
-                    }
-                    else
-                    {
-                        new Thread(() => Uppert_Kick(OtherSession, Session.User.Sala)).Start();
-                        Session.User.uppers_enviados++;
-                        OtherSession.User.uppers_recibidos++;
-                        Session.User.Sala.ActualizarEstadisticas(Session.User);
-                        Session.User.Sala.ActualizarEstadisticas(OtherSession.User);
-                        UserManager.Creditos(Session.User, true, false, Session.User.Sala.Escenario.uppert);
-                    }
-                    ServerMessage SendUppert = new ServerMessage();
-                    SendUppert.AddHead(145);
-                    SendUppert.AppendParameter(4);
-                    SendUppert.AppendParameter(Session.User.IDEspacial);
-                    SendUppert.AppendParameter(Session.User.Posicion.x);
-                    SendUppert.AppendParameter(Session.User.Posicion.y);
-                    SendUppert.AppendParameter(OtherSession.User.IDEspacial);
-                    SendUppert.AppendParameter(OtherSession.User.Posicion.x);
-                    SendUppert.AppendParameter(OtherSession.User.Posicion.y);
-                    Session.User.Sala.SendData(SendUppert);
-                }
+                userSession.SendDataProtected(server);
             }
         }
-        //End Codigo
+        private static void ChatPublico(SessionInstance Session, string[,] Parameters)
+        {
+            string mensaje = Parameters[1, 0];
+
+            if (Session.User.Sala != null
+                && Session.User.PreLock_BloqueoChat == false
+                && Utils.checkValidCharacters(mensaje, false))
+            {
+                sendPublicChatPacket(Session, mensaje);
+                Session.User.PreLock_BloqueoChat = true;
+            }
+            else
+            {
+                Utils.errorMessage(Session);
+            }
+        }
+        private static void sendPublicChatPacket(SessionInstance Session, string value)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(133);
+            server.AppendParameter(Session.User.IDEspacial);
+            server.AppendParameter(value);
+            server.AppendParameter(Session.User.admin == 1 ? 2 : 1);
+            Session.User.Sala.SendData(server, Session);
+        }
         private static void UppertPower(SessionInstance Session, SessionInstance OtherSession, string[,] Parameters)
         {
             if (OtherSession.User.Posicion.x == Session.User.Sala.Puerta.x && Session.User.Sala.Usuarios[int.Parse(Parameters[4, 0])].User.Posicion.y == Session.User.Sala.Puerta.y || Session.User.Posicion.x == Session.User.Sala.Puerta.x && Session.User.Posicion.y == Session.User.Sala.Puerta.y)
@@ -548,7 +610,6 @@ namespace BoomBang.game.handler
                 NotificacionesManager.Juegos(Session, 2);
             }
             Packet_145(Session, OtherSession);
-            RankingsManager.agregar_user_ranking(Session.User.id, 5, -1, 1);
         }
         private static void Coco(SessionInstance Session, SessionInstance OtherSession, int coco)
         {
@@ -706,74 +767,6 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        private static void Bocadillo_Manager(SessionInstance Session, string[,] Parameters)
-        {
-            mysql client = new mysql();
-            client.SetParameter("id", Session.User.id);
-            client.SetParameter("globo", Parameters[1, 0]);
-            if (client.ExecuteNonQuery("UPDATE usuarios SET bocadillo = @globo WHERE id = @id") == 1)
-            {
-                Session.User.bocadillo = Parameters[1, 0];
-                Packet_158(Session);
-            }
-        }
-        private static void Hobbies_Manager(SessionInstance Session, string[,] Parameters)
-        {
-            mysql client = new mysql();
-            client.SetParameter("id", Session.User.id);
-            client.SetParameter("Texto", Parameters[2, 0]);
-            switch (int.Parse(Parameters[1, 0]))
-            {
-                case 1:
-                    if (client.ExecuteNonQuery("UPDATE usuarios SET hobby_1 = @texto WHERE id = @id") == 1)
-                    {
-                        Session.User.hobby_1 = Parameters[2, 0];
-                    }
-                    break;
-                case 2:
-                    if (client.ExecuteNonQuery("UPDATE usuarios SET hobby_2 = @texto WHERE id = @id") == 1)
-                    {
-                        Session.User.hobby_2 = Parameters[2, 0];
-                    }
-                    break;
-                case 3:
-                    if (client.ExecuteNonQuery("UPDATE usuarios SET hobby_3 = @texto WHERE id = @id") == 1)
-                    {
-                        Session.User.hobby_3 = Parameters[2, 0];
-                    }
-                    break;
-                default:
-                    return;
-            }
-        }
-        private static void Deseos_Manager(SessionInstance Session, string[,] Parameter)
-        {
-            mysql client = new mysql();
-            client.SetParameter("id", Session.User.id);
-            client.SetParameter("Texto", Parameter[2, 0]);
-            switch (int.Parse(Parameter[1, 0]))
-            {
-                case 1:
-                    if (client.ExecuteNonQuery("UPDATE usuarios SET deseo_1 = @texto WHERE id = @id") == 1)
-                    {
-                        Session.User.deseo_1 = Parameter[2, 0];
-                    }
-                    break;
-                case 2:
-                    if (client.ExecuteNonQuery("UPDATE usuarios SET deseo_2 = @texto WHERE id = @id") == 1)
-                    {
-                        Session.User.deseo_2 = Parameter[2, 0];
-                    }
-                    break;
-                case 3:
-                    if (client.ExecuteNonQuery("UPDATE usuarios SET deseo_3 = @texto WHERE id = @id") == 1)
-                    {
-                        Session.User.deseo_3 = Parameter[2, 0];
-                    }
-                    break;
-                default: break;
-            }
-        }
         private static void ActivarTraje_Manager(SessionInstance Session, string[,] Parameters)
         {
             Session.User.ModoNinja = true;
@@ -807,16 +800,6 @@ namespace BoomBang.game.handler
             Session.User.PreLock_Disfraz = true;
             PathfindingHandler.Reprar_Mirada_Z(Session);
         }
-        private static void remuneracion_plata(SessionInstance Session)
-        {
-            if (Time.GetDifference(Session.User.coins_remain_double) <= 10)
-            {
-                Session.User.coins_remain_double = Convert.ToInt32(Time.GetCurrentAndAdd(AddType.Minutos, 15));
-                UserManager.Ajustar_Remuneracion(Session.User);
-                UserManager.Creditos(Session.User, false, true, 5);
-                NotificacionesManager.Recompensa_Plata(Session, 5);
-            }
-        }
         private static void Votos_Restantes(SessionInstance Session)
         {
             foreach (SessionInstance OtherSession in Session.User.Sala.Usuarios.Values)
@@ -828,31 +811,7 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        private static void Votos(SessionInstance Session, SessionInstance OtherSession, string[,] Parameter)
-        {
-            mysql client = new mysql();
-            if (Session.User.id == OtherSession.User.id) { Session.FinalizarConexion("Votos"); return; }
-            Session.User.VotosRestantes--;
-            client.SetParameter("id", OtherSession.User.id);
-            switch (int.Parse(Parameter[1, 0]))
-            {
-                case 1:
-                    OtherSession.User.Votos_Legal += int.Parse(Parameter[2, 0]);
-                    client.SetParameter("votos_legal", OtherSession.User.Votos_Legal);
-                    client.ExecuteNonQuery("UPDATE usuarios SET votos_legal = @votos_legal WHERE id = @id");
-                    break;
-                case 2:
-                    OtherSession.User.Votos_Sexy += int.Parse(Parameter[2, 0]);
-                    client.SetParameter("votos_sexy", OtherSession.User.Votos_Sexy);
-                    client.ExecuteNonQuery("UPDATE usuarios SET votos_sexy = @votos_sexy WHERE id = @id");
-                    break;
-                case 3:
-                    OtherSession.User.Votos_Simpatico += int.Parse(Parameter[2, 0]);
-                    client.SetParameter("votos_simpatico", OtherSession.User.Votos_Simpatico);
-                    client.ExecuteNonQuery("UPDATE usuarios SET votos_simpatico = @votos_simpatico WHERE id = @id");
-                    break;
-            }
-        }
+      
         public static void Coco_Thread(SessionInstance Session, TimeSpan Tiempo, int modelo, SalaInstance Sala, Posicion Posicion = null)
         {
             Thread.Sleep(Tiempo);
@@ -929,15 +888,6 @@ namespace BoomBang.game.handler
             server.AppendParameter(1);
             server.AppendParameter(1);
             Session.SendData(server);
-        }
-        private static void Packet_155(SessionInstance Session, int UserID, int Box_ID, int Value)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(155);
-            server.AppendParameter(UserID);
-            server.AppendParameter(Box_ID);
-            server.AppendParameter(Value);
-            Session.User.Sala.SendData(server, Session);
         }
         private static void Packet_167(SessionInstance Session)
         {
@@ -1074,7 +1024,7 @@ namespace BoomBang.game.handler
         }
         private static void Packet_133(SessionInstance Session, string mensaje)
         {
-            if (Session.ValidarEntrada(mensaje, false))
+            if (Utils.checkValidCharacters(mensaje, false))
             {
                 ServerMessage server = new ServerMessage();
                 server.AddHead(133);

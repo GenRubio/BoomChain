@@ -182,7 +182,6 @@ namespace BoomBang.game.instances.MiniGames
                         server.AppendParameter("Ha ganado: " + Recompensa_Golden +" créditos! Suma una victoria!");
                         sala.SendData(server);
 
-                        RankingsManager.agregar_user_ranking(SessionWin.User.id, 1, 2, 1);
                     }
                     if (sala.Escenario.id == 3)//Silver Ring
                     {
@@ -205,7 +204,6 @@ namespace BoomBang.game.instances.MiniGames
                         server.AppendParameter("Ha ganado: " + Recompensa_Silver +" monedas de plata! Suma una victoria!");
                         sala.SendData(server);
 
-                        RankingsManager.agregar_user_ranking(SessionWin.User.id, 1, 1, 1);
                     }
                     Participantes.Remove(SessionWin.User.IDEspacial);
                     SessionWin.User.Jugando = false;

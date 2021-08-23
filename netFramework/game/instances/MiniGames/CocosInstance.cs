@@ -120,27 +120,6 @@ namespace BoomBang.game.instances.MiniGames
                     Descalificar(Session);
                     LanzarCoco(Session);
                     UserManager.Sumar_Cocos(Session.User, 1);
-
-                    RankingsManager.agregar_user_ranking(Session.User.id, 2, 2, 1);
-
-                    //using (mysql client = new mysql())
-                    //{
-                    //    string Nombre = Session.User.nombre;
-                    //    if (Nombre == "") { Session.User.nombre = Session.User.nombre_halloween; }
-                    //    DataRow comprobar_usuario = client.ExecuteQueryRow("SELECT * FROM coco_semanal WHERE usuario = '" + Nombre + "'");
-                    //    if (comprobar_usuario != null)
-                    //    {
-                    //        int goldens = (int)comprobar_usuario["goldens"];
-                    //        int actualizar_goldens = goldens + 1;
-                    //        client.ExecuteNonQuery("UPDATE coco_semanal SET goldens = '" + actualizar_goldens + "' WHERE usuario = '" + Nombre + "'");
-                    //    }
-                    //    else
-                    //    {
-                    //        client.SetParameter("usuario", Nombre);
-                    //        client.SetParameter("goldens", 1);
-                    //        client.ExecuteNonQuery("INSERT INTO coco_semanal (`usuario`, `goldens`) VALUES (@usuario, @goldens)");
-                    //    }
-                    //}
                 }
                 Thread.Sleep(new TimeSpan(0, 0, 10));
                 if (Participantes.Count == 0 || Participantes.Count == 1) break;
@@ -175,8 +154,6 @@ namespace BoomBang.game.instances.MiniGames
                             server_5.AppendParameter(SessionWin.User.nombre);
                             server_5.AppendParameter("Ha ganado: " + Recompensa_Golden + " créditos! y Suma " + 3 + " puntos y está más cerca de conseguir un nuevo coco!");
                             sala.SendData(server_5);
-
-                            RankingsManager.agregar_user_ranking(SessionWin.User.id, 2, 2, 3);
 
                             UserManager.Creditos(SessionWin.User, true, true, Recompensa_Golden);
                             UserManager.Sumar_Cocos(SessionWin.User, 3);

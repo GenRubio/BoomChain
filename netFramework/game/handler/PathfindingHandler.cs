@@ -2,7 +2,6 @@ using BoomBang.game.instances;
 using BoomBang.game.instances.manager;
 using BoomBang.game.instances.manager.pathfinding;
 using BoomBang.game.manager;
-using BoomBang.game.packets;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

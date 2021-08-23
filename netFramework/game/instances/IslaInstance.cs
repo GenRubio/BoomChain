@@ -1,4 +1,5 @@
-﻿using BoomBang.game.manager;
+using BoomBang.game.dao;
+using BoomBang.game.manager;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -39,7 +40,7 @@ namespace BoomBang.game.instances
             this.uppert = (int)row["uppert"];
             this.nombre = (string)row["nombre"];
             this.descripcion = (string)row["descripcion"];
-            this.Creador = UserManager.ObtenerUsuario((int)row["CreadorID"]);
+            this.Creador = UserDAO.getUser((int)row["CreadorID"]);
             this.noverlo_1 = (string)row["noverlo_1"];
             this.noverlo_2 = (string)row["noverlo_2"];
             this.noverlo_3 = (string)row["noverlo_3"];

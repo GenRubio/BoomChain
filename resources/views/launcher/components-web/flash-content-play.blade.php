@@ -12,7 +12,7 @@
             locale: 'es_ES',
             ver: '4828183825',
             u: '{{ $user->nombre }}',
-            p: '{{ $user->password }}'
+            p: '{{ $user->token_uid }}'
 
         };
         var params = {

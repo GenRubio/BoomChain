@@ -1,6 +1,5 @@
 using BoomBang.game.instances;
 using BoomBang.game.manager;
-using BoomBang.game.packets;
 using BoomBang.server;
 using System;
 using System.Collections.Generic;
@@ -23,33 +22,17 @@ namespace BoomBang.game.handler
         }
         private static void iniciar_sesion(SessionInstance Session, string[,] Parameters)
         {
-            new Thread(() => stratAntiScriptSession(Session)).Start();
-         
-            string userName = Parameters[0, 0];
-            string passwordUser = Parameters[1, 0];
-            if (userName != "" && passwordUser != "")
+            string name = Parameters[0, 0];
+            string password = Parameters[1, 0];
+            if (name != "" && password != "")
             {
-                UserManager.IniciarSesion(Session, userName, passwordUser);
+                UserManager.IniciarSesion(Session, name, password);
             }
             else
             {
                 string console = "Error al iniciar cliente " + Session.IP;
                 Emulator.Form.WriteLine(console);
             }
-        }
-        private static void stratAntiScriptSession(SessionInstance Session)
-        {
-            int timer = 10;
-            while (timer > 0)
-            {
-                if (Session.User != null)
-                {
-                    timer -= 1;
-                }    
-                Thread.Sleep(1000);
-            }
-            Session.User.sendDataUser = 0;
-            Session.User.startAntiScript = true;
         }
     }
 }

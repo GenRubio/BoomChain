@@ -1,6 +1,5 @@
-﻿using BoomBang.game.instances;
+using BoomBang.game.instances;
 using BoomBang.game.manager;
-using BoomBang.game.packets;
 using System;
 using System.Collections.Generic;
 using System.Linq;

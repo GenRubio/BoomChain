@@ -143,8 +143,6 @@ namespace BoomBang.game.instances.MiniGames
                                 sala.SendData(server);
                                 Session.User.senderos_ganados++;
                                 sala.ActualizarEstadisticas(Session.User);
-                                EntregarLiana(Session, 1230);
-                                RankingsManager.agregar_user_ranking(Session.User.id, 3, 2, 1);
                                 break;
                             case 7: //Silver
                                 ServerMessage server1 = new ServerMessage();
@@ -179,43 +177,7 @@ namespace BoomBang.game.instances.MiniGames
             Session.User.Sala.Map[Session.User.Posicion.y, Session.User.Posicion.x].FijarSession(null);
             Packet_135(Session, new TimeSpan(0, 0, 5), sala, MiniGamesManager.ObtenerPuerta(sala.Escenario, Session.User.IDEspacial));
         }
-        public static bool EntregarLiana(SessionInstance Session, int Objeto)
-        {
-            using (mysql client = new mysql())
-            {
-                client.SetParameter("id", Objeto);
-                DataRow row = client.ExecuteQueryRow("SELECT * FROM objetos WHERE id = @id");
-                CatalogObjectInstance item = new CatalogObjectInstance(row);
-                client.SetParameter("item_id", Objeto);
-                client.SetParameter("userid", Session.User.id);
-                client.SetParameter("hex", item.colores_hex);
-                client.SetParameter("rgb", item.colores_rgb);
-                client.SetParameter("tam", "tam_n");
-                client.SetParameter("default_data", 0);
-                if (client.ExecuteNonQuery("INSERT INTO objetos_comprados (`objeto_id`, `colores_hex`, `colores_rgb`, `usuario_id`, `tam`, `data`) VALUES (@item_id, @hex, @rgb, @userid, @tam, @default_data)") == 1)
-                {
-                    client.SetParameter("id", Objeto);
-                    client.SetParameter("UserID", Session.User.id);
-                    int compra_id = int.Parse(Convert.ToString(client.ExecuteScalar("SELECT MAX(id) FROM objetos_comprados WHERE objeto_id = @id AND usuario_id = @UserID")));
-                    ServerMessage añadir_mochila = new ServerMessage();
-                    añadir_mochila.AddHead(189);
-                    añadir_mochila.AddHead(139);
-                    añadir_mochila.AppendParameter(compra_id);
-                    añadir_mochila.AppendParameter(Objeto);
-                    añadir_mochila.AppendParameter(item.colores_hex);
-                    añadir_mochila.AppendParameter(item.colores_rgb);
-                    añadir_mochila.AppendParameter(0);
-                    añadir_mochila.AppendParameter(0);
-                    añadir_mochila.AppendParameter(0);
-                    añadir_mochila.AppendParameter("tam_n");
-                    añadir_mochila.AppendParameter(0);
-                    añadir_mochila.AppendParameter(0);
-                    añadir_mochila.AppendParameter(1);//CantidadObjetos
-                    Session.SendData(añadir_mochila);
-                }
-            }
-            return false;
-        }
+ 
         private static void Packet_135(SessionInstance Session, TimeSpan Time, SalaInstance Sala, Posicion Posicion = null, bool kick = true)
         {
             try

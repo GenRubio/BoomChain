@@ -1,10 +1,12 @@
-﻿using BoomBang.game.instances;
+using BoomBang.game.dao;
+using BoomBang.game.instances;
 using BoomBang.server;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BoomBang.game.manager
@@ -13,30 +15,18 @@ namespace BoomBang.game.manager
     {
         public static bool CambiarColores(EscenarioInstance Escenario, string HEX, string DEC)
         {
-            using (mysql client = new mysql())
-            {
-                client.SetParameter("id", Escenario.id);
-                client.SetParameter("color_1", HEX);
-                client.SetParameter("color_2", DEC);
-                if (client.ExecuteNonQuery("UPDATE escenarios_privados SET color_1 = @color_1, color_2 = @color_2 WHERE id = @id") == 1)
-                {
-                    Escenario.color_1 = HEX;
-                    Escenario.color_2 = DEC;
-                    return true;
-                }
-            }
-            return false;
+            Escenario.color_1 = HEX;
+            Escenario.color_2 = DEC;
+
+            new Thread(() => EscenarioDAO.updateColors(Escenario.id, HEX, DEC)).Start();
+
+            return true;
         }
         public static void RenombrarEscenario(EscenarioInstance Escenario, string nombre)
         {
-            using (mysql client = new mysql())
+            if (Escenario.es_categoria == 0)
             {
-                client.SetParameter("id", Escenario.id);
-                client.SetParameter("nombre", nombre);
-                if (Escenario.es_categoria == 0)
-                {
-                    client.ExecuteNonQuery("UPDATE escenarios_privados SET nombre = @nombre WHERE id = @id");
-                }
+                EscenarioDAO.updateName(Escenario.id, nombre);
             }
             SalaInstance Sala = SalasManager.ObtenerSala(Escenario);
             if (Sala != null)
@@ -106,37 +96,11 @@ namespace BoomBang.game.manager
         {
             if (es_categoria == 1) // publico
             {
-                return Obtener_Publico(id);
+                return EscenarioDAO.getEscenarioPublic(id);
             }
             if (es_categoria == 0) // Privado
             {
-                return Obtener_Privado(id);
-            }
-            return null;
-        }
-        private static EscenarioInstance Obtener_Publico(int id)
-        {
-            using (mysql client = new mysql())
-            {
-                client.SetParameter("id", id);
-                DataRow row = client.ExecuteQueryRow("SELECT * FROM escenarios_publicos WHERE id = @id");
-                if (row != null)
-                {
-                    return new EscenarioInstance(row);
-                }
-            }
-            return null;
-        }
-        private static EscenarioInstance Obtener_Privado(int id)
-        {
-            using (mysql client = new mysql())
-            {
-                client.SetParameter("id", id);
-                DataRow row = client.ExecuteQueryRow("SELECT * FROM escenarios_privados WHERE id = @id");
-                if (row != null)
-                {
-                    return new EscenarioInstance(row);
-                }
+                return EscenarioDAO.getEscenarioPrivate(id);
             }
             return null;
         }

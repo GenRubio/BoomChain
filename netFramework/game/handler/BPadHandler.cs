@@ -1,4 +1,5 @@
-﻿using BoomBang.game.instances;
+using BoomBang.game.dao;
+using BoomBang.game.instances;
 using BoomBang.game.manager;
 using BoomBang.server;
 using System;
@@ -35,7 +36,7 @@ namespace BoomBang.game.handler
                 mysql client = new mysql();
                 foreach (DataRow row in client.ExecuteQueryTable("SELECT * FROM bpad_amigos WHERE ID_1 = '" + Session.User.id + "'").Rows)
                 {
-                    UserInstance amigo = UserManager.ObtenerUsuario((int)row["ID_2"]);
+                    UserInstance amigo = UserDAO.getUser((int)row["ID_2"]);
                     SessionInstance SessionFriend = UserManager.ObtenerSession(amigo.id);
                     string Fecha = Convert.ToString(DateTime.Now).Substring(0, 16);
                     client.SetParameter("Emisor", Session.User.id);
@@ -83,7 +84,7 @@ namespace BoomBang.game.handler
                 client.SetParameter("UserID", Session.User.id);
                 foreach (DataRow row in client.ExecuteQueryTable("SELECT * FROM bpad_amigos WHERE ID_1 = @UserID AND Solicitud = '0'").Rows)
                 {
-                    UserInstance FriendUser = UserManager.ObtenerUsuario((int)row["ID_2"]);
+                    UserInstance FriendUser = UserDAO.getUser((int)row["ID_2"]);
                     if (FriendUser != null)
                     {
                         server.AppendParameter(FriendUser.id);
@@ -185,10 +186,10 @@ namespace BoomBang.game.handler
             ServerMessage server = new ServerMessage();
             server.AddHead(132);
             server.AddHead(129);
-            UserInstance UserRegister = UserManager.ObtenerUsuario(Usuario);
+            UserInstance UserRegister = UserDAO.getUser(Usuario);
             if (UserRegister != null)
             {
-                UserInstance OtherUser = UserManager.ObtenerUsuario(Usuario);
+                UserInstance OtherUser = UserDAO.getUser(Usuario);
                 if (OtherUser != null)
                 {
                     server.AppendParameter(1);
@@ -248,7 +249,7 @@ namespace BoomBang.game.handler
             int OtherUserID = int.Parse(Parameters[0, 0]);
             if (OtherUserID != Session.User.id)
             {
-                UserInstance OtherUser = UserManager.ObtenerUsuario(OtherUserID);
+                UserInstance OtherUser = UserDAO.getUser(OtherUserID);
                 if (OtherUser != null)
                 {
                     if (MandarSolicitud(Session, OtherUser))
@@ -336,7 +337,7 @@ namespace BoomBang.game.handler
                 for (int i = 0; i < users.Length; i++)
                 {
                     int FriendID = Convert.ToInt32(users[i]);
-                    UserInstance UserFriend = UserManager.ObtenerUsuario(FriendID);
+                    UserInstance UserFriend = UserDAO.getUser(FriendID);
                     if (UserFriend != null)
                     {
                         if (EsAmigo(Session.User.id, UserFriend.id))
@@ -374,7 +375,7 @@ namespace BoomBang.game.handler
         private static void Method_132_130(SessionInstance Session, string[,] Parameters)
         {
             int OtherUser = int.Parse(Parameters[0, 0].ToString());
-            UserInstance UserFriend = UserManager.ObtenerUsuario(OtherUser);
+            UserInstance UserFriend = UserDAO.getUser(OtherUser);
             if (UserFriend != null)
             {
                 if (RechazarSolicitud(Session, UserFriend))
@@ -396,7 +397,7 @@ namespace BoomBang.game.handler
         private static void Method_132_124(SessionInstance Session, string[,] Parameters)
         {
             int OtherUser = int.Parse(Parameters[0, 0]);
-            UserInstance UserFriend = UserManager.ObtenerUsuario(OtherUser);
+            UserInstance UserFriend = UserDAO.getUser(OtherUser);
             if (UserFriend != null)
             {
                 if (AceptarSolicitud(Session, UserFriend))
@@ -429,7 +430,7 @@ namespace BoomBang.game.handler
         static void Method_132_125(SessionInstance Session, string[,] Parameters)
         {
             int FriendID = int.Parse(Parameters[0, 0]);
-            UserInstance FriendUser = UserManager.ObtenerUsuario(FriendID);
+            UserInstance FriendUser = UserDAO.getUser(FriendID);
             if (FriendUser != null)
             {
                 if (EliminarAmigo(Session, FriendUser))
@@ -556,8 +557,7 @@ namespace BoomBang.game.handler
                 List<int> ID_amigos = new List<int>();
                 foreach (DataRow row in client.ExecuteQueryTable("SELECT * FROM bpad_amigos WHERE ID_1 = '" + Session.User.id + "'").Rows)
                 {
-                    //if (!ID_amigos.Contains((int)row[""]))
-                    UserInstance UserFriend = UserManager.ObtenerUsuario((int)row["ID_2"]);
+                    UserInstance UserFriend = UserDAO.getUser((int)row["ID_2"]);
                     if (UserFriend != null)
                     {
                         server.AppendParameter(UserFriend.id);

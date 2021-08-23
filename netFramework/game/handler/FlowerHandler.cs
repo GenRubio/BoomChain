@@ -1,7 +1,6 @@
 using BoomBang.game.instances;
 using BoomBang.game.instances.manager;
 using BoomBang.game.manager;
-using BoomBang.game.packets;
 using BoomBang.server;
 using BoomBang.SocketsWeb;
 using System;

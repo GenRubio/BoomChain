@@ -1,6 +1,5 @@
 using BoomBang.game.instances;
 using BoomBang.game.manager;
-using BoomBang.game.packets;
 using BoomBang.server;
 using BoomBang.SocketsWeb;
 using System;
@@ -25,7 +24,7 @@ namespace BoomBang.game.handler
             HandlerManager.RegisterHandler(128124, new ProcessHandler(SalirSala));
             HandlerManager.RegisterHandler(187, new ProcessHandler(Islas));
         }
-        static void Islas(SessionInstance Session, string[,] Parameters)
+        private static void Islas(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
             {
@@ -33,7 +32,7 @@ namespace BoomBang.game.handler
                 Packet_187(Session);
             }
         }
-        static void SalirSala(SessionInstance Session, string[,] Parameters)
+        private static void SalirSala(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
             {
@@ -55,7 +54,7 @@ namespace BoomBang.game.handler
                 }
             }   
         }
-        static void LoadObjects(SessionInstance Session, string[,] Parameters)
+        private static void LoadObjects(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
             {
@@ -79,7 +78,7 @@ namespace BoomBang.game.handler
                 }
             }     
         }
-        static void GoRoom(SessionInstance Session, string[,] Parameters)
+        private static void GoRoom(SessionInstance Session, string[,] Parameters)
         {
             Thread.Sleep(new TimeSpan(0, 0, 0, 0, 500));
             if (Session.User != null)
@@ -111,7 +110,7 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        static void GoRoom_Subareas(SessionInstance Session, string[,] Parameters)
+        private static void GoRoom_Subareas(SessionInstance Session, string[,] Parameters)
         {
             Thread.Sleep(new TimeSpan(0, 0, 0, 0, 500));
             if (Session.User != null)
@@ -126,7 +125,7 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        static void CargarSalas(SessionInstance Session, string[,] Parameters)
+        private static void CargarSalas(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
             {
@@ -134,7 +133,7 @@ namespace BoomBang.game.handler
                 Packet_154_33(Session, int.Parse(Parameters[1, 0]));
             }
         }
-        static void CargarEscenarios(SessionInstance Session, string[,] Parameters)
+        private static void CargarEscenarios(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
             {
