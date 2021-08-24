@@ -60,6 +60,7 @@
     </Compile>
     <Compile Include="game\dao\AvatarDAO.cs" />
     <Compile Include="game\dao\EscenarioDAO.cs" />
+    <Compile Include="game\dao\IslaDAO.cs" />
     <Compile Include="game\dao\UserDAO.cs" />
     <Compile Include="game\handler\BPadHandler.cs" />
     <Compile Include="game\handler\CasasHandler.cs" />

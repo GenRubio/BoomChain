@@ -11,13 +11,6 @@ namespace BoomBang.game.dao
 {
     class EscenarioDAO
     {
-        public static void updateDescription(int id, string value)
-        {
-            mysql client = new mysql();
-            client.SetParameter("id", id);
-            client.SetParameter("texto", value);
-            client.ExecuteNonQuery("UPDATE islas SET descripcion = @texto WHERE id = @id");
-        }
         public static EscenarioInstance getEscenarioPrivate(int id)
         {
             mysql client = new mysql();
