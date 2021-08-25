@@ -22,7 +22,6 @@ namespace BoomBang.game.manager
                 FlowerHandler.Start();
                 CasasHandler.Start();
                 NavigatorHandler.Start();
-                BPadHandler.Start();
                 CatalogoHandler.Start();
                 ConcursosHandler.Start();
                 PathfindingHandler.Start();

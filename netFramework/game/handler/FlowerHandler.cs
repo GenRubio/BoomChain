@@ -22,61 +22,36 @@ namespace BoomBang.game.handler
             HandlerManager.RegisterHandler(120134, handler_120134);//Concursos
             HandlerManager.RegisterHandler(210120, handler_210120);
             HandlerManager.RegisterHandler(120132, Actualizar_avatar);
-            HandlerManager.RegisterHandler(120147120, handler_120147120Gen);//Regalo Grande
-            HandlerManager.RegisterHandler(120147121, handler_120147121);//Abrir Regalo Grande
-            HandlerManager.RegisterHandler(120137, handler_120137);//Abrir regalo peque
-            HandlerManager.RegisterHandler(120146, handler_120146);//Cambiar nombre de usuario
+            HandlerManager.RegisterHandler(120147120, loadFlowerInterfaz);//Regalo Grande
+            HandlerManager.RegisterHandler(132120, new ProcessHandler(Method_132_120));
+            HandlerManager.RegisterHandler(132121, new ProcessHandler(Method_132_121));
         }
-        private static void handler_120146(SessionInstance Session, string[,] Parameters)//Cambiar nombre de usuario
+        private static void Method_132_121(SessionInstance Session, string[,] Parameters)
         {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                if (Session.User.cambio_nombre != 1) return;
-                 handler_120146(Session, Parameters[0, 0]);
-            }
+            ServerMessage server = new ServerMessage();
+            server.AddHead(132);
+            server.AddHead(121);
+            server.AppendParameter(0);
+            Session.SendData(server);
         }
-        private static void handler_120137(SessionInstance Session, string[,] Parameters)//Abrir regalo peque premio 50 oro
+        private static void Method_132_120(SessionInstance Session, string[,] Parameters)
         {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                if (Time.GetDifference(Session.User.timespam_regalo_peque) > 0) return;
-                handler_120137(Session);
-            }
+            ServerMessage server = new ServerMessage();
+            server.AddHead(132);
+            server.AddHead(120);
+            server.AppendParameter(0);
+            Session.SendData(server);
         }
-        public static void BoomBangTeam(SessionInstance Session, string Parameters)
-        {
-             Packet_132_127(Session, Parameters);
-        }
-        private static void handler_120147121(SessionInstance Session, string[,] Parameters)//Abrir Regalo Grande
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                handler_120147121(Session);  
-            }
-        }
-        private static void handler_120147120Gen(SessionInstance Session, string[,] Parameters)//Regalo Grande
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                Packet_120_147_120(Session);
 
+        private static void loadFlowerInterfaz(SessionInstance Session, string[,] Parameters)
+        {
+            if (Session.User != null
+                && Session.User.Sala == null)
+            {
                 SocketIO.sendData(SocketIO.WebSocket, "entrarFlowerPower", Session.User.token_uid);
             }
         }
-        private static void Noticia(SessionInstance Session)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                if (Session.User.noticia_registro == 0) return;
-                 Noticia_handler(Session);
-                 Packet_209_128(Session);
-            }
-        }
+      
         private static void Actualizar_avatar(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
@@ -135,14 +110,14 @@ namespace BoomBang.game.handler
                 Session.User.timespam_regalo_grande = Time.GetCurrentAndAdd(AddType.Horas, 8);
                 UserManager.ActualizarEstadisticas(Session.User);
                  Packet_120_147_121(Session);
-                RegalosManager.Sistema_Regalos(Session);
+             
             }
         }
         private static void handler_120137(SessionInstance Session)
         {
             Session.User.timespam_regalo_peque = 0;
             Session.User.timespam_regalo_peque = Time.GetCurrentAndAdd(AddType.Dias, 1);
-            RegalosManager.mini_gift_manager(Session);
+       
         }
         private static void handler_120146(SessionInstance Session, string nombre)
         {

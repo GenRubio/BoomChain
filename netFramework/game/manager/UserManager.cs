@@ -63,7 +63,7 @@ namespace BoomBang.game.manager
                     server.AppendParameter(200);
                     server.AppendParameter(5);
                     server.AppendParameter(0);
-                    server.AppendParameter((Time.GetDifference(Session.User.timespam_regalo_peque) <= 0 ? 0 : Time.GetDifference(Session.User.timespam_regalo_peque)));//Regalo pequeño "tiempo de regalo"
+                    server.AppendParameter(-1);
                     server.AppendParameter(0);
                     server.AppendParameter(0);
                     server.AppendParameter(Session.User.tutorial_islas);

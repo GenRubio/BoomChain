@@ -166,10 +166,7 @@ namespace BoomBang.game.instances.MiniGames
                         SessionWin.User.sala_especial = false;
                         SessionWin.User.rings_ganados++;
                         SessionWin.User.toneos_ring++;
-                        if (InterfazHandler.Cada_X_Goldens.Contains(SessionWin.User.rings_ganados))
-                        {
-                            RegalosManager.Sistema_Regalos(SessionWin);
-                        }
+                       
                         SessionWin.User.Sala.ActualizarEstadisticas(SessionWin.User);
                         UserManager.Creditos(SessionWin.User, true, true, Recompensa_Golden);
 
@@ -190,11 +187,7 @@ namespace BoomBang.game.instances.MiniGames
                         SessionWin.User.Sala.ActualizarEstadisticas(SessionWin.User);
                         UserManager.Creditos(SessionWin.User, false, true, Recompensa_Silver);
 
-                        if (InterfazHandler.Cada_X_Goldens.Contains(SessionWin.User.rings_ganados))
-                        {
-                            RegalosManager.Sistema_Regalos(SessionWin);
-                        }
-
+                       
                         ServerMessage server = new ServerMessage();
                         server.AddHead(160);
                         server.AddHead(129);
