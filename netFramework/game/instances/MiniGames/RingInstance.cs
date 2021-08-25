@@ -1,4 +1,4 @@
-﻿using BoomBang.game.handler;
+using BoomBang.game.handler;
 using BoomBang.game.instances.manager;
 using BoomBang.game.manager;
 using BoomBang.server;
@@ -182,7 +182,6 @@ namespace BoomBang.game.instances.MiniGames
                         server.AppendParameter("Ha ganado: " + Recompensa_Golden +" créditos! Suma una victoria!");
                         sala.SendData(server);
 
-                        RankingsManager.agregar_user_ranking(SessionWin.User.id, 1, 2, 1);
                     }
                     if (sala.Escenario.id == 3)//Silver Ring
                     {
@@ -205,7 +204,6 @@ namespace BoomBang.game.instances.MiniGames
                         server.AppendParameter("Ha ganado: " + Recompensa_Silver +" monedas de plata! Suma una victoria!");
                         sala.SendData(server);
 
-                        RankingsManager.agregar_user_ranking(SessionWin.User.id, 1, 1, 1);
                     }
                     Participantes.Remove(SessionWin.User.IDEspacial);
                     SessionWin.User.Jugando = false;
@@ -248,15 +246,6 @@ namespace BoomBang.game.instances.MiniGames
             server.AppendParameter(Precio_Golden);//Precio Golden
             server.AppendParameter(0);
             Session.SendData(server);
-
-            if (Session.User.ver_ranking == 1)
-            {
-                RankingsManager.cartel_ranking(Session, 1, 2, ServerThreads.Fecha_Ranking_Semanal);//2 Golden
-            }
-            if (Session.User.ver_ranking == 2)
-            {
-                RankingsManager.cartel_ranking(Session, 1, 1, ServerThreads.Fecha_Ranking_Semanal);//1 Silver
-            }
         }
         public static bool FiltroDePago(SessionInstance Session, int type)///Hay que activarlo despues
         {

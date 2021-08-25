@@ -1,4 +1,4 @@
-﻿using BoomBang.game.instances.manager.pathfinding;
+using BoomBang.game.instances.manager.pathfinding;
 using BoomBang.game.manager;
 using BoomBang.server;
 using System;
@@ -87,14 +87,6 @@ namespace BoomBang.game.instances
                 this.FinalizarConexion("ProcesarDatos");
             }
         }
-        private byte[] Encriptar(byte[] buffer)
-        {
-            return buffer;
-        }
-        private byte[] Desencriptar(byte[] buffer)
-        {
-            return buffer;
-        }
         public void SendDataProtected(ServerMessage server)
         {
             try
@@ -133,52 +125,24 @@ namespace BoomBang.game.instances
             }
             if (this.User != null)
             {
-                updateOnlineUser(this.User);
-                UserManager.CerrarSesion(this, error);
+                CerrarSesion(this, error);
             }
         }
-        private  void updateOnlineUser(UserInstance User)
+        private void CerrarSesion(SessionInstance Session, string error)
         {
-            mysql client = new mysql();
-            client.SetParameter("user", User.nombre);
-            client.ExecuteNonQuery("UPDATE usuarios SET Online = 0 WHERE nombre = @user");
-        }
-        public bool ValidarEntrada(string texto, bool Register)
-        {
-            if (Register)
+            if (Session.User != null)
             {
-                string[] Permitidos = { "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f", "g", "h", "j", "k", "l", "ñ", "z", "x", "c", "v", "b", "n", "m", ",", ".", "-", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M", "@", "!", "=", ":", ".", ",", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-                string[] Letras = { "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f", "g", "h", "j", "k", "l", "ñ", "z", "x", "c", "v", "b", "n", "m", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M" };
-                string[] Numeros = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-                string[] Caracteres = { "@", "!", "=", ":", ".", "," };
-                int TotalCount = texto.Length;
-                int Letras_Totales = 0;
-                for (int id = 0; id < texto.Length; id++)
+                UserManager.Ajustar_Remuneracion(Session.User);
+                MiniGamesManager.CancelarInscripciones(Session.User);
+                if (Session.User.Sala != null) SalasManager.Salir_Sala(Session);
+                UserManager.UsuariosOnline.Remove(Session.User.id);
+                if (Emulator.ver_conexion_usuarios == true)
                 {
-                    if (Letras.Contains(texto[id].ToString()))
-                    {
-                        Letras_Totales++;
-                        if (Letras_Totales > 11) { return false; }
-                    }
-                    if (!Permitidos.Contains(texto[id].ToString()))
-                    {
-                        return false;
-                    }
+                    string console = "[UserManager] -> Se ha desconectado " + Session.User.nombre + ". > " + error;
+                    Emulator.Form.WriteLine(console);
                 }
+                Emulator.Form.UpdateTitle();
             }
-            else
-            {
-                string[] Permitidos = { "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f", "g", "h", "j", "k", "l", "ñ", "z", "x", "c", "v", "b", "n", "m", ",", ".", "-", "_", "á", "é", "í", "ó", "ú", "Á", "É", "Í", "Ó", "Ú", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Ñ", "Z", "X", "C", "V", "B", "N", "M", "{", "}", "[", "]", "@", "/", "-", "+", " ", "*", "'", "!", "#", "$", "%", "&", "(", ")", "=", "?", "¿", "¡", ":", ";", "<", ">", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-                int TotalCount = texto.Length;
-                for (int id = 0; id < texto.Length; id++)
-                {
-                    if (!Permitidos.Contains(texto[id].ToString()))
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
         }
     }
     public class ServerMessage

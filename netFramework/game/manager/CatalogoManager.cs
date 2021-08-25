@@ -1,5 +1,4 @@
-﻿using BoomBang.game.instances;
-using BoomBang.game.packets;
+using BoomBang.game.instances;
 using BoomBang.server;
 using System;
 using System.Collections.Generic;

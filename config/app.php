@@ -231,4 +231,5 @@ return [
 
     ],
 
+    'game_v' => '1.0 Alpha',
 ];

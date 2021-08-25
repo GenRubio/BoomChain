@@ -1,8 +1,7 @@
-﻿using BoomBang.game.instances;
+using BoomBang.game.instances;
 using BoomBang.game.instances.manager;
 using BoomBang.game.instances.manager.pathfinding;
 using BoomBang.game.manager;
-using BoomBang.game.packets;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -26,22 +25,6 @@ namespace BoomBang.game.handler
             {
                 if (Session.User.Sala != null)
                 {
-                    if (Session.User.ninja_celestial == true)//Ninja Celestial
-                    {
-                        Session.User.Trayectoria = new Trayectoria(Session);
-                        List<Posicion> ListPositionsNinja = new List<Posicion>();
-                        string Steps2 = Parameters[1, 0];
-                        while (Steps2 != "")
-                        {
-                            int x = int.Parse(Steps2.Substring(0, 2));
-                            int y = int.Parse(Steps2.Substring(2, 2));
-                            int z = int.Parse(Steps2.Substring(4, 1));
-                            ListPositionsNinja.Add(new Posicion(x, y, z));
-                            Steps2 = Steps2.Substring(5);
-                        }
-                        Session.User.Trayectoria.EndLocation = new Point(ListPositionsNinja[ListPositionsNinja.Count - 1].x, ListPositionsNinja[ListPositionsNinja.Count - 1].y);
-                        InterfazHandler.Sistema_Ninja_Celestial(Session, Session.User.Trayectoria.EndLocation.X, Session.User.Trayectoria.EndLocation.Y);
-                    }
                     if (Session.User.PreLock_Interactuando == true) return;
                     if (Session.User.Sala.PathFinder == false) return;
                     Session.User.Trayectoria = new Trayectoria(Session);

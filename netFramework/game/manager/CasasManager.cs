@@ -1,4 +1,5 @@
-﻿using BoomBang.game.instances;
+using BoomBang.game.dao;
+using BoomBang.game.instances;
 using BoomBang.server;
 using System;
 using System.Collections.Generic;
@@ -406,7 +407,7 @@ namespace BoomBang.game.manager
             List<EscenarioInstance> Casas = new List<EscenarioInstance>();
             using (mysql client = new mysql())
             {
-                UserInstance User = UserManager.ObtenerUsuario(nombre);
+                UserInstance User = UserDAO.getUser(nombre);
                 if (User != null)
                 {
                     client.SetParameter("id", User.id);

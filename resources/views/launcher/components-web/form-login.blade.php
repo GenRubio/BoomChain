@@ -79,7 +79,17 @@
     }
 
 </style>
-<br><br><br><br><br><br>
+<div>
+    <div class="d-flex justify-content-between">
+        <div>
+        </div>
+        <div style="color: grey;">
+            ¿No tienes cuenta? <a href="{{ route('home') }}" target="_blank" 
+                style="text-decoration: none;">Regístrate</a>
+        </div>
+    </div>
+</div>
+<br><br><br><br>
 <h1>Iniciar sesión</h1>
 <br>
 <form id="login-form">
@@ -88,6 +98,11 @@
         <label for="exampleInputEmail1">MetaMask Account ID</label>
         <input name="account" type="password" class="form-control" id="metamask-input" aria-describedby="emailHelp"
             placeholder="Introduce tu id de MetaMask" required>
+    </div>
+    <div class="form-group">
+        <label for="exampleInputEmail1">Contraseña</label>
+        <input name="password" type="password" class="form-control" id="metamask-input" aria-describedby="emailHelp"
+            placeholder="Introduce tu contarseña" required>
     </div>
     <div class="d-flex justify-content-between">
         <div>
@@ -100,7 +115,9 @@
     <br><br>
     <button type="submit" class="btn btn-primary btn-block" id="play-button">Iniciar sesíon</button>
 </form>
-
+<div style="margin-top: 117px;">
+    Game version {{ Config::get('app.game_v'); }}
+</div>
 <script>
     setTimeout(function() {
         $(document).ready(function() {

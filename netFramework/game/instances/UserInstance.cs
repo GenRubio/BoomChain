@@ -1,4 +1,4 @@
-﻿using BoomBang.game.instances.manager.pathfinding;
+using BoomBang.game.instances.manager.pathfinding;
 using BoomBang.game.manager;
 using System;
 using System.Collections.Generic;
@@ -258,42 +258,6 @@ namespace BoomBang.game.instances
             string EXTRA_COLORS = "AAAAAAAAAAAAAAAAAA";
             return "000000" + Session.User.colores.Substring(0, 6) + ObtenerCinta(nivel_ninja) + Session.User.colores.Substring(18, 6) + EXTRA_COLORS;
         }
-        public string Colores_traje_blanco(SessionInstance Session)
-        {
-            string EXTRA_COLORS = "AAAAAAAAAAAAAAAAAA";
-            return "FFFFFF" + Session.User.colores.Substring(0, 6) + ObtenerCinta(nivel_ninja) + Session.User.colores.Substring(18, 6) + EXTRA_COLORS;
-        }
-        public string Colores_traje_ninja_copiador_de_color(SessionInstance Session)
-        {
-            string EXTRA_COLORS = "AAAAAAAAAAAAAAAAAA";
-            return "FFFFFF" + "FFFFFF" + "FFFFFF" + "FFFFFF" + EXTRA_COLORS;
-        }
-        //Trajes especiales XD
-        public string Colores_traje_purpura(SessionInstance Session)
-        {
-            string EXTRA_COLORS = "AAAAAAAAAAAAAAAAAA";
-            return "790a3f" + Session.User.colores.Substring(0, 6) + Session.User.colores.Substring(18, 6) + Session.User.colores.Substring(18, 6) + EXTRA_COLORS;///Colores sinta 901615
-        }
-        public string Colores_traje_oscuro(SessionInstance Session)
-        {
-            string EXTRA_COLORS = "AAAAAAAAAAAAAAAAAA";
-            return "004852" + Session.User.colores.Substring(0, 6) + "f2b100" + Session.User.colores.Substring(18, 6) + EXTRA_COLORS;
-        }
-        public string Colores_traje_verde(SessionInstance Session)
-        {
-            string EXTRA_COLORS = "AAAAAAAAAAAAAAAAAA";
-            return "5d7835" + Session.User.colores.Substring(0, 6) + "ff9900" + Session.User.colores.Substring(18, 6) + EXTRA_COLORS;
-        }
-        public string Colores_traje_rosa(SessionInstance Session)
-        {
-            string EXTRA_COLORS = "AAAAAAAAAAAAAAAAAA";
-            return "fec2de" + Session.User.colores.Substring(0, 6) + "b3e1fe" + Session.User.colores.Substring(18, 6) + EXTRA_COLORS;
-        }
-        public string Colores_traje_selestial(SessionInstance Session)
-        {
-            return "c0bfbd" + "000000" + "20ecfe" + Session.User.colores.Substring(18, 6) + Session.User.colores.Substring(24, 6) + Session.User.colores.Substring(30, 6) + Session.User.colores.Substring(36, 6); ;///Colores sinta 901615
-        }
-        //
         private string ObtenerCinta(int NinjaLevel)
         {
             switch (NinjaLevel)
@@ -326,16 +290,16 @@ namespace BoomBang.game.instances
         }
         public int UppertLevel()
         {
-            if (uppers_enviados >= 25 && uppers_enviados <= 49) return 1;
-            if (uppers_enviados >= 50 && uppers_enviados <= 99) return 2;
-            if (uppers_enviados >= 100 && uppers_enviados <= 199) return 3;
-            if (uppers_enviados >= 200 && uppers_enviados <= 499) return 4;
-            if (uppers_enviados >= 500 && uppers_enviados <= 1499) return 5;
-            if (uppers_enviados >= 1500 && uppers_enviados <= 2999) return 6;
-            if (uppers_enviados >= 3000 && uppers_enviados <= 5999) return 7;
-            if (uppers_enviados >= 6000 && uppers_enviados <= 8999) return 8;
-            if (uppers_enviados >= 9000) return 9;
-            return 0;
+           if (rings_ganados >= 1 && rings_ganados <= 9) return 1;
+           if (rings_ganados >= 10 && rings_ganados <= 24) return 2;
+           if (rings_ganados >= 25 && rings_ganados <= 49) return 3;
+           if (rings_ganados >= 50 && rings_ganados <= 99) return 4;
+           if (rings_ganados >= 100 && rings_ganados <= 199) return 5;
+           if (rings_ganados >= 200 && rings_ganados <= 499) return 6;
+           if (rings_ganados >= 500 && rings_ganados <= 999) return 7;
+           if (rings_ganados >= 1000 && rings_ganados <= 1999) return 8;
+           if (rings_ganados >= 2000) return 9;
+           return 0;
         }
         public int CocoLevel()
         {
@@ -364,19 +328,6 @@ namespace BoomBang.game.instances
             if (puntos_ninja >= 1000) return 10;
             return 0;
         }
-        //public int UppertLevel()
-        //{
-        //    if (rings_ganados >= 1 && rings_ganados <= 9) return 1;
-        //    if (rings_ganados >= 10 && rings_ganados <= 24) return 2;
-        //    if (rings_ganados >= 25 && rings_ganados <= 49) return 3;
-        //    if (rings_ganados >= 50 && rings_ganados <= 99) return 4;
-        //    if (rings_ganados >= 100 && rings_ganados <= 199) return 5;
-        //    if (rings_ganados >= 200 && rings_ganados <= 499) return 6;
-        //    if (rings_ganados >= 500 && rings_ganados <= 999) return 7;
-        //    if (rings_ganados >= 1000 && rings_ganados <= 1999) return 8;
-        //    if (rings_ganados >= 2000) return 9;
-        //    return 0;
-        //}
         public int nivel_coco
         {
             get

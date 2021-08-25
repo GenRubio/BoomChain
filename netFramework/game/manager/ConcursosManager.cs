@@ -1,4 +1,4 @@
-﻿using BoomBang.game.instances;
+using BoomBang.game.instances;
 using BoomBang.game.instances.manager;
 using BoomBang.server;
 using System;
@@ -132,7 +132,6 @@ namespace BoomBang.game.manager
                             Item.Sala.Alerta(Session.User.nombre + " ha atrapado un coco!");
                             if (Session.User.Sala.id == 9) { items_tiempos_manager(Item, "segundos_coco_igloo"); }
                             else { 
-                                Cocos_Shurikens_Manager(Session);
                                 items_tiempos_manager(Item, "segundos_evento_semanal");
                             }
                             Alerta_Nuevo_Nivel(Session, 1);
@@ -143,7 +142,6 @@ namespace BoomBang.game.manager
                             Item.Sala.Alerta(Session.User.nombre + " ha atrapado un shuriken!");
                             if (Session.User.Sala.id == 9) { items_tiempos_manager(Item, "segundos_shuriken_igloo"); }
                             else { 
-                                Cocos_Shurikens_Manager(Session);
                                 items_tiempos_manager(Item, "segundos_evento_semanal");
                             }
                             Alerta_Nuevo_Nivel(Session, 2);
@@ -309,10 +307,6 @@ namespace BoomBang.game.manager
                     Session.SendData(server);
                 }
             }
-        }
-        private static void Cocos_Shurikens_Manager(SessionInstance Session)
-        {
-            RankingsManager.agregar_user_ranking(Session.User.id, 6, -1, 1);
         }
         private static void Objetos_Cocnursos_Manager(SessionInstance Session)
         {

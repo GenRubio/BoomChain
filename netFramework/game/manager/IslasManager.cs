@@ -1,4 +1,5 @@
-﻿using BoomBang.game.instances;
+using BoomBang.game.dao;
+using BoomBang.game.instances;
 using BoomBang.server;
 using System;
 using System.Collections.Generic;
@@ -12,38 +13,6 @@ namespace BoomBang.game.manager
     class IslasManager
     {
         public static Dictionary<int, int> IslasActivas = new Dictionary<int, int>();
-        public static void AñadirNoVerlo(IslaInstance Isla, string nombre1, string nombre2, string nombre3, string nombre4, string nombre5, string nombre6, string nombre7, string nombre8)
-        {
-            using (mysql client = new mysql())
-            {
-                client.SetParameter("id", Isla.id);
-                client.SetParameter("noverlo_1", nombre1);
-                client.SetParameter("noverlo_2", nombre2);
-                client.SetParameter("noverlo_3", nombre3);
-                client.SetParameter("noverlo_4", nombre4);
-                client.SetParameter("noverlo_5", nombre5);
-                client.SetParameter("noverlo_6", nombre6);
-                client.SetParameter("noverlo_7", nombre7);
-                client.SetParameter("noverlo_8", nombre8);
-                client.ExecuteNonQuery("UPDATE islas SET noverlo_1 = @noverlo_1, noverlo_2 = @noverlo_2, noverlo_3 = @noverlo_3, noverlo_4 = @noverlo_4, noverlo_5 = @noverlo_5, noverlo_6 = @noverlo_6, noverlo_7 = @noverlo_7, noverlo_8 = @noverlo_8 WHERE id = @id");
-            }
-        }
-        public static void AñadirMAmigos(IslaInstance Isla, string nombre1, string nombre2, string nombre3, string nombre4, string nombre5, string nombre6, string nombre7, string nombre8)
-        {
-            using (mysql client = new mysql())
-            {
-                client.SetParameter("id", Isla.id);
-                client.SetParameter("mamigos_1", nombre1);
-                client.SetParameter("mamigos_2", nombre2);
-                client.SetParameter("mamigos_3", nombre3);
-                client.SetParameter("mamigos_4", nombre4);
-                client.SetParameter("mamigos_5", nombre5);
-                client.SetParameter("mamigos_6", nombre6);
-                client.SetParameter("mamigos_7", nombre7);
-                client.SetParameter("mamigos_8", nombre8);
-                client.ExecuteNonQuery("UPDATE islas SET mamigos_1 = @mamigos_1, mamigos_2 = @mamigos_2, mamigos_3 = @mamigos_3, mamigos_4 = @mamigos_4, mamigos_5 = @mamigos_5, mamigos_6 = @mamigos_6, mamigos_7 = @mamigos_7, mamigos_8 = @mamigos_8 WHERE id = @id");
-            }
-        }
         public static void CambiarDescripcion(IslaInstance Isla, string texto)
         {
             using (mysql client = new mysql())
@@ -51,44 +20,6 @@ namespace BoomBang.game.manager
                 client.SetParameter("id", Isla.id);
                 client.SetParameter("texto", texto);
                 client.ExecuteNonQuery("UPDATE islas SET descripcion = @texto WHERE id = @id");
-            }
-        }
-        public static void CambiarUppert(IslaInstance Isla, int Estado)
-        {
-            if (Estado == 1 || Estado == 0)
-            {
-                using (mysql client = new mysql())
-                {
-                    client.SetParameter("id", Isla.id);
-                    client.SetParameter("Estado", Estado);
-                    if (client.ExecuteNonQuery("UPDATE islas SET uppert = @Estado WHERE id = @id") == 1)
-                    {
-                        List<SalaInstance> Salas = new List<SalaInstance>();
-                        try
-                        {
-                            foreach (var Sala in SalasManager.Salas_Privadas.Values)
-                            {
-                                if (Sala.Escenario.IslaID == Isla.id)
-                                {
-                                    Salas.Add(Sala);
-                                }
-                            }
-                        }
-                        catch
-                        {
-                        }
-                        foreach (var Sala in Salas)
-                        {
-                            if (Sala.Escenario.IslaID == Isla.id)
-                            {
-                                ServerMessage server = new ServerMessage();
-                                server.AddHead(175);
-                                server.AppendParameter(new object[] { 4, (Isla.uppert == 1 ? -1 : 0), 1 });
-                                Sala.SendData(server);
-                            }
-                        }
-                    }
-                }
             }
         }
         public static bool RenombrarIsla(IslaInstance Isla, string nombre)
@@ -212,7 +143,7 @@ namespace BoomBang.game.manager
             List<IslaInstance> Islas = new List<IslaInstance>();
             using (mysql client = new mysql())
             {
-                UserInstance User = UserManager.ObtenerUsuario(nombre);
+                UserInstance User = UserDAO.getUser(nombre);
                 if (User != null)
                 {
                     client.SetParameter("id", User.id);

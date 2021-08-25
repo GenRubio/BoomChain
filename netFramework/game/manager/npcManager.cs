@@ -1,4 +1,4 @@
-﻿using BoomBang.server;
+using BoomBang.server;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -19,8 +19,17 @@ namespace BoomBang.game.instances.manager
             foreach (DataRow row in client.ExecuteQueryTable("SELECT * FROM escenarios_npc WHERE EscenarioID = @modelo").Rows)
             {
                 npcInstance NpcData = new npcInstance(row);
-                server.AppendParameter(new object[] { NpcData.ID, NpcData.dialogo, NpcData.modelo, NpcData.Nombre, NpcData.Pos.x, 
-                    NpcData.Pos.y, NpcData.Pos.z, NpcData.Funcion, NpcData.Funcion_value });
+                server.AppendParameter(new object[] {
+                    NpcData.ID,
+                    NpcData.dialogo,
+                    NpcData.modelo,
+                    NpcData.Nombre,
+                    NpcData.Pos.x,
+                    NpcData.Pos.y,
+                    NpcData.Pos.z,
+                    NpcData.Funcion,
+                    NpcData.Funcion_value
+                });
             }
             return server;
         }

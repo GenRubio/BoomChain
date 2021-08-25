@@ -1,4 +1,5 @@
-﻿using BoomBang.game.manager;
+using BoomBang.game.dao;
+using BoomBang.game.manager;
 using BoomBang.server;
 using System;
 using System.Collections.Generic;
@@ -95,8 +96,6 @@ namespace BoomBang.game.instances
                 this.proximo_evento = (int)row["proximo_evento"];
                 this.tiempo_evento = (int)row["tiempo_evento"];
                 this.tipo_evento = (int)row["tipo_evento"];
-                //this.evento_anio = (int)row["evento_anio"];
-                //this.item_evento_anio = (int)row["item_evento_anio"];
                 this.loteria_semanal = (int)row["loteria_semanal"];
                 this.ranking_semanal = (int)row["ranking_semanal"];
             } 
@@ -107,7 +106,7 @@ namespace BoomBang.game.instances
                     this.IslaID = (int)row["IslaID"];
                     this.color_1 = (string)row["color_1"];
                     this.color_2 = (string)row["color_2"];
-                    this.Creador = UserManager.ObtenerUsuario((int)row["CreadorID"]);
+                    this.Creador = UserDAO.getUser((int)row["CreadorID"]);
                     this.Clave = row["clave"].ToString();
                     this.Ultima_Sala = (int)row["Ultima_Sala"];
                     using (mysql client = new mysql())
@@ -148,7 +147,7 @@ namespace BoomBang.game.instances
                     this.Puerta_14 = int.Parse(row["puerta_14"].ToString());
                     this.Puerta_15 = int.Parse(row["puerta_15"].ToString());
                     this.Puerta_16 = int.Parse(row["puerta_16"].ToString());
-                    this.Creador = UserManager.ObtenerUsuario((int)row["CreadorID"]);
+                    this.Creador = UserDAO.getUser((int)row["CreadorID"]);
                 }
             }
         }

@@ -1,8 +1,7 @@
-﻿using BoomBang.game.handler;
+using BoomBang.game.handler;
 using BoomBang.game.instances;
 using BoomBang.game.instances.manager.pathfinding;
 using BoomBang.game.instances.MiniGames;
-using BoomBang.game.packets;
 using BoomBang.server;
 using System;
 using System.Collections.Generic;
@@ -163,11 +162,6 @@ namespace BoomBang.game.manager
                 if (Salas_Publicas.ContainsKey(id))
                 {
                     SalaInstance Sala = Salas_Publicas[id];
-                    if (Sala.Escenario.id == 9 && Session.User.vip <= 0 && Session.User.admin <= 0)
-                    {
-                        Packets.Packet_183(Session, "Igloo [VIP]\rSabio: La area Igloo es exclusiva para los usuarios VIP. Puedes comprar VIP en FlowerPower.\rOso Polar: En mi area encontrarás Shurikens y Coco que caen de vez en cuando.");
-                        return false;
-                    }
                     if (Entrar_Sala(Session, Salas_Publicas[id], DoorPosition))
                     {
                         Salas_Publicas[id].CargarEscenario(Session);
@@ -177,11 +171,6 @@ namespace BoomBang.game.manager
                 else
                 {
                     SalaInstance Sala = Salas_Publicas[id];
-                    if (Sala.Escenario.id == 9 && Session.User.vip <= 0 && Session.User.admin <= 0)
-                    {
-                        Packets.Packet_183(Session, "Igloo [VIP]\rSabio: La area Igloo es exclusiva para los usuarios VIP. Puedes comprar VIP en FlowerPower.\rOso Polar: En mi area encontrarás Shurikens y Coco que caen de vez en cuando.");
-                        return false;
-                    }
                     if (CrearSala(EscenariosManager.ObtenerEscenario(es_categoria, id)))
                     {
                         if (Salas_Publicas.ContainsKey(id))

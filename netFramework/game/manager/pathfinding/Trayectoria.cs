@@ -1,4 +1,5 @@
-﻿using System;
+using BoomBang.Forms;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -242,6 +243,7 @@ namespace BoomBang.game.instances.manager.pathfinding
             IsMovementCorrupt(NextStep);
             if (!MovementIsVerifield(NextStep))
             {
+                Emulator.Form.WriteLine("Movimiento denegado", "error");
                 DetenerMovimiento();
                 BuscarOtroSendero();
                 return null;
