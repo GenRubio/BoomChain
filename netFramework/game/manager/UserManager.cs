@@ -86,6 +86,7 @@ namespace BoomBang.game.manager
 
                     string console = "[UserManager] -> Se ha conectado el usuario " + Session.User.nombre + ".";
                     Emulator.Form.WriteLine(console);
+                    Emulator.Form.UpdateTitle();
                 }
                 else
                 {
@@ -100,7 +101,6 @@ namespace BoomBang.game.manager
             }
 
             Session.SendDataProtected(server);
-            Emulator.Form.UpdateTitle();
         }
         public static void Ajustar_Remuneracion(UserInstance User)
         {
