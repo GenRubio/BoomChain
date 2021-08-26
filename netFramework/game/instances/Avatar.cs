@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BoomBang.game.instances
 {
-    class Avatar
+    class Avatar : User
     {
         private int avatar;
         private string colores;
@@ -23,7 +23,6 @@ namespace BoomBang.game.instances
         private int votos_sexy;
         private int votos_legal;
         private int votos_simpatico;
-        private int votos_restantes;
         private int besos_recibidos;
         private int besos_enviados;
         private int jugos_recibidos;
@@ -42,6 +41,7 @@ namespace BoomBang.game.instances
         private int cocoSelected;
 
         public Avatar(DataRow row)
+            : base(row)
         {
             avatar = (int)row["avatar"];
             colores = (string)row["colores"];
@@ -56,7 +56,6 @@ namespace BoomBang.game.instances
             votos_sexy = (int)row["votos_sexy"];
             votos_legal = (int)row["votos_legal"];
             votos_simpatico = (int)row["votos_simpatico"];
-            votos_restantes = (int)row["votos_restantes"];
             besos_recibidos = (int)row["besos_recibidos"];
             besos_enviados = (int)row["besos_enviados"];
             jugos_recibidos = (int)row["jugos_recibidos"];
@@ -134,9 +133,9 @@ namespace BoomBang.game.instances
         {
             return besos_recibidos;
         }
-        public int getVotosRestantes()
+        public int getVotosSexy()
         {
-            return votos_restantes;
+            return votos_sexy;
         }
         public int getVotosSimpatico()
         {
@@ -259,14 +258,6 @@ namespace BoomBang.game.instances
         public void addBesosRecibidos()
         {
             besos_recibidos = besos_recibidos + 1;
-        }
-        public void removeVotosRestantes(int value)
-        {
-            votos_restantes = votos_restantes - value;
-        }
-        public void addVotosRestantes(int value)
-        {
-            votos_restantes = votos_restantes + value;
         }
         public void removeVotosSimpatico(int value)
         {
@@ -422,5 +413,242 @@ namespace BoomBang.game.instances
             if (puntos_ninja >= 1000) return 10;
             return 0;
         }
+
+        #region Locks
+        private double Time_SendUppert = Time.TiempoActual();
+        public bool PreLock_EnviandoUppert
+        {
+            get
+            {
+                if (Time.TiempoActual() > Time_SendUppert)
+                {
+                    return false;
+                }
+                return true;
+            }
+            set
+            {
+                Time_SendUppert = Time.GetCurrentAndAdd(AddType.Milisegundos, 175);
+            }
+
+        }
+        private double Time_Notifi = Time.TiempoActual();
+        public bool PreLock_Notificacion_IzDer
+        {
+            get
+            {
+                if (Time.TiempoActual() > Time_Notifi)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+        private double Time_Uppert_Click = Time.TiempoActual();
+        public bool PreLockUpperClick
+        {
+            get
+            {
+                if (Time.TiempoActual() > Time_Uppert_Click)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+        private double Time_Mirada = Time.TiempoActual();
+        public bool PreLock_Mirada
+        {
+            get
+            {
+                if (Time.TiempoActual() > Time_Mirada)
+                {
+                    return false;
+                }
+                return true;
+            }
+            set
+            {
+                Time_Mirada = Time.GetCurrentAndAdd(AddType.Milisegundos, 200);
+            }
+        }
+        private double Time_Acciones = Time.TiempoActual();
+        public bool PreLock_Acciones
+        {
+            get
+            {
+                if (Time.TiempoActual() > Time_Acciones)
+                {
+                    return false;
+                }
+                return true;
+            }
+            set
+            {
+                Time_Acciones = Time.GetCurrentAndAdd(AddType.Milisegundos, 100);
+            }
+        }
+        private double Time_Caminando = Time.TiempoActual();
+        public bool PreLock_Caminando
+        {
+            get
+            {
+                if (Time.TiempoActual() > Time_Caminando)
+                {
+                    return false;
+                }
+                return true;
+            }
+            set
+            {
+                this.Time_Caminando = Time.GetCurrentAndAdd(AddType.Milisegundos, 680);
+            }
+        }
+        private double Time_Bloqueo_chat = Time.TiempoActual();
+        public bool PreLock_BloqueoChat
+        {
+            get
+            {
+                if (Time.TiempoActual() > Time_Bloqueo_chat)
+                {
+                    return false;
+                }
+                return true;
+            }
+            set
+            {
+                Time_Bloqueo_chat = Time.GetCurrentAndAdd(AddType.Segundos, 1);
+            }
+        }
+        public double Time_Interactuando = Time.TiempoActual();
+        public bool PreLock_Interactuando
+        {
+            get
+            {
+                if (Time.TiempoActual() > Time_Interactuando)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+        private double Time_Ficha = Time.TiempoActual();
+        public bool PreLock_Ficha
+        {
+            get
+            {
+                if (Time.TiempoActual() > Time_Ficha)
+                {
+                    return false;
+                }
+                return true;
+            }
+            set
+            {
+                Time_Ficha = Time.GetCurrentAndAdd(AddType.Segundos, 1);
+            }
+        }
+        public double Time_BlockLatency = Time.TiempoActual();
+        public bool Prelock_Latency
+        {
+            get
+            {
+                if (Time.TiempoActual() > Time_BlockLatency)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+        private double Time_Upper_Espera = Time.TiempoActual();
+        public bool PreLock_Upper_Espera
+        {
+            get
+            {
+                if (Time.TiempoActual() > Time_Upper_Espera)
+                {
+                    return false;
+                }
+                return true;
+            }
+            set
+            {
+                Time_Upper_Espera = Time.GetCurrentAndAdd(AddType.Milisegundos, 156);
+            }
+        }
+        private double Time_Disfraz = Time.TiempoActual();
+        public bool PreLock_Disfraz
+        {
+            get
+            {
+                if (Time.TiempoActual() > Time_Disfraz)
+                {
+                    return false;
+                }
+                return true;
+            }
+            set
+            {
+                Time_Disfraz = Time.GetCurrentAndAdd(AddType.Segundos, 6);
+            }
+        }
+        private double Time_Proteccion_SQL = Time.TiempoActual();
+        public bool PreLock__Proteccion_SQL
+        {
+            get
+            {
+                if (Time.TiempoActual() > Time_Proteccion_SQL)
+                {
+                    return false;
+                }
+                return true;
+            }
+            set
+            {
+                Time_Proteccion_SQL = Time.GetCurrentAndAdd(AddType.Segundos, 2);
+            }
+        }
+        public double Time_Acciones_Ficha = Time.TiempoActual();
+        public bool PreLock_Acciones_Ficha
+        {
+            get
+            {
+                if (Time.TiempoActual() > Time_Acciones_Ficha)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+        private double Time_Sapmm_Areas = Time.TiempoActual();
+        public bool PreLock__Spamm_Areas
+        {
+            get
+            {
+                if (Time.TiempoActual() > Time_Sapmm_Areas)
+                {
+                    return false;
+                }
+                return true;
+            }
+            set
+            {
+                Time_Sapmm_Areas = Time.GetCurrentAndAdd(AddType.Segundos, 2);
+            }
+        }
+        public double Time_Cambio_Colores = Time.TiempoActual();
+        public bool PreLock_Cambio_Colores
+        {
+            get
+            {
+                if (Time.TiempoActual() > Time_Cambio_Colores)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+        #endregion
     }
 }
+

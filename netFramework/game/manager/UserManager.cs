@@ -42,11 +42,6 @@ namespace BoomBang.game.manager
                 {
                     UsuariosOnline.Add(Session.User.id, Session);
 
-                    if (Session.User.timespam_regalo_peque == 0)
-                    {
-                        Session.User.timespam_regalo_peque = Time.GetCurrentAndAdd(AddType.Minutos, 30);
-                    }
-
                     server.AppendParameter(1);
                     server.AppendParameter(Session.User.nombre);
                     server.AppendParameter(Session.User.avatar);
@@ -66,7 +61,7 @@ namespace BoomBang.game.manager
                     server.AppendParameter(-1);
                     server.AppendParameter(0);
                     server.AppendParameter(0);
-                    server.AppendParameter(Session.User.tutorial_islas);
+                    server.AppendParameter(-1);//tutorial islas
                     server.AppendParameter("ES");
                     server.AppendParameter(1);
                     server.AppendParameter(0);
@@ -74,15 +69,13 @@ namespace BoomBang.game.manager
                     server.AppendParameter(0);
                     server.AppendParameter(0);
                     server.AppendParameter("");
-                    server.AppendParameter(0);//Noticia derecha                            
+                    server.AppendParameter(0);
                     server.AppendParameter(0);
                     server.AppendParameter(new object[] { 1, 0 });
                     server.AppendParameter(0);
-                    server.AppendParameter(Session.User.cambio_nombre);//Nombre personaje
+                    server.AppendParameter(-1);
 
                     new Thread(() => UserDAO.updateConnection(Session.User, Session.IP));
-
-                    repair_gift(Session);
 
                     string console = "[UserManager] -> Se ha conectado el usuario " + Session.User.nombre + ".";
                     Emulator.Form.WriteLine(console);
@@ -251,17 +244,7 @@ namespace BoomBang.game.manager
                 }
             }
         }
-        private static void repair_gift(SessionInstance Session)
-        {
-            ServerMessage server2 = new ServerMessage();
-            server2.AddHead(120);
-            server2.AddHead(147);
-            server2.AddHead(120);
-            server2.AppendParameter(1);
-            server2.AppendParameter(Time.GetDifference(Session.User.timespam_regalo_grande));
-            server2.AppendParameter(1);
-            Session.SendData(server2);
-        }
+ 
         public static SessionInstance ObtenerSession(int user_id)
         {
             if (UsuariosOnline.ContainsKey(user_id))

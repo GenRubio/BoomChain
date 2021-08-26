@@ -9,6 +9,13 @@ namespace BoomBang.game.dao
 {
     class AvatarDAO
     {
+        public static void updatePuntosNinja(int userId, int value)
+        {
+            mysql client = new mysql();
+            client.SetParameter("id", userId);
+            client.SetParameter("puntos_ninja", value);
+            client.ExecuteNonQuery("UPDATE usuarios SET puntos_ninja = @puntos_ninja WHERE id = @id");
+        }
         public static void updateVotosSimpatico(int userId, int value)
         {
             mysql client = new mysql();

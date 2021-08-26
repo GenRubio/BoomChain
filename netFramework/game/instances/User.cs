@@ -16,7 +16,6 @@ namespace BoomBang.game.instances
         private string metamask_id;
         private bool admin;
         private int credits_gold;
-        private int credits_silver;
         private string register_ip;
         private string actual_ip;
         private string last_connection;
@@ -32,7 +31,6 @@ namespace BoomBang.game.instances
             metamask_id = (string)row["metamask_id"];
             admin = (bool)row["admin"];
             credits_gold = (int)row["credits_gold"];
-            credits_silver = (int)row["credits_silver"];
             register_ip = (string)row["register_ip"];
             actual_ip = (string)row["actual_ip"];
             last_connection = (string)row["last_connection"];
@@ -90,14 +88,6 @@ namespace BoomBang.game.instances
         public void removeCreditsGold(int value)
         {
             credits_gold = credits_gold - value;
-        }
-        public void addCreditsSilver(int value)
-        {
-            credits_silver = credits_silver + value;
-        }
-        public void removeCreditsSilver(int value)
-        {
-            credits_silver = credits_silver - value;
         }
     }
 }
