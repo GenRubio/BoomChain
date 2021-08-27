@@ -1,4 +1,4 @@
-﻿using BoomBang.game.instances;
+using BoomBang.game.instances;
 using BoomBang.game.instances.manager;
 using BoomBang.game.manager;
 using BoomBang.server;
@@ -14,8 +14,6 @@ namespace BoomBang.game.handler
 {
     class CatalogoHandler
     {
-        public static string Fecha_Loteria_Final = "";
-        
         public static void Start()
         {
             HandlerManager.RegisterHandler(189133, new ProcessHandler(CargarCatalogo));
@@ -26,280 +24,13 @@ namespace BoomBang.game.handler
             HandlerManager.RegisterHandler(189136, new ProcessHandler(PonerObjeto));
             HandlerManager.RegisterHandler(189142, new ProcessHandler(CambiarColores));
             HandlerManager.RegisterHandler(189145, new ProcessHandler(MoverObjeto));
-            HandlerManager.RegisterHandler(189163, new ProcessHandler(AbrirObjeto));
             HandlerManager.RegisterHandler(189140, new ProcessHandler(Quitar_Objeto));
             HandlerManager.RegisterHandler(189143, new ProcessHandler(VoltearObjeto));
-            HandlerManager.RegisterHandler(189157, new ProcessHandler(MoverObjetoAire));
             HandlerManager.RegisterHandler(189158, new ProcessHandler(Control));
-            HandlerManager.RegisterHandler(189156, new ProcessHandler(EditarData));
             HandlerManager.RegisterHandler(189165, new ProcessHandler(Dar_Bebida));
-            HandlerManager.RegisterHandler(189164, new ProcessHandler(ClickObject));
             HandlerManager.RegisterHandler(189159, new ProcessHandler(ActivarObjeto));
             HandlerManager.RegisterHandler(189144, new ProcessHandler(CambiarTamañoObjeto));
-            HandlerManager.RegisterHandler(189160121, new ProcessHandler(AccionesAnimales));
-            //HandlerManager.RegisterHandler(189186, new ProcessHandler(Handler_189_186));
-            HandlerManager.RegisterHandler(189166, new ProcessHandler(SubirEnObjeto));
-            HandlerManager.RegisterHandler(189167, new ProcessHandler(BajarDeObjeto));
-            HandlerManager.RegisterHandler(189168, new ProcessHandler(DesplazarObjeto));
-            HandlerManager.RegisterHandler(189161, new ProcessHandler(Sapo));
-            HandlerManager.RegisterHandler(189152, new ProcessHandler(AllowAcces));
-            HandlerManager.RegisterHandler(189153, new ProcessHandler(AllowAccesInArea));
-            HandlerManager.RegisterHandler(189160120, new ProcessHandler(PathfinderAnimals));
-            //HandlerManager.RegisterHandler(189171120, new ProcessHandler(Noria));
-            HandlerManager.RegisterHandler(189171121, new ProcessHandler(accelerarNoria));
         }
-        private static void accelerarNoria(SessionInstance Session, string[,] Parameters)
-        {
-            int id = int.Parse(Parameters[0, 0]);
-            int numero = int.Parse(Parameters[1, 0]);
-            ServerMessage server = new ServerMessage();
-            server.AddHead(189);
-            server.AddHead(171);
-            server.AddHead(121);       
-            server.AppendParameter(id);
-            server.AppendParameter(numero);
-            Session.SendData(server);
-            Console.WriteLine(id + " " + numero);
-        }
-        private static void PathfinderAnimals(SessionInstance Session, string[,] Parameters)
-        {
-            int id = int.Parse(Parameters[0, 0]);
-            string patch = Parameters[1, 0];
-            try
-            {
-                List<int> ListPositions = new List<int>();
-                while (patch != "")
-                {
-                    int x = int.Parse(patch.Substring(0, 2));
-                    ListPositions.Add(x);
-                    int y = int.Parse(patch.Substring(2, 2));
-                    ListPositions.Add(y);
-                    int z = int.Parse(patch.Substring(4, 1));
-                    ListPositions.Add(z);
-                    patch = patch.Substring(5);
-                }
-                BuyObjectInstance Compra = CatalogoManager.ObtenerCompra(id);
-                if (ListPositions.Count % 3 != 0) { return; }
-                if (Compra.patchfinding != null) { return; }
-                Compra.patchfinding = ListPositions;
-                new Thread(() => Caminada(Session, Compra)).Start();
-            }
-            catch
-            {
-                string console = "Error en el patchfinding de animales. --> PathfinderAnimals";
-                Emulator.Form.WriteLine(console);
-            }
-        }
-        private static void Caminada(SessionInstance Session, BuyObjectInstance Compra)
-        {
-            try
-            {
-                while (Compra.patchfinding.Count > 0)
-                {
-                    foreach (SessionInstance sessiones in UserManager.UsuariosOnline.Values)
-                    {
-                        if (sessiones.User.Sala.Escenario.id == Compra.sala_id)
-                        {
-                            if (Compra.patchfinding.Count > 0)
-                            {
-                                ServerMessage server = new ServerMessage();
-                                server.AddHead(182);
-                                server.AppendParameter(2);
-                                server.AppendParameter(Compra.id);
-                                server.AppendParameter(Compra.patchfinding[0]);
-                                Compra.patchfinding.RemoveAt(0);
-                                server.AppendParameter(Compra.patchfinding[0]);
-                                Compra.patchfinding.RemoveAt(0);
-                                server.AppendParameter(Compra.patchfinding[0]);
-                                Compra.patchfinding.RemoveAt(0);
-                                server.AppendParameter(720);
-                                server.AppendParameter(1);
-                                Session.User.Sala.SendData(server, Session);
-                            }
-                        }
-                    }
-                    Thread.Sleep(new TimeSpan(0, 0, 0, 0, 720));
-                }
-            }
-            catch
-            {
-                string console = "Error en el patchfinding de animales. --> Caminada";
-                Emulator.Form.WriteLine(console);
-            }
-        }
-
-        private static void AllowAccesInArea(SessionInstance Session, string[,] Parameters)
-        {
-            mysql client = new mysql();
-            DataRow objeto_area = client.ExecuteQueryRow("SELECT * FROM escenarios_privados WHERE id = '" + Session.User.Sala.Escenario.id + "' LIMIT 1");
-            if (objeto_area != null)
-            {
-                BuyObjectInstance Compra = CatalogoManager.ObtenerCompra((int)objeto_area["objeto_id"]);
-                if (Compra != null)
-                {
-                    if (Compra.usuario_id != Session.User.id) return;
-                    if (Session.User.Sala.Escenario.Creador.id != Session.User.id) { Session.FinalizarConexion("AllowAccesInArea"); return; }
-                    ServerMessage server1 = new ServerMessage();
-                    server1.AddHead(189);
-                    server1.AddHead(153);
-                    server1.AppendParameter(1);
-                    server1.AppendParameter(1);
-                    server1.AppendParameter(1);
-                    server1.AppendParameter(1);
-                    server1.AppendParameter(Compra.data);
-                    server1.AppendParameter(1);
-                    server1.AppendParameter(Compra.open == 0 ? "1" : "");
-                    Session.User.Sala.SendData(server1);
-                    ServerMessage server = new ServerMessage();
-                    server.AddHead(189);
-                    server.AddHead(152);
-                    server.AppendParameter(1);
-                    server.AppendParameter(1);
-                    server.AppendParameter(1);
-                    server.AppendParameter(1);
-                    server.AppendParameter(Compra.data);
-                    server.AppendParameter(1);
-                    server.AppendParameter(Compra.open == 0 ? "1" : "");
-                    Session.User.Sala.SendData(server, Session);
-
-                    Compra.open = abrir_cerar_sala_manager(Compra);
-
-                    if (Compra.open == 1)
-                    {
-                        client.SetParameter("key", "2358f'9qw");
-                        client.SetParameter("id", Compra.id);
-                        client.ExecuteNonQuery("UPDATE escenarios_privados SET clave = @key WHERE objeto_id = @id");
-                        EscenarioInstance Sala = EscenariosManager.ObtenerEscenario(0, Session.User.Sala.id);
-                        Sala.Clave = "2358f'9qw";
-                    }
-                }
-            }
-        }
-        private static void AllowAcces(SessionInstance Session, string[,] Parameters)
-        {
-            int Compra_ID = int.Parse(Parameters[0, 0]);
-            BuyObjectInstance Compra = CatalogoManager.ObtenerCompra(Compra_ID);
-            if (Compra != null)
-            {
-                if (!listas.Objetos_Area.Contains(Compra.objeto_id)) return;
-                if (Compra.usuario_id != Session.User.id) return;
-                if (Session.User.Sala.Escenario.Creador.id != Session.User.id) { Session.FinalizarConexion("AllowAcces"); return; }
-                ServerMessage server = new ServerMessage();
-                server.AddHead(189);
-                server.AddHead(152);
-                server.AppendParameter(1);
-                server.AppendParameter(1);
-                server.AppendParameter(1);
-                server.AppendParameter(1);
-                server.AppendParameter(Compra.data);
-                server.AppendParameter(1);
-                server.AppendParameter(Compra.open == 0 ? "1": "");
-                Session.User.Sala.SendData(server, Session);
-
-                Compra.open = abrir_cerar_sala_manager(Compra);
-            }
-        }
-        private static int abrir_cerar_sala_manager(BuyObjectInstance Compra)
-        {
-            mysql client = new mysql();
-            client.SetParameter("id", Compra.id);
-            DataRow escenario = client.ExecuteQueryRow("SELECT * FROM escenarios_privados WHERE objeto_id = @id");
-            if (escenario != null)
-            {
-                client.SetParameter("id", Compra.id);
-                DataRow compra = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE id = @id");
-                if (compra != null)
-                {
-                    if (Compra.open == 0)
-                    {
-                        client.SetParameter("id", Compra.id);
-                        client.ExecuteNonQuery("UPDATE objetos_comprados SET open = 1 WHERE id = @id");
-                        client.SetParameter("key", "2358f'9qw");
-                        client.SetParameter("id", Compra.id);
-                        client.ExecuteNonQuery("UPDATE escenarios_privados SET clave = @key WHERE objeto_id = @id");
-                        EscenarioInstance Sala = EscenariosManager.ObtenerEscenario(0, (int)escenario["id"]);
-                        Sala.Clave = "2358f'9qw";
-                        Compra.open = 1;
-                    }
-                    else
-                    {
-                        client.SetParameter("id", Compra.id);
-                        client.ExecuteNonQuery("UPDATE objetos_comprados SET open = 0 WHERE id = @id");
-                        client.SetParameter("key", "");
-                        client.SetParameter("id", Compra.id);
-                        client.ExecuteNonQuery("UPDATE escenarios_privados SET clave = @key WHERE objeto_id = @id");
-                        EscenarioInstance Sala = EscenariosManager.ObtenerEscenario(0, (int)escenario["id"]);
-                        Sala.Clave = "";
-                        Compra.open = 0;
-                    }
-                }
-            }
-            return Compra.open;
-        }
-        private static void DesplazarObjeto(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User == null) return;
-            if (Session.User.Sala == null) return;
-            int CompraID = int.Parse(Parameters[0, 0]);
-            int x = int.Parse(Parameters[1, 0]);
-            int y = int.Parse(Parameters[2, 0]);
-            BuyObjectInstance Item = CatalogoManager.ObtenerCompra(CompraID);
-            if (Item != null)
-            {
-                if (Session.User.Sala.DesplazarObjeto(Session, Item, new Point(x, y)))
-                {
-                    ServerMessage server = new ServerMessage();
-                    server.AddHead(189);
-                    server.AddHead(168);
-                    server.AppendParameter(Item.id);
-                    server.AppendParameter(x);
-                    server.AppendParameter(y);
-                    Session.User.Sala.SendData(server, Session);
-                }
-            }
-        }
-        private static void BajarDeObjeto(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User == null) return;
-            if (Session.User.Sala == null) return;
-            int CompraID = int.Parse(Parameters[0, 0]);
-            int user_id = int.Parse(Parameters[1, 0]);
-            SessionInstance OtherSession = UserManager.ObtenerSession(user_id);
-            BuyObjectInstance Item = CatalogoManager.ObtenerCompra(CompraID);
-            if (Item != null && OtherSession != null)
-            {
-                OtherSession.User.Trayectoria.DetenerMovimiento();
-                Session.User.Sala.BajarEnObjeto(OtherSession, false);
-            }
-        }
-        private static void SubirEnObjeto(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User == null) return;
-            if (Session.User.Sala == null) return;
-            int CompraID = int.Parse(Parameters[0, 0]);
-            int user_id = int.Parse(Parameters[1, 0]);
-            int Posicion = int.Parse(Parameters[2, 0]);
-            SessionInstance OtherSession = UserManager.ObtenerSession(user_id);
-            BuyObjectInstance Item = CatalogoManager.ObtenerCompra(CompraID);
-            if (Item != null && OtherSession != null)
-            {
-                if (Item.usuario_id != Session.User.id) return;
-                {
-                    if (Session.User.Sala.SubirEnObjeto(OtherSession, Item, Posicion))
-                    {
-                        OtherSession.User.Trayectoria.DetenerMovimiento();
-                        ServerMessage server = new ServerMessage();
-                        server.AddHead(189);
-                        server.AddHead(166);
-                        server.AppendParameter(Item.id);
-                        server.AppendParameter(OtherSession.User.id);
-                        server.AppendParameter(Posicion);
-                        Session.User.Sala.SendData(server, Session);
-                    }
-                }
-            }
-        }
-        //End Codigo
         private static void CargarCatalogo(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
@@ -603,159 +334,6 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        static void AbrirObjeto(SessionInstance Session, string[,] Parameters)
-        {
-            int Compra_ID = int.Parse(Parameters[0, 0]);
-            BuyObjectInstance Compra = CatalogoManager.ObtenerCompra(Compra_ID);
-            using (mysql client = new mysql())
-            {
-                DataRow nombre_objeto = client.ExecuteQueryRow("SELECT * FROM objetos WHERE id = '" + Compra.objeto_id + "'");
-                if (Compra == null) return;
-                string nombre = (string)nombre_objeto["titulo"];
-                if (Compra != null)
-                {
-                    if (Compra.usuario_id != Session.User.id) return;
-                    if (Session.User.Sala.Escenario.Creador.id != Session.User.id) { Session.FinalizarConexion("AbrirObjeto"); return; }
-                    switch (Compra.objeto_id)
-                    {
-                        case 78:
-                            if (CatalogoManager.EliminarObjeto(Session.User.Sala, Compra))
-                            {
-                                NotificacionesManager.NotifiChat(Session, Session.User.nombre + " ha abierto un " + nombre + ".", Session.User.Sala);
-                                Añadir_Objeto_Click(Session, 87, 10, Compra_ID);
-                            }
-                            break;
-                        case 77:
-                            if (CatalogoManager.EliminarObjeto(Session.User.Sala, Compra))
-                            {
-                                NotificacionesManager.NotifiChat(Session, Session.User.nombre + " ha abierto un " + nombre + ".", Session.User.Sala);
-                                Añadir_Objeto_Click(Session, 86, 10, Compra_ID);
-                            }
-                            break;
-                        case 76:
-                            if (CatalogoManager.EliminarObjeto(Session.User.Sala, Compra))
-                            {
-                                NotificacionesManager.NotifiChat(Session, Session.User.nombre + " ha abierto un " + nombre + ".", Session.User.Sala);
-                                Añadir_Objeto_Click(Session, 85, 10, Compra_ID);
-                            }
-                            break;
-                        case 74:
-                            if (CatalogoManager.EliminarObjeto(Session.User.Sala, Compra))
-                            {
-                                NotificacionesManager.NotifiChat(Session, Session.User.nombre + " ha abierto un " + nombre + ".", Session.User.Sala);
-                                Añadir_Objeto_Click(Session, 80, 10, Compra_ID);
-                            }
-                            break;
-                        case 73:
-                            if (CatalogoManager.EliminarObjeto(Session.User.Sala, Compra))
-                            {
-                                NotificacionesManager.NotifiChat(Session, Session.User.nombre + " ha abierto un " + nombre + ".", Session.User.Sala);
-                                Añadir_Objeto_Click(Session, 79, 10, Compra_ID);
-                            }
-                            break;
-                        case 71:
-                            if (CatalogoManager.EliminarObjeto(Session.User.Sala, Compra))
-                            {
-                                NotificacionesManager.NotifiChat(Session, Session.User.nombre + " ha abierto un " + nombre + ".", Session.User.Sala);
-                                Añadir_Objeto_Click(Session, 371, 50, Compra_ID);
-                            }
-                            break;
-                        case 70:
-                            if (CatalogoManager.EliminarObjeto(Session.User.Sala, Compra))
-                            {
-                                NotificacionesManager.NotifiChat(Session, Session.User.nombre + " ha abierto un " + nombre + ".", Session.User.Sala);
-                                Añadir_Objeto_Click(Session, 371, 20, Compra_ID);
-                            }
-                            break;
-                        case 69:
-                            if (CatalogoManager.EliminarObjeto(Session.User.Sala, Compra))
-                            {
-                                NotificacionesManager.NotifiChat(Session, Session.User.nombre + " ha abierto un " + nombre + ".", Session.User.Sala);
-                                Añadir_Objeto_Click(Session, 371, 10, Compra_ID);
-                            }
-                            break;
-                        case 68:
-                            if (CatalogoManager.EliminarObjeto(Session.User.Sala, Compra))
-                            {
-                                NotificacionesManager.NotifiChat(Session, Session.User.nombre + " ha abierto un " + nombre + ".", Session.User.Sala);
-                                Añadir_Objeto_Click(Session, 371, 5, Compra_ID);
-                            }
-                            break;
-                        case 952:
-
-                            NotificacionesManager.NotifiChat(Session, Session.User.nombre + " ha abierto un " + nombre + ".", Session.User.Sala);
-                            Sistema_Obj_Click(Session, 952, Compra_ID);
-
-                            break;
-                        case 959:
-
-                            NotificacionesManager.NotifiChat(Session, Session.User.nombre + " ha abierto un " + nombre + ".", Session.User.Sala);
-                            Sistema_Obj_Click(Session, 959, Compra_ID);
-
-                            break;
-                        case 1112:
-                            if (CatalogoManager.EliminarObjeto(Session.User.Sala, Compra))
-                            {
-                                UserManager.Creditos(Session.User, true, true, 1000);
-                                NotificacionesManager.NotifiChat(Session, Session.User.nombre + " ha recibido 1000 créditos de oro", Session.User.Sala);
-                            }
-                            break;
-                        case 1113:
-                            if (CatalogoManager.EliminarObjeto(Session.User.Sala, Compra))
-                            {
-                                UserManager.Creditos(Session.User, false, true, 1000);
-                                NotificacionesManager.NotifiChat(Session, Session.User.nombre + " ha recibido 1000 monedas de plata", Session.User.Sala);
-                            }
-                            break;
-                        case 1443:
-                            if (CatalogoManager.EliminarObjeto(Session.User.Sala, Compra))
-                            {
-                                UserManager.Creditos(Session.User, false, true, 10);
-                                NotificacionesManager.NotifiChat(Session, Session.User.nombre + " ha recibido 10 monedas de plata", Session.User.Sala);
-                            }
-                            break;
-                        case 1444:
-                            if (CatalogoManager.EliminarObjeto(Session.User.Sala, Compra))
-                            {
-                                UserManager.Creditos(Session.User, false, true, 50);
-                                NotificacionesManager.NotifiChat(Session, Session.User.nombre + " ha recibido 50 monedas de plata", Session.User.Sala);
-                            }
-                            break;
-                        case 460:
-
-                            NotificacionesManager.NotifiChat(Session, Session.User.nombre + " ha abierto un " + nombre + ".", Session.User.Sala);
-                            Sistema_Obj_Click(Session, 460, Compra_ID);
-
-                            break;
-                        case 596:
-
-                            NotificacionesManager.NotifiChat(Session, Session.User.nombre + " ha abierto un " + nombre + ".", Session.User.Sala);
-                            Sistema_Obj_Click(Session, 596, Compra_ID);
-
-                            break;
-                        case 481:
-
-                            NotificacionesManager.NotifiChat(Session, Session.User.nombre + " ha abierto un " + nombre + ".", Session.User.Sala);
-                            Sistema_Obj_Click(Session, 481, Compra_ID);
-
-                            break;
-                        case 901:
-
-                            NotificacionesManager.NotifiChat(Session, Session.User.nombre + " ha abierto un " + nombre + ".", Session.User.Sala);
-                            Sistema_Obj_Click(Session, 901, Compra_ID);
-
-                            break;
-
-                        default:
-                            string console = "Apertura de objeto no programada: " + Compra.objeto_id;
-                            Emulator.Form.WriteLine(console);
-                            return;
-
-                    }
-                    Packet_189_140(Session, Compra);
-                }
-            }
-        }
         static void Quitar_Objeto(SessionInstance Session, string[,] Parameters)
         {
             int Compra_ID = int.Parse(Parameters[0, 0]);
@@ -850,22 +428,6 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        static void MoverObjetoAire(SessionInstance Session, string[,] Parameters)
-        {
-            int ID = Convert.ToInt32(Parameters[0, 0]);
-            int x = Convert.ToInt32(Parameters[1, 0]);
-            int y = Convert.ToInt32(Parameters[2, 0]);
-            BuyObjectInstance Item = CatalogoManager.ObtenerCompra(ID);
-            if (Item != null)
-            {
-                if (Item.usuario_id != Session.User.id) return;
-                if (!Session.User.Sala.ObjetosEnSala.ContainsKey(Item.id)) return;
-                if (Session.User.Sala.Escenario.Creador.id != Session.User.id) { Session.FinalizarConexion("MoverObjetoAire"); return; }
-                Session.User.Sala.ObjetosEnSala[Item.id].posX = x;
-                Session.User.Sala.ObjetosEnSala[Item.id].posY = y;
-                Packet_189_157(Session, Item, ID);
-            }
-        }
         static void Control(SessionInstance Session, string[,] Parameters)
         {
             int ID = Convert.ToInt32(Parameters[0, 0]);
@@ -877,36 +439,6 @@ namespace BoomBang.game.handler
                 if (!Session.User.Sala.ObjetosEnSala.ContainsKey(Item.id)) return;
                 if (Session.User.Sala.Escenario.Creador.id != Session.User.id) { Session.FinalizarConexion("Control"); return; }
                 Packet_189_158(Session, ID, Estado);
-            }
-        }
-        static void EditarData(SessionInstance Session, string[,] Parameters)
-        {
-            int ID = Convert.ToInt32(Parameters[0, 0]);
-            int apartado = Convert.ToInt32(Parameters[1, 0]);
-            string data = Parameters[2, 0];
-            BuyObjectInstance Item = CatalogoManager.ObtenerCompra(ID);
-            if (Item != null)
-            {
-                if (Item.usuario_id != Session.User.id) return;
-                if (!Session.User.Sala.ObjetosEnSala.ContainsKey(Item.id)) return;
-                if (Session.User.Sala.Escenario.Creador.id != Session.User.id) { Session.FinalizarConexion("EditarData"); return; }
-                using (mysql client = new mysql())
-                {
-                    if (Item.objeto_id == 3043)
-                    {
-                        Vender_Objetos_Oro(Session, data);
-                    }
-                    else
-                    {
-                        client.SetParameter("id", ID);
-                        client.SetParameter("data", data);
-                        if (client.ExecuteNonQuery("UPDATE objetos_comprados SET data = @data WHERE id = @id") == 1)
-                        {
-                            Session.User.Sala.ObjetosEnSala[Item.id].data = data;
-                            Packet_189_156(Session, ID, apartado, data);
-                        }
-                    }
-                }
             }
         }
         static void Dar_Bebida(SessionInstance Session, string[,] Parameters)
@@ -949,10 +481,6 @@ namespace BoomBang.game.handler
             planta.AppendParameter(1);
             Session.User.Sala.SendData(planta);
         }
-        static void ClickObject(SessionInstance Session, string[,] Parameters)
-        {
-            Packet_189_164(Session, Parameters);
-        }
         static void ActivarObjeto(SessionInstance Session, string[,] Parameters)
         {
             Packet_189_159(Session, Parameters);
@@ -991,27 +519,6 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        static void AccionesAnimales(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User.Sala != null)
-            {
-                using (mysql client = new mysql())
-                {
-                    int ID = Convert.ToInt32(Parameters[0, 0]);
-                    int accion = Convert.ToInt32(Parameters[1, 0]);
-                    BuyObjectInstance Item = CatalogoManager.ObtenerCompra(ID);
-                    if (Item != null)
-                    {
-                        if (!Session.User.Sala.ObjetosEnSala.ContainsKey(Item.id)) return;
-                        if (Session.User.Sala.Escenario.Creador.id != Session.User.id) { Session.FinalizarConexion("AccionesAnimales"); return; }
-                        if (Item.usuario_id == Session.User.id)
-                        {
-                            Packet_189_160_121(Session, ID, accion);
-                        }
-                    }
-                }
-            }
-        }
         static void Packet_Aceptar_Compra(SessionInstance Session, int item, bool Objeto_Normal, int Items_Nesesarios, int Item_id, int loteria, bool Oro, string tam, int cantidad)
         {
             mysql client = new mysql();
@@ -1030,7 +537,7 @@ namespace BoomBang.game.handler
                     {
                         if ((int)usuarios["oro"] >= (int)objetos["precio_oro"])
                         {
-                            UserManager.Creditos(Session.User, true, false, (int)objetos["precio_oro"]);
+                            
                             for (int a = 0; a < cantidad; a++)
                             {
                                 if (a == 0)
@@ -1097,7 +604,7 @@ namespace BoomBang.game.handler
                     {
                         if ((int)usuarios["plata"] >= (int)objetos["precio_plata"])
                         {
-                            UserManager.Creditos(Session.User, false, false, (int)objetos["precio_plata"]);
+                      
                             for (int a = 0; a < cantidad; a++)
                             {
                                 if (a == 0)
@@ -1169,178 +676,6 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        private static void Packet_Cancelar_Compra(SessionInstance Session)
-        {
-            Packet_189_134(Session);
-        }
-        private static void Packet_Alerta(SessionInstance Session, string Mensaje)
-        {
-            Packet_183(Session, Mensaje);
-        }
-        static void Sapo(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User.Sala != null)
-            {
-                using (mysql client = new mysql())
-                {
-                    int ID = Convert.ToInt32(Parameters[0, 0]);
-                    int accion = Convert.ToInt32(Parameters[1, 0]);
-                    BuyObjectInstance Item = CatalogoManager.ObtenerCompra(ID);
-                    if (Item != null)
-                    {
-                        if (!Session.User.Sala.ObjetosEnSala.ContainsKey(Item.id)) return;
-                        if (Item.usuario_id == Session.User.id)
-                        {
-                            Packet_189_161(Session, ID, Item);
-                        }
-                    }
-                }
-            }
-        }
-        public static void Canjear_objeto_oro(SessionInstance Session, string data, int precio_oro, int id_objeto)
-        {
-            using (mysql client = new mysql())
-            {
-                DataRow objetos_comprados = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE objeto_id = '" + id_objeto + "' AND usuario_id = '" + Session.User.id + "'");
-                if (objetos_comprados != null)
-                {
-                    NotificacionesManager.NotifiChat(Session, "Conejo: Has recibido " + precio_oro / 2 + " por la venta de " + data + "");
-                    UserManager.Creditos(Session.User, true, true, precio_oro / 2);
-                    client.ExecuteNonQuery("DELETE FROM objetos_comprados WHERE objeto_id = '" + id_objeto + "' AND usuario_id = '" + Session.User.id + "' LIMIT 1");
-                    Packet_189_169(Session, -1, id_objeto);
-                }
-            }
-        }
-        static void Vender_Objetos_Oro(SessionInstance Session, string data)
-        {
-            using (mysql client = new mysql())
-            {
-                DataRow objetos = client.ExecuteQueryRow("SELECT * FROM objetos WHERE titulo = '" + data + "'");
-                if (objetos != null)
-                {
-                    int id_objeto = (int)objetos["id"];
-                    int precio_oro = (int)objetos["precio_oro"];
-                    if (precio_oro == -1 || id_objeto == 3065 || id_objeto == 871 || id_objeto == 3067 || id_objeto == 3068 || id_objeto == 3066 || id_objeto == 3063 || id_objeto == 3069)
-                    {
-                        NotificacionesManager.NotifiChat(Session, "Conejo: Algunos objetos no pueden ser vendidos. Solo acepto objetos de Oro.");
-                    }
-                    else
-                    {
-                        DataRow objetos_comprados = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE objeto_id = '" + id_objeto + "' AND usuario_id = '" + Session.User.id + "'");
-                        if (objetos_comprados != null)
-                        {
-                            int sala_id = (int)objetos_comprados["sala_id"];
-                            if (sala_id != 0)
-                            {
-                                NotificacionesManager.NotifiChat(Session, "Conejo: es nesesario tener el objeto en la muchila para poder venderlo.");
-                            }
-                            else
-                            {
-                                ServerMessage alerta = new ServerMessage();
-                                alerta.AddHead(183);
-                                alerta.AppendParameter("Conejo: ¡Consulta la información del objeto aqui!\nNombre de objeto: " + data + " | Precio del objeto en catalago: " + precio_oro + " créditos.\nConejo: Te dare " + precio_oro / 2 + " créditos por el " + data + ".\nEscribe en chat: /si o /no para vender el " + data + "");
-                                Session.SendData(alerta);
-                                Session.User.espera_respuesta_venta_objeto_oro = true;
-                                Session.User.data_objeto_venta = data;
-                                Session.User.precio_objeto_venta = precio_oro;
-                                Session.User.id_objeto_venta = id_objeto;
-                            }
-                        }
-                        else
-                        {
-                            NotificacionesManager.NotifiChat(Session, "Conejo: no pudimos encontrar " + data + " en tu muchila.");
-                            //No tienes este objeto
-                        }
-                    }
-                }
-                else
-                {
-                    NotificacionesManager.NotifiChat(Session, "Conejo: el objeto " + data + " no figura en nuestro catalago.");
-                    // No existe este objeto en catalogo
-                }
-            }
-        }
-        private static void Sistema_Obj_Click(SessionInstance Session, int ID_Objeto, int Compra_ID)
-        {
-            Random random = new Random();
-            if (ID_Objeto == 952)
-            {
-                int Objeto = listas.Objeto_952.Count;
-                int Obtener_Objeto = random.Next(Objeto);
-                int idRandom = listas.Objeto_952[Obtener_Objeto];
-                Añadir_Objeto_Click(Session, idRandom, 1, Compra_ID);
-            }
-            if (ID_Objeto == 959)
-            {
-                int Objeto = listas.Objeto_959.Count;
-                int Obtener_Objeto = random.Next(Objeto);
-                int idRandom = listas.Objeto_959[Obtener_Objeto];
-                Añadir_Objeto_Click(Session, idRandom, 1, Compra_ID);
-            }
-            if (ID_Objeto == 460)
-            {
-                int Objeto = listas.Objeto_460.Count;
-                int Obtener_Objeto = random.Next(Objeto);
-                int idRandom = listas.Objeto_460[Obtener_Objeto];
-                Añadir_Objeto_Click(Session, idRandom, 1, Compra_ID);
-            }
-            if (ID_Objeto == 596)
-            {
-                int Objeto = listas.Objeto_596.Count;
-                int Obtener_Objeto = random.Next(Objeto);
-                int idRandom = listas.Objeto_596[Obtener_Objeto];
-                Añadir_Objeto_Click(Session, idRandom, 1, Compra_ID);
-            }
-            if (ID_Objeto == 481)
-            {
-                int Objeto = listas.Objeto_481.Count;
-                int Obtener_Objeto = random.Next(Objeto);
-                int idRandom = listas.Objeto_481[Obtener_Objeto];
-                Añadir_Objeto_Click(Session, idRandom, 1, Compra_ID);
-            }
-            if (ID_Objeto == 901)
-            {
-                int Objeto = listas.Objeto_901.Count;
-                int Obtener_Objeto = random.Next(Objeto);
-                int idRandom = listas.Objeto_901[Obtener_Objeto];
-                Añadir_Objeto_Click(Session, idRandom, 1, Compra_ID);
-            }
-        }
-        private static void Añadir_Objeto_Click(SessionInstance Session, int ID_Objeto, int Repetir_accion, int Compra_ID)
-        {
-            using (mysql client = new mysql())
-            {
-                client.SetParameter("id", ID_Objeto);
-                DataRow row = client.ExecuteQueryRow("SELECT * FROM objetos WHERE id = @id");
-                if (row != null)
-                {
-                    CatalogObjectInstance item = new CatalogObjectInstance(row);
-
-                    if (Repetir_accion == 1)
-                    {
-
-                    }
-                    else
-                    {
-                        Packet_189_137(Session);
-                        UserManager.Creditos(Session.User, false, false, item.precio_plata);
-                        client.SetParameter("id", item.id);
-                        client.SetParameter("UserID", Session.User.id);
-                        int compra_id = int.Parse(Convert.ToString(client.ExecuteScalar("SELECT MAX(id) FROM objetos_comprados WHERE objeto_id = @id AND usuario_id = @UserID")));
-                        Packet_189_139(Session, item, compra_id, Repetir_accion, "tam_n");
-                        for (int i = 0; i < Repetir_accion; i++)
-                        {
-                            client.SetParameter("item_id", item.id);
-                            client.SetParameter("userid", Session.User.id);
-                            client.SetParameter("hex", item.colores_hex);
-                            client.SetParameter("rgb", item.colores_rgb);
-                            client.SetParameter("tam", item.tam_n);
-                            client.ExecuteNonQuery("INSERT INTO objetos_comprados (`objeto_id`, `colores_hex`, `colores_rgb`, `usuario_id`, `tam`) VALUES (@item_id, @hex, @rgb, @userid, @tam)");
-                        }
-                    }
-                }
-            }
-        }
         static void Comprar_Plata(SessionInstance Session, mysql client, string[,] Parameters)
         {
             int objeto_id = int.Parse(Parameters[0, 0]);
@@ -1370,7 +705,7 @@ namespace BoomBang.game.handler
                                 return;
                             }
                         }
-                        if ((int)objetos["vip"] == 1 && Time.GetDifference(Session.User.vip_double) <= 0) { return; }
+                        if ((int)objetos["vip"] == 1) { return; }
                         if (listas.Objetos_Catalogo_Plata.Contains(objeto_id))
                         {
                             client.SetParameter("id_user", Session.User.id);
@@ -1431,7 +766,7 @@ namespace BoomBang.game.handler
                                 return;
                             }
                         }
-                        if ((int)objetos["vip"] == 1 && Time.GetDifference(Session.User.vip_double) <= 0) { return; }
+                        if ((int)objetos["vip"] == 1) { return; }
                         if (listas.Objetos_Catalogo_Oro.Contains(objeto_id))
                         {
                             client.SetParameter("id_user", Session.User.id);
@@ -1455,12 +790,7 @@ namespace BoomBang.game.handler
                             loteria_numero = (int)loteria["loteria_numero"];
                             loteria_numero++;
                         }
-                        if (objeto_id == 3065)//Cambio de Nombre
-                        {
-                            Session.User.cambio_nombre = 1;
-                            client.SetParameter("id", Session.User.id);
-                            client.ExecuteNonQuery("UPDATE usuarios SET cambio_nombre = '1' WHERE id = @id");
-                        }
+                      
                         int cantidad = 1;
                         if ((string)objetos["swf"] == "Egg_Teleport") { cantidad = 2; }
                         Packet_Aceptar_Compra(Session, objeto_id, false, 0, 0, loteria_numero, true, Parameters[1, 0], cantidad);
@@ -1489,18 +819,7 @@ namespace BoomBang.game.handler
                 server.AppendParameter(-1);
                 server.AppendParameter(Item.titulo);
                 server.AppendParameter(Item.swf);
-                if (Item.id == 871)///Loteria Semanal
-                {
-                    int ultimo_numero_loteria = 0;
-                    DataRow loteria = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE NOT (loteria_numero < (SELECT MAX(loteria_numero) FROM objetos_comprados))");
-                    if (loteria != null)
-                    {
-                        ultimo_numero_loteria = (int)loteria["loteria_numero"];
-                    }
-                    int premio_loteria_total = 250 * ultimo_numero_loteria + 5000;
-                    server.AppendParameter(Item.descripcion + " " + premio_loteria_total + " créditos. El premio sera entregado: " + Fecha_Loteria_Final + "");
-                }
-                else { server.AppendParameter(Item.descripcion); }
+                server.AppendParameter(Item.descripcion);
                 if (Item.limitado == 1) { server.AppendParameter(Item.oro_descuento); }
                 else { server.AppendParameter(Item.precio_oro); }
                 server.AppendParameter(Item.precio_plata);
@@ -1810,16 +1129,6 @@ namespace BoomBang.game.handler
             server.AppendParameter(coor);
             Session.User.Sala.SendData(server, Session);
         }
-        private static void Packet_189_157(SessionInstance Session, BuyObjectInstance Item, int ID)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(189);
-            server.AddHead(157);
-            server.AppendParameter(ID);
-            server.AppendParameter(Session.User.Sala.ObjetosEnSala[Item.id].posX);
-            server.AppendParameter(Session.User.Sala.ObjetosEnSala[Item.id].posY);
-            Session.User.Sala.SendData(server, Session);
-        }
         private static void Packet_189_158(SessionInstance Session, int ID, int Estado)
         {
             ServerMessage server = new ServerMessage();
@@ -1827,26 +1136,6 @@ namespace BoomBang.game.handler
             server.AddHead(158);
             server.AppendParameter(ID);
             server.AppendParameter(Estado);
-            Session.User.Sala.SendData(server, Session);
-        }
-        private static void Packet_189_156(SessionInstance Session, int ID, int apartado, string data)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(189);
-            server.AddHead(156);
-            server.AppendParameter(ID);
-            server.AppendParameter(apartado);
-            server.AppendParameter(data);
-            Session.User.Sala.SendData(server, Session);
-        }
-        private static void Packet_189_164(SessionInstance Session, string[,] Parameters)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(189);
-            server.AddHead(164);
-            server.AppendParameter(Parameters[0, 0]);
-            server.AppendParameter(Parameters[1, 0]);
-            server.AppendParameter(Parameters[2, 0]);
             Session.User.Sala.SendData(server, Session);
         }
         private static void Packet_189_159(SessionInstance Session, string[,] Parameters)
@@ -1868,16 +1157,6 @@ namespace BoomBang.game.handler
             server.AppendParameter(coor);
             Session.User.Sala.SendData(server, Session);
         }
-        private static void Packet_189_160_121(SessionInstance Session, int ID, int accion)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(189);
-            server.AddHead(160);
-            server.AddHead(121);
-            server.AppendParameter(ID);
-            server.AppendParameter(accion);
-            Session.User.Sala.SendData(server, Session);
-        }
         private static void Packet_189_134(SessionInstance Session)
         {
             ServerMessage server = new ServerMessage();
@@ -1893,42 +1172,6 @@ namespace BoomBang.game.handler
             server.AddHead(137);
             server.AppendParameter(1);
             Session.SendData(server);
-        }
-        
-        private static void Packet_183(SessionInstance Session, string mensaje)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(183);
-            server.AppendParameter(mensaje);
-            Session.SendData(server);
-        }
-        private static void Packet_189_161(SessionInstance Session, int ID, BuyObjectInstance Item)
-        {
-            int valor = new Random().Next(0, 11);
-            int estado = 1;
-            if (valor >= 2 && valor <= 10)
-            {
-                estado = 2;
-                int contador = Convert.ToInt32(Item.data) + 1;
-                Item.data = Convert.ToString(contador);
-            }
-            else
-            {
-                estado = 1;
-                Item.data = "0";
-            }
-            ServerMessage server = new ServerMessage();
-            server.AddHead(189);
-            server.AddHead(161);
-            server.AppendParameter(ID);
-            server.AppendParameter(Convert.ToInt32(Item.data));
-            server.AppendParameter(estado);
-            Session.User.Sala.SendData(server, Session);
-
-            mysql client = new mysql();
-            client.SetParameter("id", Item.id);
-            client.SetParameter("data", Item.data);
-            client.ExecuteNonQuery("UPDATE objetos_comprados SET data = @data WHERE id = @id");
         }
     }
 }

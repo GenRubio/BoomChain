@@ -15,7 +15,6 @@ namespace BoomBang.game.handler
     {
         public static void Start()
         {
-            HandlerManager.RegisterHandler(130, new ProcessHandler(Tutorial_Islas));
             HandlerManager.RegisterHandler(189120, new ProcessHandler(CrearIsla));
             HandlerManager.RegisterHandler(189124, new ProcessHandler(MostrarIsla));
             HandlerManager.RegisterHandler(189121, new ProcessHandler(CrearZona));
@@ -24,21 +23,7 @@ namespace BoomBang.game.handler
             HandlerManager.RegisterHandler(189130, new ProcessHandler(RenombrarZona));
             HandlerManager.RegisterHandler(189129, new ProcessHandler(RenombrarIsla));
             HandlerManager.RegisterHandler(189126, new ProcessHandler(CambiarDescripcion));
-            HandlerManager.RegisterHandler(189147, new ProcessHandler(ExpulsarUsuario));
             HandlerManager.RegisterHandler(189146, new ProcessHandler(CambiarColores));
-        }
-        private static void Tutorial_Islas(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null)
-                {
-                    if (Session.User.Sala.Escenario.es_categoria != 0) return;
-                    Session.User.tutorial_islas = 0;
-                    UserManager.Creditos(Session.User, false, true, 10000);
-                    Session.User.Sala.ActualizarEstadisticas(Session.User);
-                }
-            }
         }
         private static void CambiarDescripcion(SessionInstance Session, string[,] Parameters)
         {
@@ -72,30 +57,6 @@ namespace BoomBang.game.handler
                         new Thread(() => EscenariosManager.CambiarColores(Session.User.Sala.Escenario, Parameters[0, 0], Parameters[1, 0])).Start();
                         Packet_189_146(Session, Parameters[0, 0], Parameters[1, 0]);
                         Session.User.PreLock__Proteccion_SQL = true;
-                    }
-                }
-            }
-        }
-        private static void ExpulsarUsuario(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null)
-                {
-                    if (EscenariosManager.ControlDeSeguridad(Session.User, Session.User.Sala.Escenario))
-                    {
-                        SessionInstance SessionToKick = UserManager.ObtenerSession(int.Parse(Parameters[1, 0]));
-                        if (SessionToKick != null)
-                        {
-                            SessionInstance SessionToKick_2 = Session.User.Sala.ObtenerSession(SessionToKick.User.IDEspacial);
-                            if (SessionToKick_2 != null)
-                            {
-                                if (SessionToKick_2.User.id == SessionToKick.User.id)
-                                {
-                                    SalasManager.Salir_Sala(SessionToKick, true);
-                                }
-                            }
-                        }
                     }
                 }
             }

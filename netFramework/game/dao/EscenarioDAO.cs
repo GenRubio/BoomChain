@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace BoomBang.game.dao
 {
     class EscenarioDAO
-    {
+    { 
         public static EscenarioInstance getEscenarioPrivate(int id)
         {
             mysql client = new mysql();

@@ -38,12 +38,7 @@ namespace BoomBang.game.handler
             {
                 if (Session.User.Sala != null)
                 {
-                    if (Session.User.block_upper == true)
-                    {
-                        Session.User.block_upper = false;
-                        Session.User.colores = Session.User.colores_old;
-                        Session.User.colores_old = "";
-                    }
+                  
                     if (SalaInstance.UsuariosEnObjetos.ContainsKey(Session.User.id))
                     {
                         SalaInstance.UsuariosEnObjetos.Remove(Session.User.id);

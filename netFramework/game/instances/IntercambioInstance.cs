@@ -1,4 +1,4 @@
-﻿using BoomBang.server;
+using BoomBang.server;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -46,34 +46,7 @@ namespace BoomBang.game.instances
             this.Session_2.SendData(server_2);
 
         }
-        public void TerminarCanjeo()
-        {
-            Cambios_Session_1_Aceptados = false;
-            Cambios_Session_2_Aceptados = false;
-            Cambios_Session_1_Cambiar = false;
-            Cambios_Session_2_Cambiar = false;
-            Session_1.User.Intercambio = null;
-            Session_2.User.Intercambio = null;
-
-            ServerMessage server_1 = new ServerMessage();
-            server_1.AddHead(199);
-            server_1.AddHead(124);
-            server_1.AppendParameter(ID);
-            server_1.AppendParameter(Session_1.User.id);
-            server_1.AppendParameter(Session_2.User.id);
-            Session_1.SendData(server_1);
-
-            ServerMessage server_2 = new ServerMessage();
-            server_2.AddHead(199);
-            server_2.AddHead(124);
-            server_2.AppendParameter(ID);
-            server_2.AppendParameter(Session_2.User.id);
-            server_2.AppendParameter(Session_1.User.id);
-            Session_2.SendData(server_2);
-            
-            Session_1_Objetos.Clear();
-            Session_2_Objetos.Clear();
-        }
+    
         public void PonerObjeto(SessionInstance Session, BuyObjectInstance Compra)
         {
             if (Session_1.User.id == Session.User.id)
@@ -142,59 +115,7 @@ namespace BoomBang.game.instances
                 }
             }
         }
-        public void CambiarObjetos(SessionInstance Session)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(199);
-            server.AddHead(123);
-            server.AppendParameter(ID);
-            if (Session_1.User.id == Session.User.id)
-            {
-                if (Cambios_Session_1_Aceptados)
-                {
-                    Cambios_Session_1_Cambiar = true;
-                    server.AppendParameter(Session.User.id);
-                }
-            }
-            if (Session_2.User.id == Session.User.id)
-            {
-                if (Cambios_Session_2_Aceptados)
-                {
-                    Cambios_Session_2_Cambiar = true;
-                    server.AppendParameter(Session.User.id);
-                }
-            }
-            Thread.Sleep(new TimeSpan(0, 0, 0, 0, 200));
-            Session_1.SendData(server);
-            Session_2.SendData(server);
-            if (Cambios_Session_1_Aceptados == true && Cambios_Session_1_Cambiar == true && Cambios_Session_2_Aceptados == true && Cambios_Session_2_Cambiar == true)
-            {
-                if (RealizarCanje())
-                {
-                    Session_1_Objetos.Clear();
-                    Session_2_Objetos.Clear();
-                    Cambios_Session_1_Aceptados = false;
-                    Cambios_Session_2_Aceptados = false;
-                    Cambios_Session_1_Cambiar = false;
-                    Cambios_Session_2_Cambiar = false;
-                    Session_1.User.Intercambio = null;
-                    Session_2.User.Intercambio = null;
-
-
-                    ServerMessage server_1 = new ServerMessage();
-                    server_1.AddHead(199);
-                    server_1.AddHead(127);
-                    server_1.AppendParameter(Session_1.User.id);
-                    Session_1.SendData(server_1);
-
-                    ServerMessage server_2 = new ServerMessage();
-                    server_2.AddHead(199);
-                    server_2.AddHead(127);
-                    server_2.AppendParameter(Session_2.User.id);
-                    Session_2.SendData(server_2);
-                }
-            }
-        }
+      
         private bool RealizarCanje()
         {
             try

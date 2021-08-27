@@ -29,7 +29,6 @@ namespace BoomBang.game.manager
                 IslasHandler.Start();
                 MiniGamesHandler.Start();
                 PingHandler.Start();
-                npcHandler.Start();
               
                 string console = "Se han registrado " + Handlers.Count + " handlers.";
                 Emulator.Form.WriteLine(console);

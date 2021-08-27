@@ -62,7 +62,7 @@ namespace BoomBang.server
                         if (Session.User.PreLock_Interactuando == true) continue;
                         if (Session.User.PreLock_Caminando == true) continue;
                         if (Session.User.Sala.PathFinder == false) continue;
-                        if (Session.User.contar_pasos > 0) { Session.User.contar_pasos--; }
+  
                         Posicion SiguienteMovimiento = Session.User.Trayectoria.SiguienteMovimiento();
                         if (!Session.User.Trayectoria.MovementIsVerifield(SiguienteMovimiento)) continue;
                         if (SiguienteMovimiento.y < Session.User.Sala.MapSizeY && SiguienteMovimiento.x < Session.User.Sala.MapSizeX)

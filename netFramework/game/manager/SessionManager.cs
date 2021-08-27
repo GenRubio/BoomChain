@@ -1,4 +1,4 @@
-﻿using BoomBang.game.instances;
+using BoomBang.game.instances;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +27,14 @@ namespace BoomBang.game.manager
         {
             new SessionInstance(Servidor.EndAcceptSocket(result));
             EsperarConexiones();
+        }
+        public static SessionInstance ObtenerSession(int user_id)
+        {
+            if (UserManager.UsuariosOnline.ContainsKey(user_id))
+            {
+                return UserManager.UsuariosOnline[user_id];
+            }
+            return null;
         }
     }
 }

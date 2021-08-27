@@ -54,7 +54,7 @@ namespace BoomBang.game.manager
                     foreach (DataRow row in client.ExecuteQueryTable("SELECT * FROM objetos_comprados WHERE sala_id = @id").Rows)
                     {
                         BuyObjectInstance Compra = new BuyObjectInstance(row);
-                        SessionInstance Session = UserManager.ObtenerSession(Compra.usuario_id);
+                        SessionInstance Session = SessionManager.ObtenerSession(Compra.usuario_id);
                         if (Session != null)
                         {
                             ServerMessage añadir_mochila = new ServerMessage();

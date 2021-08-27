@@ -252,7 +252,7 @@ namespace BoomBang.game.manager
                             items_tiempos_manager(Item, "segundos_items_cmb");
                             break;
                         case "cofre_oro":
-                            UserManager.Creditos(Session.User, true, true, 1000);
+                           
                             Item.Sala.Alerta(Session.User.nombre + " ha atrapado un cofre y obtiene: 1000 créditos.");
                             items_tiempos_manager(Item, "segundos_cofre");
                             break;
@@ -278,7 +278,7 @@ namespace BoomBang.game.manager
                         if (Numero == 1) { Creditos = 25; }
                         if (Numero == 2) { Creditos = 50; }
                         if (Numero == 3) { Creditos = 100; }
-                        UserManager.Creditos(Session.User, false, true, Creditos);
+                        
                         Item.Sala.Alerta(Session.User.nombre + " ha atrapado un cofre y obtiene: " + Creditos + " monedas de plata.");
                         items_tiempos_manager(Item, "segundos_cofre");
                         break;

@@ -237,26 +237,6 @@ namespace BoomBang.game.manager
                 client.SetParameter("puerta_16", 0);
                 return;
             }
-            //if (id == 2)
-            //{
-            //    client.SetParameter("puerta_1", 1);
-            //    client.SetParameter("puerta_2", 0);
-            //    client.SetParameter("puerta_3", 0);
-            //    client.SetParameter("puerta_4", 0);
-            //    client.SetParameter("puerta_5", 0);
-            //    client.SetParameter("puerta_6", 0);
-            //    client.SetParameter("puerta_7", 0);
-            //    client.SetParameter("puerta_8", 1);
-            //    client.SetParameter("puerta_9", 1);
-            //    client.SetParameter("puerta_10", 0);
-            //    client.SetParameter("puerta_11", 0);
-            //    client.SetParameter("puerta_12", 0);
-            //    client.SetParameter("puerta_13", 0);
-            //    client.SetParameter("puerta_14", 0);
-            //    client.SetParameter("puerta_15", 0);
-            //    client.SetParameter("puerta_16", 1);
-            //    return;
-            //}
             if (id == 2)
             {
                 client.SetParameter("puerta_1", 1);

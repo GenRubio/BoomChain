@@ -91,87 +91,6 @@ namespace BoomBang.game.handler
                  Packet_120_141(Session);
             }
         }
-        private static void Noticia_handler(SessionInstance Session)
-        {
-            mysql client = new mysql();
-            client.ExecuteNonQuery("UPDATE usuarios SET noticia_registro = 0 WHERE id = '" + Session.User.id + "'");
-            Session.User.noticia_registro = 0;
-        }
-        private static void handler_120147121(SessionInstance Session)
-        {
-            if (Time.GetDifference(Session.User.timespam_regalo_grande) >= 1)
-            {
-                TimeSpan tiempo = TimeSpan.FromSeconds(Time.GetDifference(Session.User.timespam_regalo_grande));
-                 Packet_183(Session, "¡Mega Regalo!\rPróximo regalo en: " + tiempo + "\rContenido: Objetos: Rare, Muy Rare, Casi Unicos, Unicos        vv Baja vv\rCreditos: 1k, 1.5k, 2.0k, 2.5k, 3.0k - 10k, 15k, 20k, 25k , 30k (Plata - Oro)\rPuntos: Shurikens: 10 - 25 - 35 - 50 || Coco: 10 - 25 - 35 - 50\rVIP: 1Mes || 3Meses || 6Meses");
-            }
-            if (Time.GetDifference(Session.User.timespam_regalo_grande) <= 0)
-            {
-                Session.User.timespam_regalo_grande = 0;
-                Session.User.timespam_regalo_grande = Time.GetCurrentAndAdd(AddType.Horas, 8);
-                UserManager.ActualizarEstadisticas(Session.User);
-                 Packet_120_147_121(Session);
-             
-            }
-        }
-        private static void handler_120137(SessionInstance Session)
-        {
-            Session.User.timespam_regalo_peque = 0;
-            Session.User.timespam_regalo_peque = Time.GetCurrentAndAdd(AddType.Dias, 1);
-       
-        }
-        private static void handler_120146(SessionInstance Session, string nombre)
-        {
-            mysql client = new mysql();
-            DataRow objeto = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE objeto_id = '3065' AND usuario_id = '" + Session.User.id + "'");
-            if (objeto != null)
-            {
-                DataRow comprobar_nombre = client.ExecuteQueryRow("SELECT * FROM usuarios WHERE nombre = '" + nombre + "'");
-                if (comprobar_nombre != null)
-                {
-                    Packet_120_146(Session, 0);
-                    return;
-                }
-                client.ExecuteNonQuery("UPDATE usuarios SET nombre_antiguo = '" + Session.User.nombre + "' WHERE id = '" + Session.User.id + "'");
-                client.ExecuteNonQuery("UPDATE usuarios SET nombre = '" + nombre + "' WHERE id = '" + Session.User.id + "'");
-                client.ExecuteNonQuery("UPDATE usuarios SET cambio_nombre = '0' WHERE id = '" + Session.User.id + "'");
-                client.ExecuteNonQuery("DELETE FROM objetos_comprados WHERE objeto_id = '3065' AND usuario_id = '" + Session.User.id + "' LIMIT 1");
-                Session.User.nombre = nombre;
-                Packet_120_146(Session, 1);
-                Packet_189_169(Session, -1, 3065);
-            }
-        }
-        private static void Packet_132_127(SessionInstance Session, string Parameters)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(132);
-            server.AddHead(127);
-            server.AppendParameter(0);
-            server.AppendParameter(Session.User.id);
-            server.AppendParameter(Convert.ToString(DateTime.Now).Substring(0, 16));
-            server.AppendParameter(Parameters);
-            server.AppendParameter(2);
-            Session.SendData(server);
-        }
-        private static void Packet_120_147_120(SessionInstance Session)
-        {
-            Thread.Sleep(new TimeSpan(0, 0, 0, 0, 500));
-            ServerMessage server = new ServerMessage();
-            server.AddHead(120);
-            server.AddHead(147);
-            server.AddHead(120);
-            server.AppendParameter(1);
-            server.AppendParameter(Time.GetDifference(Session.User.timespam_regalo_grande));
-            server.AppendParameter(1);
-            Session.SendDataProtected(server);
-        }
-        private static void Packet_209_128(SessionInstance Session)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(209);
-            server.AddHead(128);
-            server.AppendParameter(0);
-            Session.SendData(server);
-        }
         private static void Packet_210_120(SessionInstance Session)
         {
             ServerMessage server = new ServerMessage();
@@ -206,40 +125,6 @@ namespace BoomBang.game.handler
             server.AddHead(141);
             server.AppendParameter(0);
             Session.SendDataProtected(server);
-        }
-        private static void Packet_183(SessionInstance Session, string mensaje)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(183);
-            server.AppendParameter(mensaje);
-            Session.SendData(server);
-        }
-        private static void Packet_120_147_121(SessionInstance Session)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(120);
-            server.AddHead(147);
-            server.AddHead(121);
-            server.AppendParameter(1);
-            Session.SendData(server);
-        }
-        private static void Packet_120_146(SessionInstance Session, int parametro)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(120);
-            server.AddHead(146);
-            server.AppendParameter(parametro);
-            Session.SendData(server);
-        }
-        private static void Packet_189_169(SessionInstance Session, int compra_id, int Item)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(189);
-            server.AddHead(169);
-            server.AppendParameter(compra_id);
-            server.AppendParameter(Item);
-            server.AppendParameter(1);
-            Session.SendData(server);
         }
     }
 }

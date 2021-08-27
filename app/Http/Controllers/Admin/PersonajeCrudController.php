@@ -28,46 +28,6 @@ class UsuarioCrudController extends CrudController
             'label' => 'Nombre',
             'type' => 'text'
         ]);
-        $this->crud->addColumn([
-            'name' => 'metamask',
-            'label' => 'Metamask',
-            'type' => 'text'
-        ]);
-        $this->crud->addColumn([
-            'name' => 'token_uid',
-            'label' => 'UID',
-            'type' => 'text'
-        ]);
-        $this->crud->addColumn([
-            'name' => 'oro',
-            'label' => 'Creditos',
-            'type' => 'text'
-        ]);
-        $this->crud->addColumn([
-            'name' => 'email',
-            'label' => 'Email',
-            'type' => 'email'
-        ]);
-        $this->crud->addColumn([
-            'name' => 'ip_registro',
-            'label' => 'IP Registro',
-            'type' => 'text'
-        ]);
-        $this->crud->addColumn([
-            'name' => 'ip_actual',
-            'label' => 'IP actual',
-            'type' => 'text'
-        ]);
-        $this->crud->addColumn([
-            'name' => 'ultima_conexion',
-            'label' => 'Ultima conexion',
-            'type' => 'text'
-        ]);
-        $this->crud->addColumn([
-            'name' => 'fecha_registro',
-            'label' => 'Fecha registro',
-            'type' => 'text'
-        ]);
     }
     protected function setupCreateOperation()
     {
