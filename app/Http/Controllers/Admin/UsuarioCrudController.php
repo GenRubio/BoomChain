@@ -23,6 +23,8 @@ class UsuarioCrudController extends CrudController
 
     protected function setupListOperation()
     {
+        $this->crud->addButtonFromView('line', 'personaje', 'personaje', 'beginning');
+
         $this->crud->addColumn([
             'name' => 'nombre',
             'label' => 'Nombre',
@@ -73,11 +75,98 @@ class UsuarioCrudController extends CrudController
     {
         CRUD::setValidation(UsuarioRequest::class);
 
-        CRUD::setFromDb(); // fields
+        $this->basicFieldsCreate();
     }
+    protected function basicFieldsCreate()
+    {
+        $this->crud->addFields([
+            [
+                'name' => 'metamask',
+                'label' => 'Metamask',
+                'type' => 'text'
+            ],
+            [
+                'name' => 'email',
+                'label' => 'Email',
+                'type' => 'email'
+            ],
+            [
+                'name' => 'password',
+                'label' => 'Contraseña',
+                'type' => 'password'
+            ],
+            [
+                'name' => 'oro',
+                'label' => 'Creditos',
+                'type' => 'number',
+                'default' => 0
+            ],
+            [
+                'name' => 'admin',
+                'label' => 'Administrador',
+                'type' => 'radio',
+                'options' => [
+                    1 => 'Si',
+                    0 => 'No'
+                ],
+                'default' => 0,
+                'inline' => true,
+            ],
+            [
+                'name' => 'nombre',
+                'type' => 'hidden'
+            ],
+            [
+                'name' => 'token_uid',
+                'type' => 'hidden'
+            ],
+            [
+                'name' => 'avatar',
+                'type' => 'hidden'
+            ],
+            [
+                'name' => 'colores',
+                'type' => 'hidden'
+            ],
+            [
+                'name' => 'edad',
+                'type' => 'hidden'
+            ],
+            [
+                'name' => 'ip_registro',
+                'type' => 'hidden'
+            ],
+            [
+                'name' => 'ip_actual',
+                'type' => 'hidden'
+            ],
+            [
+                'name' => 'ultima_conexion',
+                'type' => 'hidden'
+            ],
+            [
+                'name' => 'fecha_registro',
+                'type' => 'hidden'
+            ],
+        ]);
+    }
+
+    protected function basicFieldsUpdate()
+    {
+        $this->crud->addFields([
+            [
+                'name' => 'metamask',
+                'label' => 'Metamask',
+                'type' => 'text'
+            ],
+        ]);
+    }
+
 
     protected function setupUpdateOperation()
     {
-        $this->setupCreateOperation();
+        CRUD::setValidation(UsuarioRequest::class);
+
+        $this->basicFieldsUpdate();
     }
 }
