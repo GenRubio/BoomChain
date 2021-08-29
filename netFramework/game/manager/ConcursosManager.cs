@@ -84,23 +84,7 @@ namespace BoomBang.game.manager
         }
         public static void items_tiempos_manager(ObjetoLanzadoInstance item, string typo)
         {
-            if (typo == "segundos_cofre") { item.Sala.Escenario.segundos_cofre = new Random().Next(60, 120); }
-            if (typo == "segundos_coco_igloo") { item.Sala.Escenario.segundos_coco_igloo = 360; }
-            if (typo == "segundos_shuriken_igloo") { item.Sala.Escenario.segundos_shuriken_igloo = 600; }
-            if (typo == "segundos_evento_semanal") { item.Sala.Escenario.segundos_evento_semanal = new Random().Next(120, 300); ; }
-            if (typo == "segundos_items_cmb")
-            {
-                if (item.Item.id >= 7 && item.Item.id <= 21)//Objetos cementerio
-                {
-                    int[] segundos = { 60, 30, 25, 20, 15, 10 };
-                    item.Sala.Escenario.segundos_items_cmb = segundos[new Random().Next(segundos.Length)];
-                }
-                else//Objetos bosque - madriguera
-                {
-                    int[] segundos = { 60, 120, 180, 240 };
-                    item.Sala.Escenario.segundos_items_cmb = segundos[new Random().Next(segundos.Length)];
-                }
-            }
+           
         }
         public static void AbrirObjeto(ObjetoLanzadoInstance Item, SessionInstance Session)
         {

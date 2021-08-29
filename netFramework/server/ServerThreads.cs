@@ -15,15 +15,6 @@ namespace BoomBang.server
             new Thread(Pathfinder).Start();
             new Thread(Ping).Start();
             new Thread(mGamesCall).Start();
-            new Thread(ObjetosSistem).Start();
-        }
-        private static void ObjetosSistem()
-        {
-            while (true)
-            {
-                ObjetosSistem_Manager();
-                Thread.Sleep(1000);
-            }
         }
         private static void mGamesCall()
         {
@@ -119,97 +110,6 @@ namespace BoomBang.server
             MiniGamesManager.BuscarParticipantes(GameType.Sendero, 7);
             MiniGamesManager.BuscarParticipantes(GameType.Camino, 12);
             MiniGamesManager.BuscarParticipantes(GameType.Camino, 13);
-        }
-        private static void ObjetosSistem_Manager()
-        {
-            foreach (SalaInstance salas_publicas in SalasManager.Salas_Publicas.Values)
-            {
-                if (salas_publicas.Escenario.modelo == salas_publicas.Escenario.id)
-                {
-                    if (salas_publicas.Visitantes >= 2)
-                    {
-                        if (salas_publicas.Escenario.segundos_cofre > 0) { salas_publicas.Escenario.segundos_cofre--; }
-                        else//Los contadores de cofres
-                        {
-                            int cofre_type = new Random().Next(1, 20);
-                            if (cofre_type == 10) { ConcursosManager.Lanzar_Objeto(salas_publicas, 1, "segundos_cofre"); }//Oro
-                            else if (cofre_type == 5 || cofre_type == 9) { ConcursosManager.Lanzar_Objeto(salas_publicas, 29, "segundos_cofre"); }//Caja Pocion
-                            else
-                            {
-                                ConcursosManager.Lanzar_Objeto(salas_publicas, 2, "segundos_cofre");// Cofre Plata
-                            }
-                            //Output.WriteLine("Cofre lanzado en area " + salas_publicas.Escenario.nombre);
-                        }
-                        if (salas_publicas.Escenario.id == 9)//Los contadores de coco - shuriken en Igloo
-                        {
-                            if (salas_publicas.Escenario.segundos_coco_igloo > 0) { salas_publicas.Escenario.segundos_coco_igloo--; }
-                            else//Contador de Coco
-                            {
-                                ConcursosManager.Lanzar_Objeto(salas_publicas, 5, "segundos_coco_igloo");//Coco
-
-                                string console = "Item coco lanzado en area " + salas_publicas.Escenario.nombre;
-                                Emulator.Form.WriteLine(console);
-                            }
-                            if (salas_publicas.Escenario.segundos_shuriken_igloo > 0) { salas_publicas.Escenario.segundos_shuriken_igloo--; }
-                            else//Contador de Shurikens
-                            {
-                                ConcursosManager.Lanzar_Objeto(salas_publicas, 6, "segundos_shuriken_igloo");//Shuriken
-                            }
-                        }
-                    }
-                    ///****************************************************************************************************************************************************************
-                  
-                    ///****************************************************************************************************************************************************************
-                    if (salas_publicas.Escenario.id >= 26 && salas_publicas.Escenario.id <= 55 || salas_publicas.Escenario.id >= 57 && salas_publicas.Escenario.id <= 74 || salas_publicas.Escenario.id >= 78 && salas_publicas.Escenario.id <= 96)
-                    {
-                        if (salas_publicas.Escenario.segundos_items_cmb > 0) { salas_publicas.Escenario.segundos_items_cmb--; }//Contadores areas Cementerio - Bosque - Madirguera
-                        else
-                        {
-                            if (salas_publicas.Escenario.id >= 26 && salas_publicas.Escenario.id <= 55) //Items Cementerio
-                            {
-                                int Type = new Random().Next(1, 3);
-                                int ListaObjetos = 0;
-                                if (Type == 1) { ListaObjetos = new Random().Next(7, 13); }
-                                if (Type == 2) { ListaObjetos = new Random().Next(14, 22); }
-                                ConcursosManager.Lanzar_Objeto(salas_publicas, ListaObjetos, "segundos_items_cmb");
-                            }
-                            if (salas_publicas.Escenario.id >= 57 && salas_publicas.Escenario.id <= 74)//Items Bosque
-                            {
-                                int Objeto_Bosque = new Random().Next(1, 6);
-                                if (Objeto_Bosque == 3)
-                                {
-                                    ConcursosManager.Lanzar_Objeto(salas_publicas, 22, "segundos_items_cmb");
-                                } //Donut congelado
-                                else
-                                {
-                                    ConcursosManager.Lanzar_Objeto(salas_publicas, 23, "segundos_items_cmb");
-                                } //Bola de nieve
-                            }
-                            if (salas_publicas.Escenario.id >= 78 && salas_publicas.Escenario.id <= 96)//Items Madriguera
-                            {
-                                ConcursosManager.Lanzar_Objeto(salas_publicas, 24, "segundos_items_cmb");
-                            }
-                        }
-                    }
-                }
-            }
-            foreach (SalaInstance salas_privadas in SalasManager.Salas_Privadas.Values)
-            {
-                if (salas_privadas.Visitantes > 0)//Items que caen en islas
-                {
-                    if (salas_privadas.Escenario.segundos_cofre > 0) { salas_privadas.Escenario.segundos_cofre--; }
-                    else
-                    {
-                        int cofre_type = new Random().Next(1, 20);
-                        if (cofre_type == 10) { ConcursosManager.Lanzar_Objeto(salas_privadas, 1, "segundos_cofre"); }//Oro
-                        else if (cofre_type == 5 || cofre_type == 9) { ConcursosManager.Lanzar_Objeto(salas_privadas, 29, "segundos_cofre"); }//Caja Pocion
-                        else
-                        {
-                            ConcursosManager.Lanzar_Objeto(salas_privadas, 2, "segundos_cofre");// Cofre Plata
-                        }
-                    }
-                }
-            }
         }
     }
 }
