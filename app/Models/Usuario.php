@@ -169,7 +169,7 @@ class Usuario extends Authenticatable
         if ($value == null) {
             $this->attributes['token_uid'] = $this->createTokenUID();
         } else {
-            $this->attributes['token_uid'] = $this->attributes['token_uid'];
+            $this->attributes['token_uid'] = $value;
         }
     }
 
@@ -178,7 +178,7 @@ class Usuario extends Authenticatable
         if ($value == null) {
             $this->attributes['nombre'] = $this->createNameUID();
         } else {
-            $this->attributes['nombre'] = $this->attributes['nombre'];
+            $this->attributes['nombre'] = $value;
         }
     }
 

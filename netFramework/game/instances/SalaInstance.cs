@@ -619,9 +619,9 @@ namespace BoomBang.game.instances
                 server.AppendParameter(new object[] { 1, -1, -1, 4, 5, 6, 7, 8, 9, 10, 0, -1, 13, 14, -1, 16 });
                 server.AppendParameter(new object[] { 4, -1, -1, 4, 4, 4, 4, 4, 4, 4, 0, -1, 4, 4, -1, 4 });
                 server.AppendParameter(new object[] { 0, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, -1, 0 });//Puerta Categoría
-                server.AppendParameter(CasasManager.Get_Door_Location_Model(Escenario, Escenario.Creador.id));
+                server.AppendParameter(-1);
                 server.AppendParameter(new object[] { "puerta_1", "puerta_2", "puerta_3", "puerta_4", "puerta_5", "puerta_6", "puerta_7", "puerta_8", "puerta_9", "puerta_10", "puerta_11", "puerta_12", "puerta_13", "puerta_14", "puerta_15", "puerta_16" });
-                server.AppendParameter(CasasManager.Get_Key(Escenario.modelo));
+                server.AppendParameter(-1);
                 server.AppendParameter(new object[] { 0, 0, 0, 578, 631, 149, 210, 319, 0, 445, 1120, 0, 0});//Aqui van las llaves de las casas
                 server.AppendParameter(new object[] { Escenario.terreno_something_1, Escenario.object_something_1 });
                 server.AppendParameter(new object[] { Escenario.terreno_something_2, Escenario.object_something_2 });

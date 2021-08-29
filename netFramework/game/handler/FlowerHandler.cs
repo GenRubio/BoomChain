@@ -25,6 +25,15 @@ namespace BoomBang.game.handler
             HandlerManager.RegisterHandler(120147120, loadFlowerInterfaz);//Regalo Grande
             HandlerManager.RegisterHandler(132120, new ProcessHandler(Method_132_120));
             HandlerManager.RegisterHandler(132121, new ProcessHandler(Method_132_121));
+            HandlerManager.RegisterHandler(120143, new ProcessHandler(Method_120_143));
+        }
+        private static void Method_120_143(SessionInstance Session, string[,] Parameters)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(120);
+            server.AddHead(143);
+            server.AppendParameter(0);
+            Session.SendData(server);
         }
         private static void Method_132_121(SessionInstance Session, string[,] Parameters)
         {

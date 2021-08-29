@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\UsuarioRequest;
+use App\Http\Requests\UsuarioUpdateRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -159,13 +160,65 @@ class UsuarioCrudController extends CrudController
                 'label' => 'Metamask',
                 'type' => 'text'
             ],
+            [
+                'name' => 'email',
+                'label' => 'Email',
+                'type' => 'email'
+            ],
+            [
+                'name' => 'password',
+                'label' => 'Contraseña',
+                'type' => 'password'
+            ],
+            [
+                'name' => 'oro',
+                'label' => 'Creditos',
+                'type' => 'number',
+                'default' => 0
+            ],
+            [
+                'name' => 'admin',
+                'label' => 'Administrador',
+                'type' => 'radio',
+                'options' => [
+                    1 => 'Si',
+                    0 => 'No'
+                ],
+                'default' => 0,
+                'inline' => true,
+            ],
+            [
+                'name' => 'nombre',
+                'label' => 'Nombre',
+                'type' => 'text'
+            ],
+            [
+                'name' => 'ip_registro',
+                'label' => 'IP Registro',
+                'type' => 'text'
+            ],
+            [
+                'name' => 'ip_actual',
+                'label' => 'IP Actual',
+                'type' => 'text'
+            ],
+            [
+                'name' => 'ultima_conexion',
+                'label' => 'Ultima Conexion',
+                'type' => 'datetime'
+            ],
+            [
+                'name' => 'fecha_registro',
+                'label' => 'Fecha Registro',
+                'type' => 'datetime'
+            ],
         ]);
     }
 
 
     protected function setupUpdateOperation()
     {
-        CRUD::setValidation(UsuarioRequest::class);
+        CRUD::setValidation(UsuarioUpdateRequest::class);
 
         $this->basicFieldsUpdate();
     }

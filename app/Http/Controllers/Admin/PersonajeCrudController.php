@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Requests\PersonajeUpdateRequest;
 use App\Http\Requests\UsuarioRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -71,24 +72,166 @@ class PersonajeCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'avatar',
             'label' => 'Avatar',
-            'type' => 'text'
-        ]);
-        $this->crud->addColumn([
-            'name' => 'colores',
-            'label' => 'Colores',
-            'type' => 'text'
+            'type'    => 'select_from_array',
+            'options' => config('app.personajes'),
         ]);
         $this->crud->addColumn([
             'name' => 'edad',
             'label' => 'Color ficha',
-            'type' => 'text'
+            'type'    => 'select_from_array',
+            'options' => config('app.ficha_colores'),
+        ]);
+    }
+    protected function basicFieldsCreate()
+    {
+        $this->crud->addFields([
+            [
+                'name' => 'nombre',
+                'label' => 'Nombre',
+                'type' => 'text',
+                'attributes' => [
+                    'readonly'    => 'readonly',
+                  ],
+            ],
+            [
+                'name' => 'avatar',
+                'label' => 'Avatar',
+                'type' => 'select_from_array',
+                'options' => config('app.personajes'),
+            ],
+            [
+                'name' => 'edad',
+                'label' => 'Color ficha',
+                'type' => 'select_from_array',
+                'options' => config('app.ficha_colores'),
+            ],
+            [
+                'name' => 'bocadillo',
+                'label' => 'Descripcion',
+                'type' => 'text'
+            ],
+            [
+                'name' => 'hobby_1',
+                'label' => 'Hobby 1',
+                'type' => 'text'
+            ],
+            [
+                'name' => 'hobby_2',
+                'label' => 'Hobby 2',
+                'type' => 'text'
+            ],
+            [
+                'name' => 'hobby_3',
+                'label' => 'Hobby 3',
+                'type' => 'text'
+            ],
+            [
+                'name' => 'deseo_1',
+                'label' => 'Deseo 1',
+                'type' => 'text'
+            ],
+            [
+                'name' => 'deseo_2',
+                'label' => 'Deseo 2',
+                'type' => 'text'
+            ],
+            [
+                'name' => 'deseo_3',
+                'label' => 'Deseo 3',
+                'type' => 'text'
+            ],
+            [
+                'name' => 'votos_sexy',
+                'label' => 'Votos sexy',
+                'type' => 'number'
+            ],
+            [
+                'name' => 'votos_legal',
+                'label' => 'Votos legal',
+                'type' => 'number'
+            ],
+            [
+                'name' => 'votos_simpatico',
+                'label' => 'Votos simpatico',
+                'type' => 'number'
+            ],
+            [
+                'name' => 'besos_enviados',
+                'label' => 'Besos enviados',
+                'type' => 'number'
+            ],
+            [
+                'name' => 'besos_recibidos',
+                'label' => 'Besos recibidos',
+                'type' => 'number'
+            ],
+            [
+                'name' => 'jugos_enviados',
+                'label' => 'Jugos enviados',
+                'type' => 'number'
+            ],
+            [
+                'name' => 'jugos_recibidos',
+                'label' => 'Jugos recibidos',
+                'type' => 'number'
+            ],
+            [
+                'name' => 'flores_enviadas',
+                'label' => 'Flores enviados',
+                'type' => 'number'
+            ],
+            [
+                'name' => 'flores_recibidas',
+                'label' => 'Flores recibidas',
+                'type' => 'number'
+            ],
+            [
+                'name' => 'uppers_enviados',
+                'label' => 'Uppers enviados',
+                'type' => 'number'
+            ],
+            [
+                'name' => 'uppers_recibidos',
+                'label' => 'Uppers recibidos',
+                'type' => 'number'
+            ],
+            [
+                'name' => 'cocos_enviados',
+                'label' => 'Cocos enviados',
+                'type' => 'number'
+            ],
+            [
+                'name' => 'cocos_recibidos',
+                'label' => 'Cocos recibidos',
+                'type' => 'number'
+            ],
+            [
+                'name' => 'rings_ganados',
+                'label' => 'Rings ganados',
+                'type' => 'number'
+            ],
+            [
+                'name' => 'senderos_ganados',
+                'label' => 'Senderos ganados',
+                'type' => 'number'
+            ],
+            [
+                'name' => 'puntos_cocos',
+                'label' => 'Puntos coco',
+                'type' => 'number'
+            ],
+            [
+                'name' => 'puntos_ninja',
+                'label' => 'Puntos ninja',
+                'type' => 'number'
+            ],
         ]);
     }
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(UsuarioRequest::class);
+        CRUD::setValidation(PersonajeUpdateRequest::class);
 
-        CRUD::setFromDb(); // fields
+        $this->basicFieldsCreate();
     }
 
     protected function setupUpdateOperation()

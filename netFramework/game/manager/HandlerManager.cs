@@ -20,7 +20,6 @@ namespace BoomBang.game.manager
 
                 LoginHandler.Start();
                 FlowerHandler.Start();
-                CasasHandler.Start();
                 NavigatorHandler.Start();
                 CatalogoHandler.Start();
                 ConcursosHandler.Start();
