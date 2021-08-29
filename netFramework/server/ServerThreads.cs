@@ -158,15 +158,7 @@ namespace BoomBang.server
                         }
                     }
                     ///****************************************************************************************************************************************************************
-                    if (salas_publicas.Visitantes > 2)//Los contadores de eventos semanales cocos-shurikens
-                    {
-                        if (salas_publicas.Escenario.tipo_evento != 0 && salas_publicas.Escenario.segundos_evento_semanal > 0) { salas_publicas.Escenario.segundos_evento_semanal--; }
-                        else
-                        {
-                            if (salas_publicas.Escenario.tipo_evento == 1) { ConcursosManager.Lanzar_Objeto(salas_publicas, 5, "segundos_evento_semanal"); }//Coco
-                            if (salas_publicas.Escenario.tipo_evento == 2) { ConcursosManager.Lanzar_Objeto(salas_publicas, 6, "segundos_evento_semanal"); }//Shuriken
-                        }
-                    }
+                  
                     ///****************************************************************************************************************************************************************
                     if (salas_publicas.Escenario.id >= 26 && salas_publicas.Escenario.id <= 55 || salas_publicas.Escenario.id >= 57 && salas_publicas.Escenario.id <= 74 || salas_publicas.Escenario.id >= 78 && salas_publicas.Escenario.id <= 96)
                     {

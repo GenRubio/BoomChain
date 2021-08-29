@@ -224,7 +224,7 @@ namespace BoomBang.game.handler
             ServerMessage server = new ServerMessage();
             server.AddHead(154);
             server.AddHead(32);
-            foreach (DataRow row in client.ExecuteQueryTable("SELECT * FROM escenarios_publicos WHERE visible = '1' ORDER BY prioridad ASC").Rows)
+            foreach (DataRow row in client.ExecuteQueryTable("SELECT * FROM escenarios_publicos WHERE visible = '1' ORDER BY Prioridad ASC").Rows)
             {
                 areas.Add((int)row["id"], SalasManager.UsuariosEnSala(new EscenarioInstance(row)));
             }

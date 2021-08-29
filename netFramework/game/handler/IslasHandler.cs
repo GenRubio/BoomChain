@@ -238,22 +238,22 @@ namespace BoomBang.game.handler
                 server.AppendParameter(Isla.Creador.nombre);
                 server.AppendParameter(Isla.Creador.avatar);
                 server.AppendParameter(Isla.Creador.colores);
-                server.AppendParameter(Isla.mamigos_1);
-                server.AppendParameter(Isla.mamigos_2);
-                server.AppendParameter(Isla.mamigos_3);
-                server.AppendParameter(Isla.mamigos_4);
-                server.AppendParameter(Isla.mamigos_5);
-                server.AppendParameter(Isla.mamigos_6);
-                server.AppendParameter(Isla.mamigos_7);
-                server.AppendParameter(Isla.mamigos_8);
-                server.AppendParameter(Isla.noverlo_1);
-                server.AppendParameter(Isla.noverlo_2);
-                server.AppendParameter(Isla.noverlo_3);
-                server.AppendParameter(Isla.noverlo_4);
-                server.AppendParameter(Isla.noverlo_5);
-                server.AppendParameter(Isla.noverlo_6);
-                server.AppendParameter(Isla.noverlo_7);
-                server.AppendParameter(Isla.noverlo_8);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
                 server.AppendParameter(Escenarios.Count);
                 foreach (EscenarioInstance Escenario in Escenarios)
                 {
@@ -268,22 +268,7 @@ namespace BoomBang.game.handler
                     server.AppendParameter(0);
                     server.AppendParameter(SalasManager.UsuariosEnSala(Escenario));//Visitantes
                     server.AppendParameter(0);
-                    if (Isla.noverlo_1.Contains(Session.User.nombre) || Isla.noverlo_2.Contains(Session.User.nombre) || Isla.noverlo_3.Contains(Session.User.nombre) || Isla.noverlo_4.Contains(Session.User.nombre) || Isla.noverlo_5.Contains(Session.User.nombre) || Isla.noverlo_6.Contains(Session.User.nombre) || Isla.noverlo_7.Contains(Session.User.nombre) || Isla.noverlo_8.Contains(Session.User.nombre))
-                    {
-                        server.AppendParameter(1);//Usuario no puede acceder a la isla
-                        server.AppendParameter(1);
-                    }
-                    else
-                    {
-                        if (Isla.mamigos_1.Contains(Session.User.nombre) || Isla.mamigos_2.Contains(Session.User.nombre) || Isla.mamigos_3.Contains(Session.User.nombre) || Isla.mamigos_4.Contains(Session.User.nombre) || Isla.mamigos_5.Contains(Session.User.nombre) || Isla.mamigos_6.Contains(Session.User.nombre) || Isla.mamigos_7.Contains(Session.User.nombre) || Isla.mamigos_8.Contains(Session.User.nombre))
-                        {
-                            server.AppendParameter(0);
-                        }
-                        else
-                        {
-                            server.AppendParameter((string.IsNullOrEmpty(Escenario.Clave) ? 0 : 1));
-                        }
-                    }
+                    server.AppendParameter((string.IsNullOrEmpty(Escenario.Clave) ? 0 : 1));
                 }
 
             }

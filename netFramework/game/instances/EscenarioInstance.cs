@@ -31,16 +31,7 @@ namespace BoomBang.game.instances
         public int segundos_coco_igloo = 360;
         public int segundos_shuriken_igloo = 600;
         public int segundos_items_cmb = new Random().Next(10, 60);
-        public double proximo_evento { get; set; }
-        public double tiempo_evento { get; set; }
-        public int tipo_evento { get; set; }// Esta mal tiene que ir int
-        public bool evento_activo = false;
-        public bool activar_evento = false;
-        public bool ev_coco = false;
-        public double evento_anio { get; set; }
-        public int item_evento_anio;
-        public double loteria_semanal { get; set; }
-        public double ranking_semanal { get; set; }
+
         //Privados
         public string color_1 { get; set; }
         public string color_2 { get; set; }
@@ -76,8 +67,6 @@ namespace BoomBang.game.instances
         public int Puerta_14 { get; set; }
         public int Puerta_15 { get; set; }
         public int Puerta_16 { get; set; }
-        public int tipo_evento_isla;
-        public bool Concurso_Evento = false;
         public int Ultima_Sala;
         public EscenarioInstance(DataRow row)
         {
@@ -91,14 +80,6 @@ namespace BoomBang.game.instances
             this.coco = (int)row["coco"];
             this.visible = (int)row["visible"];
             this.IrAlli = (int)row["IrAlli"];
-            if (es_categoria == 1)
-            {
-                this.proximo_evento = (int)row["proximo_evento"];
-                this.tiempo_evento = (int)row["tiempo_evento"];
-                this.tipo_evento = (int)row["tipo_evento"];
-                this.loteria_semanal = (int)row["loteria_semanal"];
-                this.ranking_semanal = (int)row["ranking_semanal"];
-            } 
             if (es_categoria == 0 || es_categoria == 9)
             {
                 if (categoria == 2 || es_categoria == 9)
@@ -109,11 +90,6 @@ namespace BoomBang.game.instances
                     this.Creador = UserDAO.getUser((int)row["CreadorID"]);
                     this.Clave = row["clave"].ToString();
                     this.Ultima_Sala = (int)row["Ultima_Sala"];
-                    using (mysql client = new mysql())
-                    {
-                        DataRow row2 = client.ExecuteQueryRow("SELECT * FROM escenarios_publicos");
-                        this.tipo_evento_isla = (int)row2["tipo_evento"];
-                    }
                 }
                 if (categoria == 4)//La parte de casas
                 {
