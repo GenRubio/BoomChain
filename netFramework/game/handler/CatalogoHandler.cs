@@ -99,42 +99,10 @@ namespace BoomBang.game.handler
                 if (Compra.objeto_id != Objeto_id) return;
                 if (Session.User.Sala.ObjetosEnSala.ContainsKey(Compra.id)) return;
                 if (Session.User.Sala.Escenario.Creador.id != Session.User.id) { Session.FinalizarConexion("PonerObjeto"); return; }
-                if (CatalogoManager.portales_magicos.Contains(Compra.objeto_id))
-                {
-                    string[] Valores = Regex.Split(Espacio_Ocupado, ",");
-                    int pos_x = Convert.ToInt32(Valores[Valores.Length - 2]);
-                    int pos_y = Convert.ToInt32(Valores[Valores.Length - 1]);
-                    if (Compra.objeto_id == 652)//Portal Mágico Chiclets
-                    {
-                        new Thread(() => sala_privada_portal(Session.User.Sala, Compra, "Portal Chicle", 23)).Start();
-                        new Thread(() => colocar_entrada_portal(Session.User.Sala, Compra, pos_x, pos_y)).Start();
-                    }
-                    else if (Compra.objeto_id == 653)//Portal Mágico Nubes
-                    {
-                        new Thread(() => sala_privada_portal(Session.User.Sala, Compra, "Portal Cielo", 21)).Start();
-                        new Thread(() => colocar_entrada_portal(Session.User.Sala, Compra, pos_x, pos_y)).Start();
-                    }
-                    else if (Compra.objeto_id == 646)//Portal Mágico 3D
-                    {
-                        new Thread(() => sala_privada_portal(Session.User.Sala, Compra, "Portal 3D", 24)).Start();
-                        new Thread(() => colocar_entrada_portal(Session.User.Sala, Compra, pos_x, pos_y)).Start();
-                    }
-                    else if (Compra.objeto_id == 480)//Egg Espacial
-                    {
-                        new Thread(() => colcoar_entrada_teleport(Session.User.Sala, Compra, pos_x, pos_y)).Start();
-                    }
-                    else if (Compra.objeto_id == 1217)//Arbol valentin
-                    {
-                        new Thread(() => colcoar_entrada_teleport(Session.User.Sala, Compra, pos_x, pos_y)).Start();
-                    }
-                    Espacio_Ocupado = calcular_posicion_entrada_portal_magico(Espacio_Ocupado);
-                }
+                
                 if (CatalogoManager.ColocarObjeto(Session.User.Sala, Compra, compra_id, x, y, tam, rotation, Espacio_Ocupado))
                 {
-                    if (CatalogoManager.lianas_cocos.Contains(Compra.objeto_id)) 
-                    {
-                        new Thread(() => CatalogoManager.colocar_objeto_trampa(Session.User.Sala, Compra, Espacio_Ocupado, false, false)).Start();
-                    }
+                   
                     Packet_189_136(Session, Compra);
                     Packet_189_169(Session, compra_id, Objeto_id);
                     if (listas.Plantas.Contains(Compra.objeto_id))
@@ -147,111 +115,7 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        private static void colcoar_entrada_teleport(SalaInstance Sala, BuyObjectInstance Compra, int x, int y)
-        {
-            mysql client = new mysql();
-            client.SetParameter("id", Compra.id);
-            DataRow segundo_objeto_muchila = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE id = @id");
-            if (segundo_objeto_muchila != null)
-            {
-                client.SetParameter("modelo", (int)segundo_objeto_muchila["id_objeto_2"]);
-                DataRow segundo_objeto = client.ExecuteQueryRow("SELECT * FROM trampas_privadas WHERE modelo = @modelo");
-                if (segundo_objeto != null)
-                {
-                    client.SetParameter("modelo", Compra.id);
-                    client.SetParameter("x", x);
-                    client.SetParameter("y", y);
-                    client.SetParameter("escenario_id", Sala.Escenario.id);
-                    client.SetParameter("go_escenario_x", (int)segundo_objeto["x"] - 1);
-                    client.SetParameter("go_escenario_y", (int)segundo_objeto["y"] + 1);
-                    client.SetParameter("es_categoria", 0);
-                    client.SetParameter("go_es_categoria", 0);
-                    client.SetParameter("go_escenario_id", (int)segundo_objeto["escenario_id"]);
-                    if (client.ExecuteNonQuery("INSERT INTO trampas_privadas (modelo, x, y, escenario_id, go_es_categoria, go_escenario_x, go_escenario_y,es_categoria, go_escenario_id ) VALUES (@modelo, @x, @y, @escenario_id, @go_es_categoria, @go_escenario_x, @go_escenario_y, @es_categoria, @go_escenario_id)") == 1)
-                    {
-                        client.SetParameter("modelo", Compra.id);
-                        DataRow muchila = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE id = @modelo");
-                        if (muchila != null)
-                        {
-                            client.SetParameter("modelo", Compra.id);
-                            DataRow select_creacion = client.ExecuteQueryRow("SELECT * FROM trampas_privadas WHERE modelo = @modelo");
-                            if (select_creacion != null)
-                            {
-                                client.SetParameter("modelo", (int)muchila["id_objeto_2"]);
-                                client.SetParameter("go_escenario_x", (int)select_creacion["x"] - 1);
-                                client.SetParameter("go_escenario_y", (int)select_creacion["y"] + 1);
-                                client.SetParameter("go_escenario_id", (int)select_creacion["escenario_id"]);
-                                client.ExecuteNonQuery("UPDATE trampas_privadas SET go_escenario_x = @go_escenario_x, go_escenario_y = @go_escenario_y, go_escenario_id = @go_escenario_id WHERE modelo = @modelo");
-                            }
-
-                        }
-                    }
-                    return;
-                }
-                client.SetParameter("modelo", Compra.id);
-                client.SetParameter("x", x);
-                client.SetParameter("y", y);
-                client.SetParameter("escenario_id", Sala.Escenario.id);
-                client.SetParameter("es_categoria", 0);
-                client.SetParameter("go_es_categoria", 0);
-                client.ExecuteNonQuery("INSERT INTO trampas_privadas (modelo,x,y,escenario_id, es_categoria,go_es_categoria) VALUES (@modelo, @x, @y, @escenario_id, @es_categoria, @go_es_categoria)");
-            }
-        }
-        private static void colocar_entrada_portal(SalaInstance Sala, BuyObjectInstance Compra, int x, int y)
-        {
-            mysql client = new mysql();
-            client.SetParameter("objeto_id", Compra.id);
-            DataRow sala_creada = client.ExecuteQueryRow("SELECT * FROM escenarios_privados WHERE objeto_id = @objeto_id");
-            if (sala_creada != null)
-            {
-                client.SetParameter("id", (int)sala_creada["modelo"]);
-                DataRow mapa_sala_creada = client.ExecuteQueryRow("SELECT * FROM mapas_privados WHERE id = @id");
-                if (mapa_sala_creada != null)
-                {
-                    client.SetParameter("modelo", Compra.id);
-                    client.SetParameter("x", x);
-                    client.SetParameter("y", y);
-                    client.SetParameter("escenario_id", Sala.Escenario.id);
-                    client.SetParameter("es_categoria", 0);
-                    client.SetParameter("go_escenario_id", (int)sala_creada["id"]);
-                    client.SetParameter("go_es_categoria", 0);
-                    client.SetParameter("go_escenario_x", (int)mapa_sala_creada["posX"]);
-                    client.SetParameter("go_escenario_y", (int)mapa_sala_creada["posY"]);
-                    client.ExecuteNonQuery("INSERT INTO trampas_privadas (`modelo`, `x`, `y`, `escenario_id`, `es_categoria`, `go_escenario_id`, `go_es_categoria`, `go_escenario_x`, `go_escenario_y`) VALUES (@modelo, @x, @y, @escenario_id, @es_categoria, @go_escenario_id, @go_es_categoria, @go_escenario_x, @go_escenario_y)");
-                }
-            }
-        }
-        private static void sala_privada_portal(SalaInstance Sala, BuyObjectInstance Compra, string nombre_sala, int modelo)
-        {
-            mysql client = new mysql();
-            client.SetParameter("id_sala", Sala.Escenario.id);
-            DataRow islas = client.ExecuteQueryRow("SELECT * FROM escenarios_privados WHERE id = @id_sala");
-            if (islas != null)
-            {
-                client.SetParameter("nombre", nombre_sala);
-                client.SetParameter("modelo", modelo);
-                client.SetParameter("CreadorID", Sala.Escenario.Creador.id);
-                client.SetParameter("objeto_id", Compra.id);
-                client.SetParameter("color_1", "15CCFE35D3FEFEF8D98B59371E5B11");
-                client.SetParameter("color_2", "6,86,82,15,84,100,78,63,100,111,53,55,51,16,39");
-                client.SetParameter("Ultima_Sala", (int)islas["IslaID"]);
-                client.ExecuteNonQuery("INSERT INTO escenarios_privados (`nombre`, `modelo`, `CreadorID`, `objeto_id`, `color_1`, `color_2`, `Ultima_Sala` ) VALUES (@nombre, @modelo, @CreadorID, @objeto_id, @color_1, @color_2, @Ultima_Sala)");
-            }
-        }
-        private static string calcular_posicion_entrada_portal_magico(string array)
-        {
-            string[] Valores = Regex.Split(array, ",");
-            string nuevo_espacio_ocupado = "";
-            for (int a = 0; a < Valores.Length - 2; a++)
-            {
-                if (a != Valores.Length - 3)
-                {
-                    nuevo_espacio_ocupado = nuevo_espacio_ocupado + Valores[a] + ",";
-                }
-                else { nuevo_espacio_ocupado = nuevo_espacio_ocupado + Valores[a]; }
-            }
-            return nuevo_espacio_ocupado;
-        }
+     
         private static void CambiarColores(SessionInstance Session, string[,] Parameters)
         {
             int Compra_ID = int.Parse(Parameters[0, 0]);
@@ -295,23 +159,7 @@ namespace BoomBang.game.handler
                 if (Compra.objeto_id != Objeto_ID) return;
                 if (!Session.User.Sala.ObjetosEnSala.ContainsKey(Compra.id)) return;
                 if (Session.User.Sala.Escenario.Creador.id != Session.User.id) { Session.FinalizarConexion("MoverObjeto"); return; }
-                if (CatalogoManager.portales_magicos.Contains(Compra.objeto_id))
-                {
-                    mysql client = new mysql();
-                    client.SetParameter("modelo", Compra.id);
-                    DataRow entrada_portal = client.ExecuteQueryRow("SELECT * FROM trampas_privadas WHERE modelo = @modelo");
-                    if (entrada_portal != null)
-                    {
-                        string[] Valores = Regex.Split(ocupe, ",");
-                        int pos_x = Convert.ToInt32(Valores[Valores.Length - 2]);
-                        int pos_y = Convert.ToInt32(Valores[Valores.Length - 1]);
-                        client.SetParameter("x", pos_x);
-                        client.SetParameter("y", pos_y);
-                        client.SetParameter("modelo", (int)entrada_portal["modelo"]);
-                        client.ExecuteNonQuery("UPDATE trampas_privadas SET x = @x, y = @y WHERE modelo = @modelo");
-                        ocupe = calcular_posicion_entrada_portal_magico(ocupe);
-                    }
-                }
+              
                 using (mysql client = new mysql())
                 {
                     client.SetParameter("id", Compra.id);
@@ -325,10 +173,7 @@ namespace BoomBang.game.handler
                         Session.User.Sala.ObjetosEnSala[Compra.id].posY = y;
                         Session.User.Sala.ObjetosEnSala[Compra.id].espacio_ocupado = ocupe;
                         Session.User.Sala.FijarChutas(Session.User.Sala.ObjetosEnSala[Compra.id]);
-                        if (CatalogoManager.lianas_cocos.Contains(Compra.objeto_id))
-                        {
-                            CatalogoManager.colocar_objeto_trampa(Session.User.Sala, Compra, ocupe, true, false);
-                        }
+                      
                         Packet_189_145(Session, Compra);
                     }
                 }
@@ -347,35 +192,12 @@ namespace BoomBang.game.handler
                 {
                     DataRow row = client.ExecuteQueryRow("SELECT * FROM objetos WHERE id = '" + Compra.objeto_id + "'");
                     CatalogObjectInstance item = new CatalogObjectInstance(row);
-                    if (CatalogoManager.portales_magicos.Contains(Compra.objeto_id))
-                    {
-                        client.SetParameter("modelo", Compra.id);
-                        client.ExecuteNonQuery("DELETE FROM trampas_privadas WHERE modelo = @modelo");
-                        if (Compra.objeto_id != 480 && Compra.objeto_id != 1217)//Egg Portal - Arbol del amor
-                        {
-                            client.SetParameter("objeto_id", Compra.id);
-                            client.ExecuteNonQuery("DELETE FROM escenarios_privados WHERE objeto_id = @objeto_id");
-                        }
-                        else
-                        {
-                            client.SetParameter("modelo", Compra.id);
-                            client.SetParameter("id_user", Session.User.id);
-                            DataRow localizar_2_modelo = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE id = @modelo AND usuario_id = @id_user");
-                            if (localizar_2_modelo != null)
-                            {
-                                client.SetParameter("modelo", (int)localizar_2_modelo["id_objeto_2"]);
-                                client.ExecuteNonQuery("UPDATE trampas_privadas SET go_escenario_id = -1, go_escenario_x = -1, go_escenario_y = -1 WHERE modelo = @modelo");
-                            }
-                        }
-                    }
+                  
                     if (listas.Objetos_Area.Contains(Compra.objeto_id))
                     {
                         borar_sala_creada_objeto(Compra);
                     }
-                    if (CatalogoManager.lianas_cocos.Contains(Compra.objeto_id))
-                    {
-                        CatalogoManager.colocar_objeto_trampa(Session.User.Sala, Compra, "0", false, true);
-                    }
+                  
                     Packet_189_140(Session, Compra);
                     Packet_189_139(Session, item, Compra.id, 1, Compra.tam);
                     if (listas.Plantas.Contains(Compra.objeto_id))

@@ -75,39 +75,7 @@ namespace BoomBang.game.manager
             }
             return false;
         }
-        public static void colocar_objeto_trampa(SalaInstance Sala, BuyObjectInstance Compra, string espacio_ocupado, bool update, bool deleat)
-        {
-            mysql client = new mysql();
-            string[] Valores = Regex.Split(espacio_ocupado, ",");
-            if (update == false && deleat == false)
-            {
-                client.SetParameter("modelo", Compra.id);
-                client.SetParameter("x", Valores[0]);
-                client.SetParameter("y", Valores[1]);
-                client.SetParameter("mover_x", Sala.Puerta.x);
-                client.SetParameter("mover_y", Sala.Puerta.y);
-                client.SetParameter("escenario_id", Sala.Escenario.id);
-                if (Compra.objeto_id == 1230) { client.SetParameter("expulsar_usuario", 1); }
-                else
-                {
-                    client.SetParameter("expulsar_usuario", 0);
-                }
-                client.ExecuteNonQuery("INSERT INTO trampas_privadas (`modelo`, `x`, `y`, `mover_x`, `mover_y`, `escenario_id`, `es_categoria`, `expulsar_usuario`) VALUES (@modelo, @x, @y, @mover_x, @mover_y, @escenario_id, '0', @expulsar_usuario)");
-            }
-            else if (update == true && deleat == false)
-            {
-                client.SetParameter("modelo", Compra.id);
-                client.SetParameter("x", Valores[0]);
-                client.SetParameter("y", Valores[1]);
-                client.SetParameter("escenario_id", Sala.Escenario.id);
-                client.ExecuteNonQuery("UPDATE trampas_privadas SET x = @x, y = @y WHERE modelo = @modelo AND escenario_id = @escenario_id");
-            }
-            if (deleat == true)
-            {
-                client.SetParameter("modelo", Compra.id);
-                client.ExecuteNonQuery("DELETE FROM trampas_privadas WHERE modelo = @modelo");
-            }
-        }
+      
         public static List<int> lianas_cocos = new List<int> { 1230, 1229 };
         public static List<int> portales_magicos = new List<int> { 652, 653, 646, 480, 1217 };
         public static bool ColocarObjeto(SalaInstance Sala, BuyObjectInstance Compra, int id, int x, int y, string tam, int rotation, string espacio_ocupado)

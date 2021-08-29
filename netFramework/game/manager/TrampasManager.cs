@@ -1,4 +1,4 @@
-﻿using BoomBang.game.instances;
+using BoomBang.game.instances;
 using BoomBang.server;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,6 @@ namespace BoomBang.game.manager
     public class TrampasManager
     {
         private static List<TrampaInstance> trampasPublicas = new List<TrampaInstance>();
-        private static List<TrampaInstance> trampasPrivadas = new List<TrampaInstance>();
         public static void saveTrampasSala()
         {
             mysql client = new mysql();
@@ -21,10 +20,7 @@ namespace BoomBang.game.manager
             {
                 trampasPublicas.Add(new TrampaInstance(trampa));
             }
-            foreach (DataRow trampa in client.ExecuteQueryTable("SELECT * FROM trampas_privadas").Rows)
-            {
-                trampasPrivadas.Add(new TrampaInstance(trampa));
-            }
+          
         }
         private static void buscarFlechas(int es_categoria, int escenario_id, SessionInstance Session)
         {
@@ -66,13 +62,7 @@ namespace BoomBang.game.manager
             }
             else
             {
-                foreach (TrampaInstance trampa in trampasPrivadas.ToList())
-                {
-                    if (trampa.es_categoria == es_categoria && trampa.escenario_id == escenario_id && trampa.Posicion.x == x && trampa.Posicion.y == y)
-                    {
-                        return trampa;
-                    }
-                }
+               
             }
             return null;
         }
