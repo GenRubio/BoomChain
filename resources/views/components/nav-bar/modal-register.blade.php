@@ -38,9 +38,7 @@
                 data: $(this).serialize(),
                 success: function(data) {
                     if (data.success) {
-
                         location.href = "{{ route('dashboard') }}";
-
                     } else {
                         toastr.options.closeButton = true;
                         toastr.error(data.message);

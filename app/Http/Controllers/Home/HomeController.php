@@ -13,7 +13,7 @@ class HomeController extends Controller
             return redirect()->route('dashboard');
         }
         else{
-            return view('pages.home');
+            return view('pages.home.home');
         }
         
     }

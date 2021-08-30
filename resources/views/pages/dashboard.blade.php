@@ -1,3 +1,0 @@
-
-
-<p>{{ auth()->user()->nombre }}
