@@ -38,12 +38,7 @@ namespace BoomBang.game.handler
             {
                 if (Session.User.Sala != null)
                 {
-                    if (Session.User.block_upper == true)
-                    {
-                        Session.User.block_upper = false;
-                        Session.User.colores = Session.User.colores_old;
-                        Session.User.colores_old = "";
-                    }
+                  
                     if (SalaInstance.UsuariosEnObjetos.ContainsKey(Session.User.id))
                     {
                         SalaInstance.UsuariosEnObjetos.Remove(Session.User.id);
@@ -70,8 +65,7 @@ namespace BoomBang.game.handler
                         if (Session.User.Sala.Camino != null) Session.User.Sala.Camino.Cargar_Contador(Session);
                     }
                     if (Session.User.Sala.Ring != null || Session.User.Sala.Cocos != null || Session.User.Sala.Sendero != null || Session.User.Sala.Camino != null) { return; }
-                    TrampasManager.ObtenerTrampas(Session);
-                    ConcursosManager.Encontrar_Objetos(Session, Session.User.Sala);
+              
 
 
                     SocketIO.sendData(SocketIO.WebSocket, "entrarSala", Session.User.token_uid + ",null");
@@ -229,7 +223,7 @@ namespace BoomBang.game.handler
             ServerMessage server = new ServerMessage();
             server.AddHead(154);
             server.AddHead(32);
-            foreach (DataRow row in client.ExecuteQueryTable("SELECT * FROM escenarios_publicos WHERE visible = '1' ORDER BY prioridad ASC").Rows)
+            foreach (DataRow row in client.ExecuteQueryTable("SELECT * FROM escenarios_publicos WHERE visible = '1' ORDER BY Prioridad ASC").Rows)
             {
                 areas.Add((int)row["id"], SalasManager.UsuariosEnSala(new EscenarioInstance(row)));
             }

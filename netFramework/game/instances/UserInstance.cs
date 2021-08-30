@@ -11,18 +11,11 @@ namespace BoomBang.game.instances
 {
     public class UserInstance
     {
-        public int sendDataUser = 0;
-        public bool startAntiScript = false;
-        public int avisosScript = 0;
         public int id { get; private set; }
         public string nombre { get; set; }
-        public string nombre_halloween { get; set; }
         public string password { get; set; }
-        public string security { get; set; }
         public int avatar { get; set; }
-        public int avatar_anterior { get; set; }
         public string colores { get; set; }
-        public string colores_old = "";
         public string email { get; set; }
         public int edad { get; set; }
         public string ip_registro { get; set; }
@@ -30,10 +23,7 @@ namespace BoomBang.game.instances
         string mfecha_registro;
         public string fecha_registro { get { return mfecha_registro; } }
         public int oro { get; set; }
-        public int plata { get; set; }
         public int admin { get; set; }
-        public double vip_double { get; set; }
-        public string end_vip { get; set; }
         public string bocadillo { get; set; }
         public string hobby_1 { get; set; }
         public string hobby_2 { get; set; }
@@ -64,25 +54,17 @@ namespace BoomBang.game.instances
         public int puntos_cocos { get; set; }
         public int puntos_ninja { get; set; }
         public string ultima_conexion { get; set; }
-        public double coins_remain_double { get; set; }
-        /* SpaceParams */
+
+
         public int IDEspacial { get; set; }
         public SalaInstance Sala { get; set; }
         public Posicion Posicion { get; set; }
-
         public bool Caminando { get; set; }
         public int UppertSelect { get; set; }
         public int CocoSelect { get; set; }
-        /*Pathfinder*/
         public Trayectoria Trayectoria { get; set; }
         public PathFinder PathFinder { get; set; }
-        /* Ninja */
         public bool ModoNinja { get; set; }
-        /* Traje */
-        public bool ModoAvatar { get; set; }
-        //Intercambios
-        public int Cambios { get; set; }
-        public IntercambioInstance Intercambio;
         //MiniGames
         public int mGame12ActualPoints { get; set; }
         public Inscripcion CaminoNinja { get; set; }
@@ -93,122 +75,24 @@ namespace BoomBang.game.instances
         public int CocosRestantes = 0;
         //ObjectManager
         public ObjectEditor ObjectEditor { get; set; }
-
         public bool Concurso_Evento = false;
         int mTrajeID;
         public int TrajeID { get { return mTrajeID; } set { mTrajeID = value; } }
-
-        int mtutorial_islas;
-        public int tutorial_islas { get { return mtutorial_islas; } set { mtutorial_islas = value; } }
-
-        //Regalos
-        double mtimespam_regalo_peque;
-        public double timespam_regalo_peque { get { return mtimespam_regalo_peque; } set { mtimespam_regalo_peque = value; } }
-        //Regalos Grande
-        double mtimespam_regalo_grande;
-        public double timespam_regalo_grande { get { return mtimespam_regalo_grande; } set { mtimespam_regalo_grande = value; } }
-        //Noticias 
-        int mnovedades_noticias;
-        public int novedades_noticias { get { return mnovedades_noticias; } set { mnovedades_noticias = value; } }
-        //Pociones
-        public int Efecto;
-        public int EfectoAnterior;
-        public int TiempoPocion;
-        public int KekoAnteriorPocion;
-        public int TimpoEspera_Fantasma_Espectro = 0;
-        //Cambios
-        double mtimespam_desc_cambios;
-        public double timespam_desc_cambios { get { return mtimespam_desc_cambios; } set { mtimespam_desc_cambios = value; } }
-
-        //Validar Email
-        public int ValidarEmail;
-
-        //Chat Publico
-        public int Color_Chat = 1;
-
-        //Tiempo conexion Usuario
-        public int AFKManager = 3600;
-
-        public int Clicks_Upper = 0;
-        public int Click_Caminar = 0;
-        public int Click_Pared = 0;
-        public int Ultimo_Intervalo;
-        public int Contar_Intervalos;
-
-        public int Contar_Auto = 0;
-
-        public int Clicks_Acciones = 0;
-        //BLOCK_ DE COCO
-        public  bool block_coco = false;
-
-        public int Sala_Especial = 0;
-
-        public double baneo = 0;
-        public int contador_baneo;
-
-        public int cambio_nombre { get; set; }
-        public int noticia_registro { get; set; }
-
-        public bool sala_especial = true;
-
-        public int toneos_ring;
-        //Vender objeto de oro
-        public bool espera_respuesta_venta_objeto_oro = false;
-        public int precio_objeto_venta;
-        public int id_objeto_venta;
-        public string data_objeto_venta;
-
-        public string NinjaColores_Sala = "";
-        public bool Ninja_Copi_color = false;
-
-        public int Traje_Ninja_Principal;
-        public int torneos_coco;
-
-        public bool block_upper = false;
-
-
-        public int ver_ranking { get; set; }
-
-        public bool ninja_celestial = false;
-        public bool ninja_celestial_puesto = false;
-
-        public bool ver_clicks = false;
-
-        public bool retard_upper = false;
-
-        public int contador_fa = 0;
-        public int contar_pasos = 0;
-        public int contador_frase = 0;
-        public string primera_frase = "";
-
-        public int Clicks_Accion = 0;
-
-        public int Timer_BPad = 0;
-        public int Contador_MensajeBPad = 0;
-
-        public bool masacre12 = false;
-        public int comprobar_conexion = 10;
         public string levelup = "";
-
         public string token_uid = "";
         public UserInstance(DataRow row)
         {
             this.id = (int)row["id"];
             this.nombre = (string)row["nombre"];
             this.password = (string)row["password"];
-            this.security = (string)row["security"];
             this.avatar = (int)row["avatar"];
             this.colores = (string)row["colores"];
             this.email = (string)row["email"];
-            this.ValidarEmail = (int)row["email_validado"];
             this.edad = (int)row["edad"];
             this.ip_registro = (string)row["ip_registro"];
             this.ip_actual = (string)row["ip_actual"];
             this.oro = (int)row["oro"];
-            this.plata = (int)row["plata"];
             this.admin = (int)row["admin"];
-            this.vip_double = Convert.ToDouble((int)row["vip"]);
-            this.end_vip = (string)row["end_vip"];
             this.bocadillo = (string)row["bocadillo"];
             this.hobby_1 = (string)row["hobby_1"];
             this.hobby_2 = (string)row["hobby_2"];
@@ -235,22 +119,8 @@ namespace BoomBang.game.instances
             this.puntos_ninja = (int)row["puntos_ninja"];
             this.ultima_conexion = (string)row["ultima_conexion"];
             this.mfecha_registro = row["fecha_registro"].ToString();
-            this.mtimespam_desc_cambios = double.Parse(row["timespam_desc_cambios"].ToString());
-            this.coins_remain_double = Time.GetCurrentAndAdd(AddType.Segundos, (int)row["coins_remain"]);
             this.UppertSelect = UppertLevel();
             this.CocoSelect = nivel_coco;
-            this.mtutorial_islas = int.Parse(row["tutorial_islas"].ToString());
-            this.mtimespam_regalo_peque = double.Parse(row["timespam_regalo_peque"].ToString());
-            this.mtimespam_regalo_grande = double.Parse(row["timespam_regalo_grande"].ToString());
-            this.mnovedades_noticias = (int)row["novedades_noticias"];
-            this.baneo = (int)row["baneo"];
-            this.contador_baneo = (int)row["contador_baneo"];
-            this.cambio_nombre = (int)row["cambio_nombre"];
-            this.noticia_registro = (int)row["noticia_registro"];
-            this.toneos_ring = (int)row["toneos_ring"];
-            this.Traje_Ninja_Principal = (int)row["t_n_p"];
-            this.torneos_coco = (int)row["torneos_coco"];
-            this.ver_ranking = (int)row["ver_ranking"];
             this.token_uid = (string)row["token_uid"];
         }
         public string Colores_traje(SessionInstance Session)
@@ -395,17 +265,7 @@ namespace BoomBang.game.instances
                 return 400;
             }
         }
-        public int vip
-        {
-            get
-            {
-                if (Time.TiempoActual() > vip_double)
-                {
-                    return 0;
-                }
-                return 1;
-            }
-        }
+
         #region Locks
         private double Time_SendUppert = Time.TiempoActual();
         public bool PreLock_EnviandoUppert
@@ -480,12 +340,13 @@ namespace BoomBang.game.instances
                 Time_Acciones = Time.GetCurrentAndAdd(AddType.Milisegundos, 100);
             }
         }
+
         private double Time_Caminando = Time.TiempoActual();
         public bool PreLock_Caminando
         {
             get
             {
-                if (Time.TiempoActual() > Time_Caminando)
+                if (Time.TiempoActual() >= Time_Caminando)
                 {
                     return false;
                 }
@@ -496,6 +357,7 @@ namespace BoomBang.game.instances
                 this.Time_Caminando = Time.GetCurrentAndAdd(AddType.Milisegundos, 680);
             }
         }
+        
         private double Time_Bloqueo_chat = Time.TiempoActual();
         public bool PreLock_BloqueoChat
         {

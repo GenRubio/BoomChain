@@ -1,4 +1,4 @@
-﻿using BoomBang.game.manager;
+using BoomBang.game.manager;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,6 +27,7 @@ namespace BoomBang.Forms
         public static int puerto_server = 2002;
         public static Emulator Form;
         public static bool WebSockets = true;
+        public static bool activeAlertsPackets = false;
 
         public Emulator()
         {

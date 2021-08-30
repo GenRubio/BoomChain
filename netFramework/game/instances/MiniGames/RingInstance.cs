@@ -127,13 +127,11 @@ namespace BoomBang.game.instances.MiniGames
                 Session.User.Jugando = false;
                 if (sala.Escenario.id == 2 && NSP == false)
                 {
-                    UserManager.Creditos(Session.User, true, false, Precio_Golden);
-                    Session.User.sala_especial = false;
+                  
                 }
                 if (sala.Escenario.id == 3 && NSP == false)
                 {
-                    UserManager.Creditos(Session.User, false, false, Precio_Silver);
-                    Session.User.sala_especial = false;
+                   
                 }
                 Participantes.Remove(Session.User.IDEspacial);
                 if (MiniGamesManager.Inscripciones_Ring.ContainsKey(Session.User.id))
@@ -163,15 +161,9 @@ namespace BoomBang.game.instances.MiniGames
                     CancelarInscripcion(SessionWin);
                     if (sala.Escenario.id == 2)///Golden Ring
                     {
-                        SessionWin.User.sala_especial = false;
                         SessionWin.User.rings_ganados++;
-                        SessionWin.User.toneos_ring++;
-                        if (InterfazHandler.Cada_X_Goldens.Contains(SessionWin.User.rings_ganados))
-                        {
-                            RegalosManager.Sistema_Regalos(SessionWin);
-                        }
                         SessionWin.User.Sala.ActualizarEstadisticas(SessionWin.User);
-                        UserManager.Creditos(SessionWin.User, true, true, Recompensa_Golden);
+                        
 
                         ServerMessage server = new ServerMessage();
                         server.AddHead(160);
@@ -185,16 +177,12 @@ namespace BoomBang.game.instances.MiniGames
                     }
                     if (sala.Escenario.id == 3)//Silver Ring
                     {
-                        SessionWin.User.sala_especial = false;
+        
                         SessionWin.User.rings_ganados++;
                         SessionWin.User.Sala.ActualizarEstadisticas(SessionWin.User);
-                        UserManager.Creditos(SessionWin.User, false, true, Recompensa_Silver);
+                       
 
-                        if (InterfazHandler.Cada_X_Goldens.Contains(SessionWin.User.rings_ganados))
-                        {
-                            RegalosManager.Sistema_Regalos(SessionWin);
-                        }
-
+                       
                         ServerMessage server = new ServerMessage();
                         server.AddHead(160);
                         server.AddHead(129);
@@ -292,24 +280,17 @@ namespace BoomBang.game.instances.MiniGames
                 {
                     if (ID == 3)//Silver
                     {
-                        if (Session.User.plata >= RingInstance.Precio_Silver)
+                        if (!MiniGamesManager.Inscripciones_Ring.ContainsKey(Session.User.id))
                         {
-                            if (!MiniGamesManager.Inscripciones_Ring.ContainsKey(Session.User.id))
+                            MiniGamesManager.Inscripciones_Ring.Add(Session.User.id, new Inscripcion(Session, 3));
+                            if (MiniGamesManager.Inscripciones_Ring.ContainsKey(Session.User.id))
                             {
-                                MiniGamesManager.Inscripciones_Ring.Add(Session.User.id, new Inscripcion(Session, 3));
-                                if (MiniGamesManager.Inscripciones_Ring.ContainsKey(Session.User.id))
-                                {
-                                    server.AppendParameter(1);
-                                }
-                            }
-                            else
-                            {
-                                server.AppendParameter(-1);
+                                server.AppendParameter(1);
                             }
                         }
                         else
                         {
-                            server.AppendParameter(2);
+                            server.AppendParameter(-1);
                         }
                     }
                 }

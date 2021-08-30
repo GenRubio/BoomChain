@@ -29,12 +29,9 @@ namespace BoomBang.game.handler
                     if (Session.User.Sala.PathFinder == false) return;
                     Session.User.Trayectoria = new Trayectoria(Session);
                     List<Posicion> ListPositions = posicions(Parameters[1, 0]);
-                    Session.User.contar_pasos = ListPositions.Count;
                     Session.User.Trayectoria.EndLocation = new Point(ListPositions[ListPositions.Count - 1].x, ListPositions[ListPositions.Count - 1].y);
                     Session.User.Trayectoria.IniciarCaminado(ListPositions);
-                    Session.User.Click_Caminar += 1;
                     if (Session.User.PreLock_Acciones_Ficha == true) { Session.User.Time_Acciones_Ficha = 0; }
-                    if (Session.User.contador_fa > 0) { Session.User.contador_fa = 1; }
                 }
             }
         }
@@ -59,7 +56,7 @@ namespace BoomBang.game.handler
         }
         static void MirarZ(SessionInstance Session, string[,] Parameters)
         {
-            Session.User.Click_Pared += 1;
+    
             if (Session.User.PreLock_Mirada == true) return;
             if (Session.User != null)
             {

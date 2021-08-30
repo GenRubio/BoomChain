@@ -1,4 +1,4 @@
-﻿using BoomBang.game.handler;
+using BoomBang.game.handler;
 using BoomBang.game.instances.manager;
 using BoomBang.game.manager;
 using BoomBang.server;
@@ -394,7 +394,7 @@ namespace BoomBang.game.instances.MiniGames
                         server.AppendParameter(Session.User.nombre);
                         server.AppendParameter("Ha ganado: " + GoldenOro + " créditos! y Suma " + Recompensa_Golden + " puntos y mejora su habilidad Ninja.");
                         sala.SendData(server);
-                        UserManager.Creditos(Session.User, true, true, GoldenOro);
+                      
                         Session.User.puntos_ninja += Recompensa_Golden;
                         sala.ActualizarEstadisticas(Session.User);
                         break;
@@ -408,7 +408,7 @@ namespace BoomBang.game.instances.MiniGames
                         server1.AppendParameter(Session.User.nombre);
                         server1.AppendParameter("Ha ganado: " + 500 + " monedas de plata");
                         sala.SendData(server1);
-                        UserManager.Creditos(Session.User, false, true, Recompensa_Silver);
+                      
                         sala.ActualizarEstadisticas(Session.User);
                         break;
                 }
@@ -429,13 +429,13 @@ namespace BoomBang.game.instances.MiniGames
                 switch (sala.Escenario.modelo)
                 {
                     case 12:
-                        UserManager.Creditos(Session.User, true, false, Precio_Golden);
+                        
                         Session.User.puntos_ninja += Golden_Lost;
                         sala.ActualizarEstadisticas(Session.User);
                         break;
 
                     case 13:
-                        UserManager.Creditos(Session.User, false, false, Precio_Silver);
+                    
                         sala.ActualizarEstadisticas(Session.User);
                         break;
                 }
@@ -597,24 +597,17 @@ namespace BoomBang.game.instances.MiniGames
                 }
                 if (ID == 13)//Silver
                 {
-                    if (Session.User.plata >= CaminoInstance.Precio_Silver)
+                    if (!MiniGamesManager.Inscripciones_Camino.ContainsKey(Session.User.id))
                     {
-                        if (!MiniGamesManager.Inscripciones_Camino.ContainsKey(Session.User.id))
+                        MiniGamesManager.Inscripciones_Camino.Add(Session.User.id, new Inscripcion(Session, 13));
+                        if (MiniGamesManager.Inscripciones_Camino.ContainsKey(Session.User.id))
                         {
-                            MiniGamesManager.Inscripciones_Camino.Add(Session.User.id, new Inscripcion(Session, 13));
-                            if (MiniGamesManager.Inscripciones_Camino.ContainsKey(Session.User.id))
-                            {
-                                server.AppendParameter(1);
-                            }
-                        }
-                        else
-                        {
-                            server.AppendParameter(-1);
+                            server.AppendParameter(1);
                         }
                     }
                     else
                     {
-                        server.AppendParameter(2);
+                        server.AppendParameter(-1);
                     }
                 }
             }

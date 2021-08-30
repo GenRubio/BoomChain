@@ -3,14 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\UsuarioRequest;
+use App\Http\Requests\UsuarioUpdateRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
-/**
- * Class UsuarioCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
- */
 class UsuarioCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
@@ -19,11 +15,6 @@ class UsuarioCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
 
-    /**
-     * Configure the CrudPanel object. Apply settings to all operations.
-     * 
-     * @return void
-     */
     public function setup()
     {
         CRUD::setModel(\App\Models\Usuario::class);
@@ -31,50 +22,204 @@ class UsuarioCrudController extends CrudController
         CRUD::setEntityNameStrings('usuario', 'usuarios');
     }
 
-    /**
-     * Define what happens when the List operation is loaded.
-     * 
-     * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
-     * @return void
-     */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // columns
+        $this->crud->addButtonFromView('line', 'personaje', 'personaje', 'beginning');
 
-        /**
-         * Columns can be defined using the fluent syntax or array syntax:
-         * - CRUD::column('price')->type('number');
-         * - CRUD::addColumn(['name' => 'price', 'type' => 'number']); 
-         */
+        $this->crud->addColumn([
+            'name' => 'nombre',
+            'label' => 'Nombre',
+            'type' => 'text'
+        ]);
+        $this->crud->addColumn([
+            'name' => 'metamask',
+            'label' => 'Metamask',
+            'type' => 'text'
+        ]);
+        $this->crud->addColumn([
+            'name' => 'token_uid',
+            'label' => 'UID',
+            'type' => 'text'
+        ]);
+        $this->crud->addColumn([
+            'name' => 'oro',
+            'label' => 'Creditos',
+            'type' => 'text'
+        ]);
+        $this->crud->addColumn([
+            'name' => 'email',
+            'label' => 'Email',
+            'type' => 'email'
+        ]);
+        $this->crud->addColumn([
+            'name' => 'ip_registro',
+            'label' => 'IP Registro',
+            'type' => 'text'
+        ]);
+        $this->crud->addColumn([
+            'name' => 'ip_actual',
+            'label' => 'IP actual',
+            'type' => 'text'
+        ]);
+        $this->crud->addColumn([
+            'name' => 'ultima_conexion',
+            'label' => 'Ultima conexion',
+            'type' => 'text'
+        ]);
+        $this->crud->addColumn([
+            'name' => 'fecha_registro',
+            'label' => 'Fecha registro',
+            'type' => 'text'
+        ]);
     }
-
-    /**
-     * Define what happens when the Create operation is loaded.
-     * 
-     * @see https://backpackforlaravel.com/docs/crud-operation-create
-     * @return void
-     */
     protected function setupCreateOperation()
     {
         CRUD::setValidation(UsuarioRequest::class);
 
-        CRUD::setFromDb(); // fields
-
-        /**
-         * Fields can be defined using the fluent syntax or array syntax:
-         * - CRUD::field('price')->type('number');
-         * - CRUD::addField(['name' => 'price', 'type' => 'number'])); 
-         */
+        $this->basicFieldsCreate();
+    }
+    protected function basicFieldsCreate()
+    {
+        $this->crud->addFields([
+            [
+                'name' => 'metamask',
+                'label' => 'Metamask',
+                'type' => 'text'
+            ],
+            [
+                'name' => 'email',
+                'label' => 'Email',
+                'type' => 'email'
+            ],
+            [
+                'name' => 'password',
+                'label' => 'Contraseña',
+                'type' => 'password'
+            ],
+            [
+                'name' => 'oro',
+                'label' => 'Creditos',
+                'type' => 'number',
+                'default' => 0
+            ],
+            [
+                'name' => 'admin',
+                'label' => 'Administrador',
+                'type' => 'radio',
+                'options' => [
+                    1 => 'Si',
+                    0 => 'No'
+                ],
+                'default' => 0,
+                'inline' => true,
+            ],
+            [
+                'name' => 'nombre',
+                'type' => 'hidden'
+            ],
+            [
+                'name' => 'token_uid',
+                'type' => 'hidden'
+            ],
+            [
+                'name' => 'avatar',
+                'type' => 'hidden'
+            ],
+            [
+                'name' => 'colores',
+                'type' => 'hidden'
+            ],
+            [
+                'name' => 'edad',
+                'type' => 'hidden'
+            ],
+            [
+                'name' => 'ip_registro',
+                'type' => 'hidden'
+            ],
+            [
+                'name' => 'ip_actual',
+                'type' => 'hidden'
+            ],
+            [
+                'name' => 'ultima_conexion',
+                'type' => 'hidden'
+            ],
+            [
+                'name' => 'fecha_registro',
+                'type' => 'hidden'
+            ],
+        ]);
     }
 
-    /**
-     * Define what happens when the Update operation is loaded.
-     * 
-     * @see https://backpackforlaravel.com/docs/crud-operation-update
-     * @return void
-     */
+    protected function basicFieldsUpdate()
+    {
+        $this->crud->addFields([
+            [
+                'name' => 'metamask',
+                'label' => 'Metamask',
+                'type' => 'text'
+            ],
+            [
+                'name' => 'email',
+                'label' => 'Email',
+                'type' => 'email'
+            ],
+            [
+                'name' => 'password',
+                'label' => 'Contraseña',
+                'type' => 'password'
+            ],
+            [
+                'name' => 'oro',
+                'label' => 'Creditos',
+                'type' => 'number',
+                'default' => 0
+            ],
+            [
+                'name' => 'admin',
+                'label' => 'Administrador',
+                'type' => 'radio',
+                'options' => [
+                    1 => 'Si',
+                    0 => 'No'
+                ],
+                'default' => 0,
+                'inline' => true,
+            ],
+            [
+                'name' => 'nombre',
+                'label' => 'Nombre',
+                'type' => 'text'
+            ],
+            [
+                'name' => 'ip_registro',
+                'label' => 'IP Registro',
+                'type' => 'text'
+            ],
+            [
+                'name' => 'ip_actual',
+                'label' => 'IP Actual',
+                'type' => 'text'
+            ],
+            [
+                'name' => 'ultima_conexion',
+                'label' => 'Ultima Conexion',
+                'type' => 'datetime'
+            ],
+            [
+                'name' => 'fecha_registro',
+                'label' => 'Fecha Registro',
+                'type' => 'datetime'
+            ],
+        ]);
+    }
+
+
     protected function setupUpdateOperation()
     {
-        $this->setupCreateOperation();
+        CRUD::setValidation(UsuarioUpdateRequest::class);
+
+        $this->basicFieldsUpdate();
     }
 }

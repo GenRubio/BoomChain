@@ -30,8 +30,6 @@ namespace BoomBang.SocketsWeb
             {
                 reciveData(client);
             }
-            /*client.Close();
-            socket.Close();*/
         }
 
         public static void sendData(Socket client, string idType, string parameters)
@@ -50,7 +48,6 @@ namespace BoomBang.SocketsWeb
             }
            
         }
-
         private static void reciveData(Socket client)
         {
             try
@@ -78,7 +75,6 @@ namespace BoomBang.SocketsWeb
             }
          
         }
-
         private static SessionInstance session (string token_uid)
         {
             foreach(SessionInstance session in UserManager.UsuariosOnline.Values.ToList())
@@ -90,20 +86,17 @@ namespace BoomBang.SocketsWeb
             }
             return null;
         }
-
         private static string getIdType(string buffer)
         {
             string[] data = buffer.Split('|');
             return data[0];
         }
-
         private static string [] getParameters(string buffer)
         {
             string[] data = buffer.Split('|');
             string[] parameters = data[1].Split(',');
             return parameters;
         }
-
         private static void callPackage(SessionInstance session, string idType, string[] parameters)
         {
             if (session != null)
@@ -111,13 +104,13 @@ namespace BoomBang.SocketsWeb
                 switch (idType)
                 {
                     case "yellow-alert":
-                        CallPackage.alert(session);
+                       
                         break;
                     case "change-ninja":
-                        CallPackage.changeNinja(session, parameters);
+                     
                         break;
                     case "change-ficha-user":
-                        CallPackage.changeFichaUser(session, parameters);
+                    
                         break;
                 }
             }

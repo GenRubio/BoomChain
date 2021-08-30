@@ -107,7 +107,7 @@ namespace BoomBang.game.instances
             {
                 if (this.Client.Connected)
                 {
-                    this.User.sendDataUser++;
+          
                     this.Client.Send(server.GetMessage());  
                 }
             }
@@ -132,7 +132,7 @@ namespace BoomBang.game.instances
         {
             if (Session.User != null)
             {
-                UserManager.Ajustar_Remuneracion(Session.User);
+                
                 MiniGamesManager.CancelarInscripciones(Session.User);
                 if (Session.User.Sala != null) SalasManager.Salir_Sala(Session);
                 UserManager.UsuariosOnline.Remove(Session.User.id);

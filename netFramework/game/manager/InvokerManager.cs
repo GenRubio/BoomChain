@@ -1,4 +1,4 @@
-﻿using BoomBang.game.instances;
+using BoomBang.game.instances;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,8 +61,12 @@ namespace BoomBang.game.manager
                     return;
                 }
 
-                string console = "[InvokerManager][Falta] -> " + head + " -> " + Packet;
-                Emulator.Form.WriteLine(console, "warning");
+                if (Emulator.activeAlertsPackets == true)
+                {
+                    string console = "[InvokerManager][Falta] -> " + head + " -> " + Packet;
+                    Emulator.Form.WriteLine(console, "warning");
+                }
+               
             }
             catch (Exception ex)
             {

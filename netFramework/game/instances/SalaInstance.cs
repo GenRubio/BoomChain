@@ -619,16 +619,16 @@ namespace BoomBang.game.instances
                 server.AppendParameter(new object[] { 1, -1, -1, 4, 5, 6, 7, 8, 9, 10, 0, -1, 13, 14, -1, 16 });
                 server.AppendParameter(new object[] { 4, -1, -1, 4, 4, 4, 4, 4, 4, 4, 0, -1, 4, 4, -1, 4 });
                 server.AppendParameter(new object[] { 0, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, -1, 0 });//Puerta Categoría
-                server.AppendParameter(CasasManager.Get_Door_Location_Model(Escenario, Escenario.Creador.id));
+                server.AppendParameter(-1);
                 server.AppendParameter(new object[] { "puerta_1", "puerta_2", "puerta_3", "puerta_4", "puerta_5", "puerta_6", "puerta_7", "puerta_8", "puerta_9", "puerta_10", "puerta_11", "puerta_12", "puerta_13", "puerta_14", "puerta_15", "puerta_16" });
-                server.AppendParameter(CasasManager.Get_Key(Escenario.modelo));
+                server.AppendParameter(-1);
                 server.AppendParameter(new object[] { 0, 0, 0, 578, 631, 149, 210, 319, 0, 445, 1120, 0, 0});//Aqui van las llaves de las casas
-                server.AppendParameter(new object[] { Escenario.terreno_something_1, Escenario.object_something_1 });
-                server.AppendParameter(new object[] { Escenario.terreno_something_2, Escenario.object_something_2 });
-                server.AppendParameter(new object[] { Escenario.terreno_something_3, Escenario.object_something_3 });
-                server.AppendParameter(new object[] { Escenario.terreno_config, Escenario.object_config });
-                server.AppendParameter(new object[] { Escenario.terreno_colores, Escenario.object_colores });
-                server.AppendParameter(new object[] { Escenario.terreno_rgb, Escenario.object_rgb });
+                server.AppendParameter(new object[] { -1, -1 });
+                server.AppendParameter(new object[] { -1, -1 });
+                server.AppendParameter(new object[] { -1, -1 });
+                server.AppendParameter(new object[] { -1, -1 });
+                server.AppendParameter(new object[] { -1, -1 });
+                server.AppendParameter(new object[] { -1, -1 });
 
                 LoadObjects();
                 server.AppendParameter(ObjetosEnSala.Count);
@@ -675,7 +675,7 @@ namespace BoomBang.game.instances
                 server.AppendParameter(OtherSession.User.edad);
                 server.AppendParameter(MonthDifference(Convert.ToDateTime(OtherSession.User.fecha_registro), DateTime.Now));//Tiempo registrado   MonthDifference(DateTime.Now, Convert.ToDateTime(Session.User.fecha_registro))
                 server.AppendParameter((OtherSession.User.ModoNinja == true ? 1 : 0));
-                server.AppendParameter((OtherSession.User.puntos_ninja >= 400 || OtherSession.User.Traje_Ninja_Principal != 0 ? 12 : 0));//traje ninja
+                server.AppendParameter((OtherSession.User.puntos_ninja >= 400  ? 12 : 0));//traje ninja
                 server.AppendParameter(OtherSession.User.UppertSelect);
                 server.AppendParameter(OtherSession.User.UppertLevel());
                 server.AppendParameter(OtherSession.User.CocoSelect);
@@ -713,9 +713,9 @@ namespace BoomBang.game.instances
                     + OtherSession.User.puntos_ninja_limite
                 });
                 server.AppendParameter(OtherSession.User.admin);
-                server.AppendParameter(OtherSession.User.vip);
-                server.AppendParameter(OtherSession.User.Cambios);
-                server.AppendParameter(Escenario.id == 2 || OtherSession.User.Sala.Ring != null || OtherSession.User.Sala.Cocos != null || OtherSession.User.Sala.Sendero != null || OtherSession.User.Sala.Camino != null ? 0 : OtherSession.User.Efecto);
+                server.AppendParameter(0);
+                server.AppendParameter(0);
+                server.AppendParameter(0);
                 server.AppendParameter(OtherSession.User.id);
             }
             if (Escenario.es_categoria == 0)
@@ -771,7 +771,7 @@ namespace BoomBang.game.instances
             server.AppendParameter(Session.User.edad);
             server.AppendParameter(MonthDifference(Convert.ToDateTime(Session.User.fecha_registro), DateTime.Now));//Tiempo registrado   MonthDifference(DateTime.Now, Convert.ToDateTime(Session.User.fecha_registro))
             server.AppendParameter((Session.User.ModoNinja == true ? 1 : 0));
-            server.AppendParameter((Session.User.puntos_ninja >= 400 || Session.User.Traje_Ninja_Principal != 0 ? 12 : 0));//traje ninja
+            server.AppendParameter((Session.User.puntos_ninja >= 400  ? 12 : 0));//traje ninja
             server.AppendParameter(Session.User.UppertSelect);
             server.AppendParameter(Session.User.UppertLevel());
             server.AppendParameter(Session.User.CocoSelect);
@@ -820,10 +820,10 @@ namespace BoomBang.game.instances
                 + "³1³"
                 + Session.User.puntos_ninja_limite
             });
-            server.AppendParameter((Session.User.toneos_ring >= 2000 && Session.User.vip <= 0 ? 1 : Session.User.admin));//Ficha dorada para las personas con mas de 2k torneos
-            server.AppendParameter(Session.User.vip);//vip
-            server.AppendParameter(Session.User.Cambios);//cambios
-            server.AppendParameter(Escenario.id == 2 || Session.User.Sala.Ring != null || Session.User.Sala.Cocos != null || Session.User.Sala.Sendero != null || Session.User.Sala.Camino != null ? 0 : Session.User.Efecto);
+            server.AppendParameter(Session.User.admin);//Ficha dorada para las personas con mas de 2k torneos
+            server.AppendParameter(0);//vip
+            server.AppendParameter(0);//cambios
+            server.AppendParameter(0);
             server.AppendParameter(Session.User.id);
             SendData(server, Session);
           

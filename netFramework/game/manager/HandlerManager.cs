@@ -15,22 +15,15 @@ namespace BoomBang.game.manager
         {
             try
             {
-                ConcursosManager.seavItemsObject();//Cargar los items que caen en salas
-                TrampasManager.saveTrampasSala();//Cargar las trampas de todas las salas
-
                 LoginHandler.Start();
                 FlowerHandler.Start();
-                CasasHandler.Start();
                 NavigatorHandler.Start();
-                BPadHandler.Start();
                 CatalogoHandler.Start();
-                ConcursosHandler.Start();
                 PathfindingHandler.Start();
                 InterfazHandler.Start();
                 IslasHandler.Start();
                 MiniGamesHandler.Start();
                 PingHandler.Start();
-                npcHandler.Start();
               
                 string console = "Se han registrado " + Handlers.Count + " handlers.";
                 Emulator.Form.WriteLine(console);

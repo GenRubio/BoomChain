@@ -15,7 +15,6 @@ namespace BoomBang.game.handler
     {
         public static void Start()
         {
-            HandlerManager.RegisterHandler(130, new ProcessHandler(Tutorial_Islas));
             HandlerManager.RegisterHandler(189120, new ProcessHandler(CrearIsla));
             HandlerManager.RegisterHandler(189124, new ProcessHandler(MostrarIsla));
             HandlerManager.RegisterHandler(189121, new ProcessHandler(CrearZona));
@@ -24,21 +23,7 @@ namespace BoomBang.game.handler
             HandlerManager.RegisterHandler(189130, new ProcessHandler(RenombrarZona));
             HandlerManager.RegisterHandler(189129, new ProcessHandler(RenombrarIsla));
             HandlerManager.RegisterHandler(189126, new ProcessHandler(CambiarDescripcion));
-            HandlerManager.RegisterHandler(189147, new ProcessHandler(ExpulsarUsuario));
             HandlerManager.RegisterHandler(189146, new ProcessHandler(CambiarColores));
-        }
-        private static void Tutorial_Islas(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null)
-                {
-                    if (Session.User.Sala.Escenario.es_categoria != 0) return;
-                    Session.User.tutorial_islas = 0;
-                    UserManager.Creditos(Session.User, false, true, 10000);
-                    Session.User.Sala.ActualizarEstadisticas(Session.User);
-                }
-            }
         }
         private static void CambiarDescripcion(SessionInstance Session, string[,] Parameters)
         {
@@ -72,30 +57,6 @@ namespace BoomBang.game.handler
                         new Thread(() => EscenariosManager.CambiarColores(Session.User.Sala.Escenario, Parameters[0, 0], Parameters[1, 0])).Start();
                         Packet_189_146(Session, Parameters[0, 0], Parameters[1, 0]);
                         Session.User.PreLock__Proteccion_SQL = true;
-                    }
-                }
-            }
-        }
-        private static void ExpulsarUsuario(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null)
-                {
-                    if (EscenariosManager.ControlDeSeguridad(Session.User, Session.User.Sala.Escenario))
-                    {
-                        SessionInstance SessionToKick = UserManager.ObtenerSession(int.Parse(Parameters[1, 0]));
-                        if (SessionToKick != null)
-                        {
-                            SessionInstance SessionToKick_2 = Session.User.Sala.ObtenerSession(SessionToKick.User.IDEspacial);
-                            if (SessionToKick_2 != null)
-                            {
-                                if (SessionToKick_2.User.id == SessionToKick.User.id)
-                                {
-                                    SalasManager.Salir_Sala(SessionToKick, true);
-                                }
-                            }
-                        }
                     }
                 }
             }
@@ -277,22 +238,22 @@ namespace BoomBang.game.handler
                 server.AppendParameter(Isla.Creador.nombre);
                 server.AppendParameter(Isla.Creador.avatar);
                 server.AppendParameter(Isla.Creador.colores);
-                server.AppendParameter(Isla.mamigos_1);
-                server.AppendParameter(Isla.mamigos_2);
-                server.AppendParameter(Isla.mamigos_3);
-                server.AppendParameter(Isla.mamigos_4);
-                server.AppendParameter(Isla.mamigos_5);
-                server.AppendParameter(Isla.mamigos_6);
-                server.AppendParameter(Isla.mamigos_7);
-                server.AppendParameter(Isla.mamigos_8);
-                server.AppendParameter(Isla.noverlo_1);
-                server.AppendParameter(Isla.noverlo_2);
-                server.AppendParameter(Isla.noverlo_3);
-                server.AppendParameter(Isla.noverlo_4);
-                server.AppendParameter(Isla.noverlo_5);
-                server.AppendParameter(Isla.noverlo_6);
-                server.AppendParameter(Isla.noverlo_7);
-                server.AppendParameter(Isla.noverlo_8);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
+                server.AppendParameter(-1);
                 server.AppendParameter(Escenarios.Count);
                 foreach (EscenarioInstance Escenario in Escenarios)
                 {
@@ -307,22 +268,7 @@ namespace BoomBang.game.handler
                     server.AppendParameter(0);
                     server.AppendParameter(SalasManager.UsuariosEnSala(Escenario));//Visitantes
                     server.AppendParameter(0);
-                    if (Isla.noverlo_1.Contains(Session.User.nombre) || Isla.noverlo_2.Contains(Session.User.nombre) || Isla.noverlo_3.Contains(Session.User.nombre) || Isla.noverlo_4.Contains(Session.User.nombre) || Isla.noverlo_5.Contains(Session.User.nombre) || Isla.noverlo_6.Contains(Session.User.nombre) || Isla.noverlo_7.Contains(Session.User.nombre) || Isla.noverlo_8.Contains(Session.User.nombre))
-                    {
-                        server.AppendParameter(1);//Usuario no puede acceder a la isla
-                        server.AppendParameter(1);
-                    }
-                    else
-                    {
-                        if (Isla.mamigos_1.Contains(Session.User.nombre) || Isla.mamigos_2.Contains(Session.User.nombre) || Isla.mamigos_3.Contains(Session.User.nombre) || Isla.mamigos_4.Contains(Session.User.nombre) || Isla.mamigos_5.Contains(Session.User.nombre) || Isla.mamigos_6.Contains(Session.User.nombre) || Isla.mamigos_7.Contains(Session.User.nombre) || Isla.mamigos_8.Contains(Session.User.nombre))
-                        {
-                            server.AppendParameter(0);
-                        }
-                        else
-                        {
-                            server.AppendParameter((string.IsNullOrEmpty(Escenario.Clave) ? 0 : 1));
-                        }
-                    }
+                    server.AppendParameter((string.IsNullOrEmpty(Escenario.Clave) ? 0 : 1));
                 }
 
             }

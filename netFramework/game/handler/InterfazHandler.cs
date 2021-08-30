@@ -106,7 +106,6 @@ namespace BoomBang.game.handler
             {
                 if (Session.User.Sala != null)
                 {
-                    Votos_Restantes(Session);
                     Packet_167(Session);
                 }
             }
@@ -117,7 +116,7 @@ namespace BoomBang.game.handler
             {
                 if (Session.User.Sala != null)
                 {
-                    if (Session.User.Efecto != 0) return;
+                    
                     if (Session.User.PreLock_Disfraz == true) { Packet_143(Session); return; }
                     if (Session.User.ModoNinja == true)
                     {
@@ -430,8 +429,7 @@ namespace BoomBang.game.handler
                             }
                             if (Session.User.oro >= 0)
                             {
-                                if (Session.User.block_upper == true) return;
-                                if (OtherSession.User.block_upper == true) return;
+                             
                                 int Derecha = Session.User.Posicion.x - OtherSession.User.Posicion.x;
                                 int Izquierda = Session.User.Posicion.y - OtherSession.User.Posicion.y;
                                 if (Derecha == 1 && Izquierda == 1)
@@ -465,7 +463,7 @@ namespace BoomBang.game.handler
 
             if (Session.User != null
                 && Session.User.Sala != null
-                && Session.User.contar_pasos == 0
+            
                 && Session.User.PreLock_Acciones_Ficha != true
                 && accion >= 1 && accion <= 8)
             {
@@ -579,10 +577,7 @@ namespace BoomBang.game.handler
                     Session.User.Sala.Ring.Descalificar(OtherSession);
                     new Thread(() => Uppert_Kick(OtherSession, Session.User.Sala, false)).Start();
                     Session.User.PreLock_Disfraz = true;
-                    if (OtherSession.User.ModoNinja == true)
-                    {
-                        if (Session.User.Ninja_Copi_color == true || Session.User.Traje_Ninja_Principal == 5) { Session.User.NinjaColores_Sala = OtherSession.User.NinjaColores_Sala; new Thread(() => Copiar_traje(Session)).Start(); }
-                    }
+
                     Session.User.uppers_enviados++;
                     OtherSession.User.uppers_recibidos++;
                     Session.User.Sala.ActualizarEstadisticas(Session.User);
@@ -593,11 +588,7 @@ namespace BoomBang.game.handler
             {
                 new Thread(() => Uppert_Kick(OtherSession, Session.User.Sala)).Start();
                 Session.User.PreLock_Disfraz = true;
-                if (OtherSession.User.ModoNinja == true)
-                {
-                    if (Session.User.Ninja_Copi_color == true || Session.User.Traje_Ninja_Principal == 5) { Session.User.NinjaColores_Sala = OtherSession.User.NinjaColores_Sala; new Thread(() => Copiar_traje(Session)).Start(); }
-                }
-                if (Session.User.ninja_celestial_puesto == true) { Session.User.ninja_celestial = true; new Thread(() => Ninja_Celestial_Tiempo(Session)).Start(); }
+               
                 Session.User.uppers_enviados++;
                 OtherSession.User.uppers_recibidos++;
                 Session.User.Sala.ActualizarEstadisticas(Session.User);
@@ -614,7 +605,7 @@ namespace BoomBang.game.handler
         private static void Coco(SessionInstance Session, SessionInstance OtherSession, int coco)
         {
             bool coco_viejo = false;
-            if (OtherSession.User.Posicion.x == Session.User.Sala.Puerta.x && OtherSession.User.Posicion.y == Session.User.Sala.Puerta.y || Session.User.Posicion.x == Session.User.Sala.Puerta.x && Session.User.Posicion.y == Session.User.Sala.Puerta.y || OtherSession.User.block_coco == true)
+            if (OtherSession.User.Posicion.x == Session.User.Sala.Puerta.x && OtherSession.User.Posicion.y == Session.User.Sala.Puerta.y || Session.User.Posicion.x == Session.User.Sala.Puerta.x && Session.User.Posicion.y == Session.User.Sala.Puerta.y)
             {
                 return;
             }
@@ -625,17 +616,8 @@ namespace BoomBang.game.handler
                 {
                     case 0:
                         OtherSession.User.Time_Interactuando = Time.GetCurrentAndAdd(AddType.Segundos, 6);
-                        if (Session.User.vip == 1)
-                        {
-                            coco = 0;
-                            coco_viejo = true;
-                            new Thread(() => Coco_Thread(OtherSession, new TimeSpan(0, 0, 0, 6, 0), 0, Session.User.Sala)).Start();
-                        }
-                        else
-                        {
-                            coco = 35;
-                            new Thread(() => Coco_Thread(OtherSession, new TimeSpan(0, 0, 0, 6, 0), 35, Session.User.Sala)).Start();
-                        }                         
+                        coco = 35;
+                        new Thread(() => Coco_Thread(OtherSession, new TimeSpan(0, 0, 0, 6, 0), 35, Session.User.Sala)).Start();
                         break;
                     case 1:
                         coco = 40;
@@ -771,47 +753,30 @@ namespace BoomBang.game.handler
         {
             Session.User.ModoNinja = true;
 
-            if (Session.User.avatar == 13 || Session.User.avatar == 14) {
-                Session.User.avatar = Session.User.avatar_anterior;
-            }
-
             Session.User.Trayectoria.DetenerMovimiento();
             Session.User.PreLock_Disfraz = true;
 
-            if (Session.User.nivel_ninja >= 1 && Session.User.Traje_Ninja_Principal == 0)
+            if (Session.User.nivel_ninja >= 1)
             {
-                Session.User.NinjaColores_Sala = Session.User.Colores_traje(Session);
+                Session.User.colores = Session.User.Colores_traje(Session);
             }
             PathfindingHandler.Reprar_Mirada_Z(Session);
-            if (Session.User.ModoNinja == true && Session.User.NinjaColores_Sala == "")
+            if (Session.User.ModoNinja == true)
             {
                 Session.User.ModoNinja = false;
                 return;
             }
-            Packet_125_120(Session, Session.User.id, 12, Session.User.NinjaColores_Sala, true);
+            Packet_125_120(Session, Session.User.id, 12, Session.User.colores, true);
         }
         private static void DesactivarTraje(SessionInstance Session)
         {
             Session.User.ModoNinja = false;
-            Session.User.ninja_celestial_puesto = false;
-            Session.User.Ninja_Copi_color = false;///1.0 CODE
-            Session.User.NinjaColores_Sala = "";///1.0 CODE
+         
             Session.User.Trayectoria.DetenerMovimiento();
             Session.User.PreLock_Disfraz = true;
             PathfindingHandler.Reprar_Mirada_Z(Session);
         }
-        private static void Votos_Restantes(SessionInstance Session)
-        {
-            foreach (SessionInstance OtherSession in Session.User.Sala.Usuarios.Values)
-            {
-                if (OtherSession.User.colores_old != "")
-                {
-                    Packet_125_120(Session, OtherSession.User.id, OtherSession.User.avatar, OtherSession.User.colores, false);
-                    NotificacionesManager.NotifiChat(Session, "Sabio: Usuario " + OtherSession.User.nombre + " tiene anti upper activado.");
-                }
-            }
-        }
-      
+     
         public static void Coco_Thread(SessionInstance Session, TimeSpan Tiempo, int modelo, SalaInstance Sala, Posicion Posicion = null)
         {
             Thread.Sleep(Tiempo);
@@ -840,15 +805,7 @@ namespace BoomBang.game.handler
                 {
                     if (kick)
                     {
-                        if (Session.User.vip > 0)
-                        {
-                            Packet_182(Session, 0, 0, Session.User.Posicion.z);
-                            Session.User.Sala.Map[Session.User.Posicion.y, Session.User.Posicion.x].FijarSession(null);
-                            Session.User.Posicion.x = Session.User.Sala.Puerta.x;
-                            Session.User.Posicion.y = Session.User.Sala.Puerta.y;
-                            Packet_135(Session, Session.User.Sala.Puerta.x, Session.User.Sala.Puerta.y, 4);
-                        }
-                        else { SalasManager.Salir_Sala(Session, true); }
+                       SalasManager.Salir_Sala(Session, true);
                     }
                     else
                     {
@@ -863,22 +820,6 @@ namespace BoomBang.game.handler
             {
                 return;
             } 
-        }
-        static void Ninja_Celestial_Tiempo(SessionInstance Session)
-        {
-            Thread.Sleep(new TimeSpan(0, 0, 4));
-            if (Session.User.Sala != null)
-            {
-                if (Session.User.ninja_celestial == true) { Session.User.ninja_celestial = false; }
-            }
-        }
-        static void Copiar_traje(SessionInstance Session)
-        {
-            Thread.Sleep(new TimeSpan(0, 0, 13));
-            Session.User.Trayectoria.DetenerMovimiento();
-            Session.User.PreLock_Disfraz = true;
-
-            Packet_125_120(Session, Session.User.id, 12, Session.User.NinjaColores_Sala, true);
         }
         private static void Packet_210_125(SessionInstance Session)
         {
@@ -896,13 +837,7 @@ namespace BoomBang.game.handler
             server.AppendParameter(Session.User.VotosRestantes);
             Session.User.Sala.SendData(server, Session);
         }
-        private static void Packet_152(SessionInstance Session)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(152);
-            server.AppendParameter(Time.GetDifference(Session.User.coins_remain_double));
-            Session.SendData(server);
-        }
+       
         private static void Packet_143(SessionInstance Session)
         {
             ServerMessage server = new ServerMessage();
@@ -932,25 +867,7 @@ namespace BoomBang.game.handler
             server.AppendParameter(Session.User.id);
             Session.User.Sala.SendData(server, Session);
         }
-        private static void Packet_157(SessionInstance Session, int BoxID, string Texto)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(157);
-            server.AppendParameter(Session.User.IDEspacial);
-            server.AppendParameter(BoxID);
-            server.AppendParameter(Texto);
-            Session.User.Sala.SendData(server, Session);
-        }
-
-        private static void Packet_156(SessionInstance Session, int BoxID, string Texto)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(156);
-            server.AppendParameter(Session.User.IDEspacial);
-            server.AppendParameter(BoxID);
-            server.AppendParameter(Texto);
-            Session.User.Sala.SendData(server, Session);
-        }
+        
         private static void Packet_140(SessionInstance Session, SessionInstance OtherSession, int InteraccionID)
         {
             ServerMessage server = new ServerMessage();
@@ -1000,42 +917,7 @@ namespace BoomBang.game.handler
             server.AddHead(144);
             Session.SendDataProtected(server);
         }
-        private static void Packet_134(SessionInstance Session, int accion)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(134);
-            server.AppendParameter(Session.User.IDEspacial);
-            server.AppendParameter(accion);
-            Session.User.Sala.SendData(server, Session);
-        }
-        private static void Packet_136(SessionInstance Session, string mensaje, int usuario_2)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(136);
-            server.AppendParameter(Session.User.IDEspacial);
-            server.AppendParameter(mensaje);
-            server.AppendParameter((Session.User.admin == 1 ? 2 : 1));
-            Session.SendData(server);
-            SessionInstance OtherSession = Session.User.Sala.ObtenerSession(usuario_2);
-            if (OtherSession != null)
-            {
-                OtherSession.SendDataProtected(server);
-            }
-        }
-        private static void Packet_133(SessionInstance Session, string mensaje)
-        {
-            if (Utils.checkValidCharacters(mensaje, false))
-            {
-                ServerMessage server = new ServerMessage();
-                server.AddHead(133);
-                server.AppendParameter(Session.User.IDEspacial);
-                server.AppendParameter(mensaje);
-                server.AppendParameter((Session.User.admin == 1 && Session.User.Color_Chat == 1 
-                    || Session.User.admin == 2 && Session.User.Color_Chat == 1 ? 2 : 
-                    Session.User.vip >= 1 && Session.User.Color_Chat == 1 ? 9 : Session.User.Color_Chat));
-                Session.User.Sala.SendData(server, Session);
-            }
-        }
+       
         private static void Packet_145(SessionInstance Session, SessionInstance OtherSession)
         {
             ServerMessage server = new ServerMessage();
@@ -1070,33 +952,6 @@ namespace BoomBang.game.handler
             server.AppendParameter(Session.User.IDEspacial);
             server.AppendParameter(Session.User.Posicion.x);
             server.AppendParameter(Session.User.Posicion.y);
-            Session.User.Sala.SendData(server, Session);
-        }
-        private static void Packet_158(SessionInstance Session)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(158);
-            server.AppendParameter(Session.User.IDEspacial);
-            server.AppendParameter(Session.User.bocadillo);
-            Session.User.Sala.SendData(server, Session);
-            Session.User.PreLock_Ficha = true;
-        }
-        public static void Packet_209128(SessionInstance Session)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(209);
-            server.AddHead(128);
-            server.AppendParameter(0);
-            Session.SendData(server);
-        }
-        private static void Packet_135(SessionInstance Session, int x, int y, int z)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(135);
-            server.AppendParameter(Session.User.IDEspacial);
-            server.AppendParameter(x);
-            server.AppendParameter(y);
-            server.AppendParameter(z);
             Session.User.Sala.SendData(server, Session);
         }
         private static void Packet_149(SessionInstance Session)

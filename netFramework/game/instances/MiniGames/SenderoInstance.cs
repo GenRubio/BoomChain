@@ -153,7 +153,7 @@ namespace BoomBang.game.instances.MiniGames
                                 server1.AppendParameter(Session.User.nombre);
                                 server1.AppendParameter("Ha ganado: 5 monedas de plata!");
                                 sala.SendData(server1);
-                                UserManager.Creditos(Session.User, false, true, Recompensa_Silver);
+                               
                                 NotificacionesManager.Recompensa_Plata(Session, 5);
                                 sala.ActualizarEstadisticas(Session.User);
                                 break;
@@ -293,12 +293,12 @@ namespace BoomBang.game.instances.MiniGames
                 switch (sala.Escenario.modelo)
                 {
                     case 6:
-                        UserManager.Creditos(Session.User, true, false, Precio_Golden);
+                       
                         sala.ActualizarEstadisticas(Session.User);
                         break;
 
                     case 7:
-                        UserManager.Creditos(Session.User, false, false, Precio_Silver);
+                   
                         sala.ActualizarEstadisticas(Session.User);
                         break;
                 }
@@ -478,24 +478,17 @@ namespace BoomBang.game.instances.MiniGames
                 {
                     if (ID == 7)//Silver
                     {
-                        if (Session.User.plata >= SenderoInstance.Precio_Silver)
+                        if (!MiniGamesManager.Inscripciones_Sendero.ContainsKey(Session.User.id))
                         {
-                            if (!MiniGamesManager.Inscripciones_Sendero.ContainsKey(Session.User.id))
+                            MiniGamesManager.Inscripciones_Sendero.Add(Session.User.id, new Inscripcion(Session, 7));
+                            if (MiniGamesManager.Inscripciones_Sendero.ContainsKey(Session.User.id))
                             {
-                                MiniGamesManager.Inscripciones_Sendero.Add(Session.User.id, new Inscripcion(Session, 7));
-                                if (MiniGamesManager.Inscripciones_Sendero.ContainsKey(Session.User.id))
-                                {
-                                    server.AppendParameter(1);
-                                }
-                            }
-                            else
-                            {
-                                server.AppendParameter(-1);
+                                server.AppendParameter(1);
                             }
                         }
                         else
                         {
-                            server.AppendParameter(2);
+                            server.AppendParameter(-1);
                         }
                     }
                 }

@@ -155,18 +155,9 @@ namespace BoomBang.game.instances.MiniGames
                             server_5.AppendParameter("Ha ganado: " + Recompensa_Golden + " créditos! y Suma " + 3 + " puntos y está más cerca de conseguir un nuevo coco!");
                             sala.SendData(server_5);
 
-                            UserManager.Creditos(SessionWin.User, true, true, Recompensa_Golden);
+                           
                             UserManager.Sumar_Cocos(SessionWin.User, 3);
-                            SessionWin.User.torneos_coco++;
-                            if (SessionWin.User.torneos_coco == 300)
-                            {
-                                using (mysql client = new mysql())
-                                {
-                                    client.SetParameter("usuario_id", SessionWin.User.id);
-                                    client.SetParameter("objeto_id", 3069);
-                                    client.ExecuteNonQuery("INSERT INTO objetos_comprados (`usuario_id`, `objeto_id`) VALUES (@usuario_id, @objeto_id)");
-                                }
-                            }
+                           
                             UserManager.ActualizarEstadisticas(SessionWin.User);
                             break;
                         case 9:
@@ -178,7 +169,7 @@ namespace BoomBang.game.instances.MiniGames
                             server_6.AppendParameter(SessionWin.User.nombre);
                             server_6.AppendParameter("Ha ganado: " + Recompensa_Silver + " monedas de plata! y Suma " + 1 + " puntos y está más cerca de conseguir un nuevo coco!");
                             sala.SendData(server_6);
-                            UserManager.Creditos(SessionWin.User, false, true, Recompensa_Silver);
+                    
                             UserManager.Sumar_Cocos(SessionWin.User, 1);
                             break;
                     }
@@ -230,11 +221,11 @@ namespace BoomBang.game.instances.MiniGames
                 Session.User.CocosLocos = null;
                 if (sala.Escenario.id == 8)
                 {
-                    UserManager.Creditos(Session.User, true, false, Precio_Golden);
+                   
                 }
                 if (sala.Escenario.id == 9)
                 {
-                    UserManager.Creditos(Session.User, false, false, Precio_Silver);
+                   
                 }
                 Participantes.Remove(Session.User.IDEspacial);
                 if (MiniGamesManager.Inscripciones_CocosLocos.ContainsKey(Session.User.id))
@@ -321,24 +312,17 @@ namespace BoomBang.game.instances.MiniGames
                     if (ID == 9)//Silver
                     {
                         server.AppendParameter(-1);
-                        if (Session.User.plata >= CocosInstance.Precio_Silver)
+                        if (!MiniGamesManager.Inscripciones_CocosLocos.ContainsKey(Session.User.id))
                         {
-                            if (!MiniGamesManager.Inscripciones_CocosLocos.ContainsKey(Session.User.id))
+                            MiniGamesManager.Inscripciones_CocosLocos.Add(Session.User.id, new Inscripcion(Session, 9));
+                            if (MiniGamesManager.Inscripciones_CocosLocos.ContainsKey(Session.User.id))
                             {
-                                MiniGamesManager.Inscripciones_CocosLocos.Add(Session.User.id, new Inscripcion(Session, 9));
-                                if (MiniGamesManager.Inscripciones_CocosLocos.ContainsKey(Session.User.id))
-                                {
-                                    server.AppendParameter(1);
-                                }
-                            }
-                            else
-                            {
-                                server.AppendParameter(-1);
+                                server.AppendParameter(1);
                             }
                         }
                         else
                         {
-                            server.AppendParameter(2);
+                            server.AppendParameter(-1);
                         }
                     }
                 }

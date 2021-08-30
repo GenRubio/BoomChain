@@ -309,12 +309,7 @@ namespace BoomBang.game.manager
                     Session.User.IDEspacial = key;
                     Session.User.Trayectoria = new Trayectoria(Session);
                     Session.User.Sala.Map[Session.User.Posicion.y, Session.User.Posicion.x].FijarSession(Session);
-                    if (Session.User.colores_old != "")
-                    {
-                        Session.User.colores = Session.User.colores_old;
-                        Session.User.colores_old = "";
-                        Session.User.block_upper = false;
-                    }
+                   
                     Session.User.Sala.EnviarRegistro(Session);
                     return true;
                 }
@@ -351,10 +346,7 @@ namespace BoomBang.game.manager
                         Session.User.Sala.SendData(eliminar_usuario);
                         Session.User.Sala.EliminarInteraccionesDeUsuario(Session.User.IDEspacial);
                         MiniGamesManager.DescalificarParticipante(Session);
-                        if (Session.User.Intercambio != null)
-                        {
-                            Session.User.Intercambio.TerminarCanjeo();
-                        }
+                        
                         Session.User.Sala = null;
                     }
                 }
@@ -376,7 +368,7 @@ namespace BoomBang.game.manager
         #region oso_bosque
         public static void bosque_oso(SessionInstance Session)
         {
-            if (Session.User.Sala.Escenario.id == 69 && Session.User.Posicion.x == 10 && Session.User.Posicion.y == 14 && Session.User.Efecto != 7)
+            if (Session.User.Sala.Escenario.id == 69 && Session.User.Posicion.x == 10 && Session.User.Posicion.y == 14)
             {
                 Session.User.Trayectoria.DetenerMovimiento();
                 packet_oso(Session);
