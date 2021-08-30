@@ -24,7 +24,8 @@ class UsuarioCrudController extends CrudController
 
     protected function setupListOperation()
     {
-        $this->crud->addButtonFromView('line', 'personaje', 'personaje', 'beginning');
+        $this->crud->addButtonFromView('line', 'personajes', 'personajes', 'beginning');
+        $this->crud->addButtonFromView('line', 'user-data', 'user-data', 'beginning');
 
         $this->crud->addColumn([
             'name' => 'nombre',

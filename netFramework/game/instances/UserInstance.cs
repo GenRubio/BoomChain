@@ -1,3 +1,4 @@
+using BoomBang.game.dao;
 using BoomBang.game.instances.manager.pathfinding;
 using BoomBang.game.manager;
 using System;
@@ -80,6 +81,8 @@ namespace BoomBang.game.instances
         public int TrajeID { get { return mTrajeID; } set { mTrajeID = value; } }
         public string levelup = "";
         public string token_uid = "";
+        public PersonajeInstance Personaje;
+        public List<PersonajeInstance> personajesList;
         public UserInstance(DataRow row)
         {
             this.id = (int)row["id"];
@@ -122,6 +125,16 @@ namespace BoomBang.game.instances
             this.UppertSelect = UppertLevel();
             this.CocoSelect = nivel_coco;
             this.token_uid = (string)row["token_uid"];
+            this.personajesList = setUserPersonajes();
+            this.Personaje = setUserPersonaje();
+        }
+        private List<PersonajeInstance> setUserPersonajes()
+        {
+            return PersonajeDAO.getUserPersonajes(this.id);
+        }
+        private PersonajeInstance setUserPersonaje()
+        {
+            return PersonajeDAO.getUserPersonaje(this.id);
         }
         public string Colores_traje(SessionInstance Session)
         {

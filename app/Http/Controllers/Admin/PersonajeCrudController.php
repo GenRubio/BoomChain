@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\PersonajeUpdateRequest;
-use App\Http\Requests\UsuarioRequest;
+use App\Http\Requests\PersonajeRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Support\Facades\Route;
@@ -16,15 +15,13 @@ class PersonajeCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
 
-    protected $user_id;
-
     public function setup()
     {
-        CRUD::setModel(\App\Models\Usuario::class);
+        CRUD::setModel(\App\Models\Personaje::class);
         $this->setRoute();
         $this->breadCrumbs();
         $this->filterList();
-        CRUD::setEntityNameStrings('personaje', 'personaje');
+        CRUD::setEntityNameStrings('personaje', 'personajes');
     }
 
     private function setRoute()
@@ -33,7 +30,7 @@ class PersonajeCrudController extends CrudController
 
         $this->crud->setRoute(
             "admin/usuario/"
-                . $this->user_id . "/personaje"
+                . $this->user_id . "/personajes"
         );
     }
     private function breadCrumbs()
@@ -44,196 +41,105 @@ class PersonajeCrudController extends CrudController
             'Usuarios' => backpack_url('usuario'),
             'Personaje' => backpack_url("usuario/"
                 . $this->user_id
-                . "/personaje"),
+                . "/personajes"),
             trans('backpack::crud.list') => false,
         ];
     }
 
     private function filterList()
     {
-        $this->crud->addClause('where', 'id', $this->user_id);
+        $this->crud->addClause('where', 'usuario_id', $this->user_id);
     }
 
     protected function setupListOperation()
     {
-        $this->crud->removeButton('create');
-        $this->crud->removeButton('delete');
-
         $this->crud->addColumn([
-            'name' => 'nombre',
-            'label' => 'Nombre',
-            'type' => 'text'
-        ]);
-        $this->crud->addColumn([
-            'name' => 'bocadillo',
-            'label' => 'Descripcion',
-            'type' => 'text'
-        ]);
-        $this->crud->addColumn([
-            'name' => 'avatar',
-            'label' => 'Avatar',
+            'name' => 'avatar_id',
+            'label' => 'Personaje',
             'type'    => 'select_from_array',
             'options' => config('app.personajes'),
         ]);
         $this->crud->addColumn([
-            'name' => 'edad',
-            'label' => 'Color ficha',
-            'type'    => 'select_from_array',
-            'options' => config('app.ficha_colores'),
+            'name' => 'principal',
+            'label' => 'Principal',
+            'type' => 'check'
         ]);
     }
-    protected function basicFieldsCreate()
+
+    protected function basicFields()
     {
         $this->crud->addFields([
             [
-                'name' => 'nombre',
-                'label' => 'Nombre',
-                'type' => 'text',
-                'attributes' => [
-                    'readonly'    => 'readonly',
-                  ],
-            ],
-            [
-                'name' => 'avatar',
-                'label' => 'Avatar',
+                'name' => 'avatar_id',
+                'label' => 'Personaje',
                 'type' => 'select_from_array',
                 'options' => config('app.personajes'),
             ],
             [
-                'name' => 'edad',
-                'label' => 'Color ficha',
-                'type' => 'select_from_array',
-                'options' => config('app.ficha_colores'),
+                'name' => 'usuario_id',
+                'type' => 'hidden',
+                'value' => $this->user_id
             ],
             [
-                'name' => 'bocadillo',
-                'label' => 'Descripcion',
-                'type' => 'text'
+                'name'    => 'color_1',
+                'label'   => 'Color 1',
+                'type'    => 'color',
+                'default' => '#FFFFFF',
             ],
             [
-                'name' => 'hobby_1',
-                'label' => 'Hobby 1',
-                'type' => 'text'
+                'name'    => 'color_2',
+                'label'   => 'Color 2',
+                'type'    => 'color',
+                'default' => '#FFFFFF',
             ],
             [
-                'name' => 'hobby_2',
-                'label' => 'Hobby 2',
-                'type' => 'text'
+                'name'    => 'color_3',
+                'label'   => 'Color 3',
+                'type'    => 'color',
+                'default' => '#FFFFFF',
             ],
             [
-                'name' => 'hobby_3',
-                'label' => 'Hobby 3',
-                'type' => 'text'
+                'name'    => 'color_4',
+                'label'   => 'Color 4',
+                'type'    => 'color',
+                'default' => '#FFFFFF',
             ],
             [
-                'name' => 'deseo_1',
-                'label' => 'Deseo 1',
-                'type' => 'text'
+                'name'    => 'color_5',
+                'label'   => 'Color 5',
+                'type'    => 'color',
+                'default' => '#FFFFFF',
             ],
             [
-                'name' => 'deseo_2',
-                'label' => 'Deseo 2',
-                'type' => 'text'
+                'name'    => 'color_6',
+                'label'   => 'Color 6',
+                'type'    => 'color',
+                'default' => '#FFFFFF',
             ],
             [
-                'name' => 'deseo_3',
-                'label' => 'Deseo 3',
-                'type' => 'text'
+                'name'    => 'color_7',
+                'label'   => 'Color 7',
+                'type'    => 'color',
+                'default' => '#FFFFFF',
             ],
             [
-                'name' => 'votos_sexy',
-                'label' => 'Votos sexy',
-                'type' => 'number'
-            ],
-            [
-                'name' => 'votos_legal',
-                'label' => 'Votos legal',
-                'type' => 'number'
-            ],
-            [
-                'name' => 'votos_simpatico',
-                'label' => 'Votos simpatico',
-                'type' => 'number'
-            ],
-            [
-                'name' => 'besos_enviados',
-                'label' => 'Besos enviados',
-                'type' => 'number'
-            ],
-            [
-                'name' => 'besos_recibidos',
-                'label' => 'Besos recibidos',
-                'type' => 'number'
-            ],
-            [
-                'name' => 'jugos_enviados',
-                'label' => 'Jugos enviados',
-                'type' => 'number'
-            ],
-            [
-                'name' => 'jugos_recibidos',
-                'label' => 'Jugos recibidos',
-                'type' => 'number'
-            ],
-            [
-                'name' => 'flores_enviadas',
-                'label' => 'Flores enviados',
-                'type' => 'number'
-            ],
-            [
-                'name' => 'flores_recibidas',
-                'label' => 'Flores recibidas',
-                'type' => 'number'
-            ],
-            [
-                'name' => 'uppers_enviados',
-                'label' => 'Uppers enviados',
-                'type' => 'number'
-            ],
-            [
-                'name' => 'uppers_recibidos',
-                'label' => 'Uppers recibidos',
-                'type' => 'number'
-            ],
-            [
-                'name' => 'cocos_enviados',
-                'label' => 'Cocos enviados',
-                'type' => 'number'
-            ],
-            [
-                'name' => 'cocos_recibidos',
-                'label' => 'Cocos recibidos',
-                'type' => 'number'
-            ],
-            [
-                'name' => 'rings_ganados',
-                'label' => 'Rings ganados',
-                'type' => 'number'
-            ],
-            [
-                'name' => 'senderos_ganados',
-                'label' => 'Senderos ganados',
-                'type' => 'number'
-            ],
-            [
-                'name' => 'puntos_cocos',
-                'label' => 'Puntos coco',
-                'type' => 'number'
-            ],
-            [
-                'name' => 'puntos_ninja',
-                'label' => 'Puntos ninja',
-                'type' => 'number'
+                'name' => 'principal',
+                'label' => 'Principal',
+                'type' => 'checkbox',
             ],
         ]);
     }
+
+    
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(PersonajeUpdateRequest::class);
+        CRUD::setValidation(PersonajeRequest::class);
 
-        $this->basicFieldsCreate();
+        $this->basicFields();
+
     }
 
+    
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();

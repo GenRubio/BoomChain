@@ -34,7 +34,7 @@ class MetamaskController extends Controller
         Auth::logout();
     }
 
-    public function login(Request $request)
+    public function loginGame(Request $request)
     {
         $metamask = $request->account;
 

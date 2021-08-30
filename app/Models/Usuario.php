@@ -84,6 +84,10 @@ class Usuario extends Authenticatable
     |--------------------------------------------------------------------------
     */
 
+    public function personajes(){
+        return $this->hasMany(Personaje::class, 'usuario_id', 'id');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES
