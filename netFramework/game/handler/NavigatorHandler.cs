@@ -65,8 +65,7 @@ namespace BoomBang.game.handler
                         if (Session.User.Sala.Camino != null) Session.User.Sala.Camino.Cargar_Contador(Session);
                     }
                     if (Session.User.Sala.Ring != null || Session.User.Sala.Cocos != null || Session.User.Sala.Sendero != null || Session.User.Sala.Camino != null) { return; }
-                    TrampasManager.ObtenerTrampas(Session);
-                    ConcursosManager.Encontrar_Objetos(Session, Session.User.Sala);
+              
 
 
                     SocketIO.sendData(SocketIO.WebSocket, "entrarSala", Session.User.token_uid + ",null");

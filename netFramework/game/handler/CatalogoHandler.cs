@@ -642,12 +642,9 @@ namespace BoomBang.game.handler
                 server.AppendParameter(Item.titulo);
                 server.AppendParameter(Item.swf);
                 server.AppendParameter(Item.descripcion);
-                if (Item.limitado == 1) { server.AppendParameter(Item.oro_descuento); }
-                else { server.AppendParameter(Item.precio_oro); }
-                server.AppendParameter(Item.precio_plata);
-                if (Item.tipo_arrastre == 28 || Item.tipo_arrastre == 30) { server.AppendParameter(Item.categoria + "³18"); }//Pociones
-                else if (Item.limitado == 1) { server.AppendParameter(Item.categoria + "³17"); }
-                else { server.AppendParameter(Item.categoria); }
+                server.AppendParameter(Item.precio_oro == -1 ? Item.precio_plata : Item.precio_oro);
+                server.AppendParameter(-1);
+                server.AppendParameter(Item.categoria);
                 server.AppendParameter(Item.colores_hex);
                 server.AppendParameter(Item.colores_rgb);
                 server.AppendParameter(0);
@@ -666,12 +663,12 @@ namespace BoomBang.game.handler
                 server.AppendParameter(Item.something_5);// something_5
                 server.AppendParameter(Item.something_6);// something_6
                 server.AppendParameter(Item.tipo_arrastre); //something 10
-                server.AppendParameter(Item.vip);
+                server.AppendParameter(0);
                 server.AppendParameter(Item.espacio_mapabytes);
-                server.AppendParameter(Item.id == 1112 && Session.User.admin > 0 ? 1 : Item.visible);
+                server.AppendParameter(Item.visible);
                 server.AppendParameter(Item.tipo_rare);// something_12
                 server.AppendParameter(Item.arrastrable); //something_13
-                server.AppendParameter(Item.intercambiable); // something_14
+                server.AppendParameter(-1); // something_14
                 server.AppendParameter(Item.salas_usables); //something_15
                 server.AppendParameter(Item.rotacion);
             }

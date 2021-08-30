@@ -26,11 +26,12 @@ namespace BoomBang.game.handler
             string name = Parameters[0, 0];
             string password = Parameters[1, 0];
 
-            Session.User = UserDAO.getUser(name, password);
-            if (Session.User != null)
+            UserInstance user = UserDAO.getUser(name, password);
+            if (user != null)
             {
-                if (!UserManager.usuarioOnline(Session.User))
+                if (UserManager.usuarioOnline(user) == false)
                 {
+                    Session.User = user;
                     IniciarSesion(Session);
                     UserManager.UsuariosOnline.Add(Session.User.id, Session);
                 }

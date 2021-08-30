@@ -21,7 +21,7 @@ namespace BoomBang.game.manager
         {
             foreach(SessionInstance sessionOnline in UsuariosOnline.Values.ToList())
             {
-                if (sessionOnline.User == User)
+                if (sessionOnline.User.id == User.id)
                 {
                     return true;
                 }

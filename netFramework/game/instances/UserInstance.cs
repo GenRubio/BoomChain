@@ -265,7 +265,7 @@ namespace BoomBang.game.instances
                 return 400;
             }
         }
-        
+
         #region Locks
         private double Time_SendUppert = Time.TiempoActual();
         public bool PreLock_EnviandoUppert
@@ -340,12 +340,13 @@ namespace BoomBang.game.instances
                 Time_Acciones = Time.GetCurrentAndAdd(AddType.Milisegundos, 100);
             }
         }
+
         private double Time_Caminando = Time.TiempoActual();
         public bool PreLock_Caminando
         {
             get
             {
-                if (Time.TiempoActual() > Time_Caminando)
+                if (Time.TiempoActual() >= Time_Caminando)
                 {
                     return false;
                 }
@@ -356,6 +357,7 @@ namespace BoomBang.game.instances
                 this.Time_Caminando = Time.GetCurrentAndAdd(AddType.Milisegundos, 680);
             }
         }
+        
         private double Time_Bloqueo_chat = Time.TiempoActual();
         public bool PreLock_BloqueoChat
         {

@@ -74,10 +74,12 @@ namespace BoomBang.server
                                 server.AppendParameter(750);
                                 server.AppendParameter((Session.User.Trayectoria.Movimientos.Count >= 1 ? 1 : 0));
                                 Session.User.Sala.SendData(server, Session);
-                                new Thread(() => ConcursosManager.BuscarObjetoCaido(Session, Session.User.Sala)).Start();
-                                new Thread(() => TrampasManager.BuscarTrampa(Session)).Start();
-                                //new Thread(() => SalasManager.bosque_oso(Session)).Start();
-                                if (Session.User.Sala.Sendero != null) new Thread(() => Session.User.Sala.Sendero.VerificarMovimiento(Session)).Start();
+
+
+                                if (Session.User.Sala.Sendero != null)
+                                {
+                                    new Thread(() => Session.User.Sala.Sendero.VerificarMovimiento(Session)).Start();
+                                }
                             }
                             else
                             {
