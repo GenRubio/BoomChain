@@ -23,6 +23,12 @@ class Usuario extends Authenticatable
     protected $fillable = [
         'nombre',
         'password',
+        'avatar',
+        'colores',
+        'edad',
+        'ip_registro',
+        'ip_actual',
+        'fecha_registro',
         'token_uid',
         'metamask'
     ];

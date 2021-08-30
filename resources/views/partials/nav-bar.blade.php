@@ -286,57 +286,9 @@
 				<span class="input-group-addon"><i class="material-icons">&#xE8B6;</i></span>
 			</div>
 		</form>
-		<ul class="nav navbar-nav navbar-right">			
-			<li id="logginDiv">
-				<a data-toggle="dropdown" class="dropdown-toggle" href="#">Login</a>
-				<ul class="dropdown-menu form-wrapper">					
-					<li>
-						<form action="/examples/actions/confirmation.php" method="post">
-							<p class="hint-text">Sign in with your social media account</p>
-							<div class="form-group social-btn clearfix" style="text-align: center">
-								<a href="#" class="btn btn-light" style="color:black">
-                                <img src="https://avatars.githubusercontent.com/u/11744586?s=200&v=4"></i> 
-                                Metamask</a>
-								
-							</div>
-							<div class="or-seperator"><b>or</b></div>
-							<div class="form-group">
-								<input type="text" class="form-control" placeholder="Username" required="required">
-							</div>
-							<div class="form-group">
-								<input type="password" class="form-control" placeholder="Password" required="required">
-							</div>
-							<input type="submit" class="btn btn-primary btn-block" value="Login">
-							<div class="form-footer">
-								<a href="#">Forgot Your password?</a>
-							</div>
-						</form>
-					</li>
-				</ul>
-			</li>
-			<li>
-				<a href="#" data-toggle="dropdown" class="btn btn-primary dropdown-toggle get-started-btn mt-1 mb-1">Sign up</a>
-				<ul class="dropdown-menu form-wrapper">					
-					<li>
-						<form action="/examples/actions/confirmation.php" method="post">
-							<p class="hint-text">Fill in this form to create your account!</p>
-							<div class="form-group">
-								<input id= "metamaskAccount" type="text" class="form-control" placeholder="Metamask Account" required="required">
-							</div>
-							<div class="form-group">
-								<input type="password" class="form-control" placeholder="Password" required="required">
-							</div>
-							<div class="form-group">
-								<input type="password" class="form-control" placeholder="Confirm Password" required="required">
-							</div>
-							<div class="form-group">
-								<label class="checkbox-inline"><input type="checkbox" required="required"> I accept the <a href="#">Terms &amp; Conditions</a></label>
-							</div>
-							<input type="submit" class="btn btn-primary btn-block" value="Sign up">
-						</form>
-					</li>
-				</ul>
-			</li>
+		<ul class="nav navbar-nav navbar-right">
+		    <div id="metamask-status">
+			</div>
 		</ul>
 	</div>
 </nav>

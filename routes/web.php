@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\MetamaskController;
+use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\Home\HomeController;
 use App\Http\Controllers\Launcher\PlayController;
 use Backpack\CRUD\app\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Route;
@@ -16,12 +18,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('pages.home');
-})->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::prefix('metamask')->group(function () {
-    Route::post('/', [MetamaskController::class, 'login'])->name('metamask.login');
+    Route::post('/', [MetamaskController::class, 'index'])->name('metamask.index');
+    Route::post('/login', [MetamaskController::class, 'login'])->name('metamask.login');
+    Route::post('/register', [MetamaskController::class, 'register'])->name('metamask.register');
 });
 
 Route::get('/log-out', [PlayController::class, 'logOut'])->name('logOut');
@@ -30,5 +32,6 @@ Route::prefix('launcher')->group(function () {
     Route::get('/play', [PlayController::class, 'index'])->name('launcher.play');
 });
 
-Route::middleware('auth')->group(function () { 
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
