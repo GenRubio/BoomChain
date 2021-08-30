@@ -1,4 +1,4 @@
-﻿using BoomBang.game.handler;
+using BoomBang.game.handler;
 using BoomBang.game.instances;
 using BoomBang.server;
 using System;
@@ -38,14 +38,7 @@ namespace BoomBang.game
         public static Dictionary<int, CatalogObjectInstance> Catalago = new Dictionary<int, CatalogObjectInstance>();
         public static List<int> BB_Managers = new List<int>();///Listado de actividades de eventos y rankings del juego
 
-        static void BoomBang_Managers(mysql client)
-        {
-            DataRow managers = client.ExecuteQueryRow("SELECT proximo_evento, tiempo_evento, tipo_evento, loteria_semanal, ranking_semanal FROM bb_managers ORDER BY id DESC LIMIT 1");
-            if (managers != null)
-            {
-                BB_Managers = new List<int> { (int)managers["proximo_evento"], (int)managers["tiempo_evento"], (int)managers["tipo_evento"], (int)managers["loteria_semanal"], (int)managers["ranking_semanal"] };
-            }
-        } 
+        
         public static void dictionary_manager()
         {
             mysql client = new mysql();
@@ -103,7 +96,7 @@ namespace BoomBang.game
             {
                 Areas_Id.Add((int)Row["id"]);
             }
-            BoomBang_Managers(client);
+         
         }
     }
 }
