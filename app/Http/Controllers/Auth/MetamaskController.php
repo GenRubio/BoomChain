@@ -113,8 +113,6 @@ class MetamaskController extends Controller
         $usuario->metamask = $request->metamask;
         $usuario->password = Hash::make($request->password_confirm);
         $usuario->nombre = null;
-        $usuario->avatar = 1;
-        $usuario->colores = "B88A5CFF99000099CC0099CCE31709FFFFFF336666";
         $usuario->ip_registro = null;
         $usuario->ip_actual = null;
         $usuario->fecha_registro = null;

@@ -24,8 +24,6 @@ class Usuario extends Authenticatable
     protected $fillable = [
         'nombre',
         'password',
-        'avatar',
-        'colores',
         'edad',
         'ip_registro',
         'ip_actual',
@@ -85,7 +83,15 @@ class Usuario extends Authenticatable
     */
 
     public function personajes(){
-        return $this->hasMany(Personaje::class, 'usuario_id', 'id');
+        return $this->hasMany(Personaje::class, 'usuario_id', 'id')->where('principal', 0);
+    }
+
+    public function personaje(){
+        return $this->hasOne(Personaje::class, 'usuario_id', 'id')->where('principal', 1)->limit(1);
+    }
+
+    public function islas(){
+        return $this->hasMany(Isla::class, 'CreadorID', 'id');
     }
 
     /*

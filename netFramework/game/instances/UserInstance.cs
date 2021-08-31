@@ -15,8 +15,6 @@ namespace BoomBang.game.instances
         public int id { get; private set; }
         public string nombre { get; set; }
         public string password { get; set; }
-        public int avatar { get; set; }
-        public string colores { get; set; }
         public string email { get; set; }
         public int edad { get; set; }
         public string ip_registro { get; set; }
@@ -65,7 +63,6 @@ namespace BoomBang.game.instances
         public int CocoSelect { get; set; }
         public Trayectoria Trayectoria { get; set; }
         public PathFinder PathFinder { get; set; }
-        public bool ModoNinja { get; set; }
         //MiniGames
         public int mGame12ActualPoints { get; set; }
         public Inscripcion CaminoNinja { get; set; }
@@ -76,9 +73,6 @@ namespace BoomBang.game.instances
         public int CocosRestantes = 0;
         //ObjectManager
         public ObjectEditor ObjectEditor { get; set; }
-        public bool Concurso_Evento = false;
-        int mTrajeID;
-        public int TrajeID { get { return mTrajeID; } set { mTrajeID = value; } }
         public string levelup = "";
         public string token_uid = "";
         public PersonajeInstance Personaje;
@@ -88,8 +82,6 @@ namespace BoomBang.game.instances
             this.id = (int)row["id"];
             this.nombre = (string)row["nombre"];
             this.password = (string)row["password"];
-            this.avatar = (int)row["avatar"];
-            this.colores = (string)row["colores"];
             this.email = (string)row["email"];
             this.edad = (int)row["edad"];
             this.ip_registro = (string)row["ip_registro"];
@@ -135,41 +127,6 @@ namespace BoomBang.game.instances
         private PersonajeInstance setUserPersonaje()
         {
             return PersonajeDAO.getUserPersonaje(this.id);
-        }
-        public string Colores_traje(SessionInstance Session)
-        {
-            string EXTRA_COLORS = "AAAAAAAAAAAAAAAAAA";
-            return "000000" + Session.User.colores.Substring(0, 6) + ObtenerCinta(nivel_ninja) + Session.User.colores.Substring(18, 6) + EXTRA_COLORS;
-        }
-        private string ObtenerCinta(int NinjaLevel)
-        {
-            switch (NinjaLevel)
-            {
-                case 0:
-                    return "C9CACF";
-                case 1:
-                    return "FF0000";
-                case 2:
-                    return "FF3399";
-                case 3:
-                    return "FF6600";
-                case 4:
-                    return "00CC00";
-                case 5:
-                    return "0066CC";
-                case 6:
-                    return "FFFFFF";
-                case 7:
-                    return "660099";
-                case 8:
-                    return "653232";
-                case 9:
-                    return "222222";
-                case 10:
-                    return "f2b100";
-                default:
-                    return "FFFFFF";
-            }
         }
         public int UppertLevel()
         {

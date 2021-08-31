@@ -58,6 +58,28 @@ class Personaje extends Model
     |--------------------------------------------------------------------------
     */
 
+    public function getColor1Attribute(){
+        return "#" . $this->attributes['color_1'];
+    }
+    public function getColor2Attribute(){
+        return "#" . $this->attributes['color_2'];
+    }
+    public function getColor3Attribute(){
+        return "#" . $this->attributes['color_3'];
+    }
+    public function getColor4Attribute(){
+        return "#" . $this->attributes['color_4'];
+    }
+    public function getColor5Attribute(){
+        return "#" . $this->attributes['color_5'];
+    }
+    public function getColor6Attribute(){
+        return "#" . $this->attributes['color_6'];
+    }
+    public function getColor7Attribute(){
+        return "#" . $this->attributes['color_7'];
+    }
+
     /*
     |--------------------------------------------------------------------------
     | MUTATORS

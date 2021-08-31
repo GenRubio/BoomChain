@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\PersonajeUpdateRequest;
+use App\Http\Requests\UserDatosUpdateRequest;
 use App\Http\Requests\UsuarioRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -217,7 +217,7 @@ class UserDataCrudController extends CrudController
     }
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(PersonajeUpdateRequest::class);
+        CRUD::setValidation(UserDatosUpdateRequest::class);
 
         $this->basicFieldsCreate();
     }

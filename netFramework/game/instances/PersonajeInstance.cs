@@ -28,6 +28,7 @@ namespace BoomBang.game.instances
             this.color_4 = (string)row["color_4"];
             this.color_5 = (string)row["color_5"];
             this.color_6 = (string)row["color_6"];
+            this.color_7 = (string)row["color_7"];
             this.principal = (int)row["principal"];
         }
 

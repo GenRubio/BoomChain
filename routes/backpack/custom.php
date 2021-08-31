@@ -16,6 +16,8 @@ Route::group([
     Route::group(['prefix' => 'usuario/{user_id}'], function () {
         Route::crud('user-data', 'UserDataCrudController');
         Route::crud('personajes', 'PersonajeCrudController');
+        Route::crud('islas', 'IslaCrudController');
     });
     Route::crud('escenarios-publico', 'EscenariosPublicoCrudController');
+  
 });

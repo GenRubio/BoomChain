@@ -262,4 +262,11 @@ return [
         1009 => 'Roza',
         1010 => 'Platina',
     ],
+    'islas' => [
+        1 => 'Isla perdida',
+        2 => 'Isla volcan',
+        3 => 'Isla hielo',
+        4 => 'Isla desierto',
+        5 => 'Isla vampiros',
+    ],
 ];

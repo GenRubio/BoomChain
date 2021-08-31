@@ -49,23 +49,7 @@ namespace BoomBang.game.manager
                 client.ExecuteNonQuery("UPDATE usuarios SET puntos_ninja = @puntos_ninja WHERE id = @id");
             }
         }
-        public static void ActualizarAvatar(UserInstance User, string colores, int avatar)
-        {
-            if (User != null)
-            {
-                using (mysql client = new mysql())
-                {
-                    client.SetParameter("id", User.id);
-                    client.SetParameter("colores", colores);
-                    client.SetParameter("avatar", avatar);
-                    if (client.ExecuteNonQuery("UPDATE usuarios SET colores = @colores, avatar = @avatar WHERE id = @id") == 1)
-                    {
-                        User.colores = colores;
-                        User.avatar = avatar;
-                    }
-                }
-            }
-        }
+       
         public static void ActualizarEstadisticas(UserInstance User)
         {
             using (mysql client = new mysql())

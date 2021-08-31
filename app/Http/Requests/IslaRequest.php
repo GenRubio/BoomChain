@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Http\Requests\Request;
 use Illuminate\Foundation\Http\FormRequest;
 
-class PersonajeRequest extends FormRequest
+class IslaRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,14 +26,9 @@ class PersonajeRequest extends FormRequest
     public function rules()
     {
         return [
-            'avatar_id' => 'required',
-            'color_1' => 'required',
-            'color_2' => 'required',
-            'color_3' => 'required',
-            'color_4' => 'required',
-            'color_5' => 'required',
-            'color_6' => 'required',
-            'color_7' => 'required',
+           'nombre' => 'required',
+           'descripcion' => 'required',
+           'modelo' => 'required',
         ];
     }
 
@@ -57,7 +52,7 @@ class PersonajeRequest extends FormRequest
     public function messages()
     {
         return [
-          
+            //
         ];
     }
 }

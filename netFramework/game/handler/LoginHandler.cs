@@ -29,12 +29,21 @@ namespace BoomBang.game.handler
             UserInstance user = UserDAO.getUser(name, password);
             if (user != null)
             {
-                if (UserManager.usuarioOnline(user) == false)
+                if (user.Personaje != null)
                 {
-                    Session.User = user;
-                    IniciarSesion(Session);
-                    UserManager.UsuariosOnline.Add(Session.User.id, Session);
+                    if (UserManager.usuarioOnline(user) == false)
+                    {
+                        Session.User = user;
+                        IniciarSesion(Session);
+                        UserManager.UsuariosOnline.Add(Session.User.id, Session);
+                    }
                 }
+                else
+                {
+                    string console = "Error al iniciar cliente no tiene perosnaje " + Session.IP;
+                    Emulator.Form.WriteLine(console);
+                }
+                
             }
             else
             {
@@ -49,8 +58,8 @@ namespace BoomBang.game.handler
             server.AddHead(130);
             server.AppendParameter(1);
             server.AppendParameter(Session.User.nombre);
-            server.AppendParameter(Session.User.avatar);
-            server.AppendParameter(Session.User.colores);
+            server.AppendParameter(Session.User.Personaje.avatar);
+            server.AppendParameter(Session.User.Personaje.colores);
             server.AppendParameter(Session.User.email);
             server.AppendParameter(Session.User.edad);
             server.AppendParameter(2);

@@ -233,11 +233,11 @@ namespace BoomBang.game.handler
                 server.AppendParameter(Isla.nombre);
                 server.AppendParameter(Isla.descripcion);
                 server.AppendParameter(Isla.modelo);
-                server.AppendParameter(Isla.uppert);
+                server.AppendParameter(-1);
                 server.AppendParameter(Isla.Creador.id);
                 server.AppendParameter(Isla.Creador.nombre);
-                server.AppendParameter(Isla.Creador.avatar);
-                server.AppendParameter(Isla.Creador.colores);
+                server.AppendParameter(Isla.Creador.Personaje.avatar);
+                server.AppendParameter(Isla.Creador.Personaje.colores);
                 server.AppendParameter(-1);
                 server.AppendParameter(-1);
                 server.AppendParameter(-1);

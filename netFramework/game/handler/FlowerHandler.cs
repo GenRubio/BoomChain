@@ -21,7 +21,6 @@ namespace BoomBang.game.handler
             HandlerManager.RegisterHandler(120141, handler_120141);
             HandlerManager.RegisterHandler(120134, handler_120134);//Concursos
             HandlerManager.RegisterHandler(210120, handler_210120);
-            HandlerManager.RegisterHandler(120132, Actualizar_avatar);
             HandlerManager.RegisterHandler(120147120, loadFlowerInterfaz);//Regalo Grande
             HandlerManager.RegisterHandler(132120, new ProcessHandler(Method_132_120));
             HandlerManager.RegisterHandler(132121, new ProcessHandler(Method_132_121));
@@ -61,21 +60,7 @@ namespace BoomBang.game.handler
             }
         }
       
-        private static void Actualizar_avatar(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                if (Session.User.PreLock_Cambio_Colores == true) return;
-                if (int.Parse(Parameters[1, 0]) >= 1 && int.Parse(Parameters[1, 0]) <= 11)
-                {
-                    if (int.Parse(Parameters[1, 0]) >= 1 && int.Parse(Parameters[1, 0]) <= 11 && Parameters[0, 0].Substring(0,6) == "000000") { return; }
-                    if (int.Parse(Parameters[1, 0]) >= 8 && int.Parse(Parameters[1, 0]) <= 9 && Parameters[0, 0].Substring(6, 6) == "000000") { return; }
-                    UserManager.ActualizarAvatar(Session.User, Parameters[0, 0], int.Parse(Parameters[1, 0]));
-                    Session.User.Time_Cambio_Colores = Time.GetCurrentAndAdd(AddType.Segundos, 13);
-                }
-            }
-        }
+        
         private static void handler_210120(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)

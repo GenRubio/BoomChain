@@ -13,7 +13,6 @@ namespace BoomBang.game.instances
     {
         public int id { get; set; }
         public int modelo { get; set; }
-        public int uppert { get; set; }
         public string nombre { get; set; }
         public string descripcion { get; set; }
         public UserInstance Creador { get; set; }
@@ -22,7 +21,6 @@ namespace BoomBang.game.instances
         {
             this.id = (int)row["id"];
             this.modelo = (int)row["modelo"];
-            this.uppert = (int)row["uppert"];
             this.nombre = (string)row["nombre"];
             this.descripcion = (string)row["descripcion"];
             this.Creador = UserDAO.getUser((int)row["CreadorID"]);

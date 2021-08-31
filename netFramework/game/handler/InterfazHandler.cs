@@ -34,8 +34,6 @@ namespace BoomBang.game.handler
             HandlerManager.RegisterHandler(158, new ProcessHandler(updateDescription));
             HandlerManager.RegisterHandler(156, new ProcessHandler(updateHobbies));
             HandlerManager.RegisterHandler(157, new ProcessHandler(updateDeseos));
-            HandlerManager.RegisterHandler(125120, new ProcessHandler(ActivarTraje));
-            HandlerManager.RegisterHandler(125121, new ProcessHandler(DesactivarTraje));
             HandlerManager.RegisterHandler(167, new ProcessHandler(Votos_Restantes));
             HandlerManager.RegisterHandler(155, new ProcessHandler(Votos));
             HandlerManager.RegisterHandler(210125, new ProcessHandler(None_210_125));
@@ -107,36 +105,6 @@ namespace BoomBang.game.handler
                 if (Session.User.Sala != null)
                 {
                     Packet_167(Session);
-                }
-            }
-        }
-        static void DesactivarTraje(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null)
-                {
-                    
-                    if (Session.User.PreLock_Disfraz == true) { Packet_143(Session); return; }
-                    if (Session.User.ModoNinja == true)
-                    {
-                        DesactivarTraje(Session);
-                        Packet_125_120(Session, Session.User.id, Session.User.avatar, Session.User.colores, true);
-                        Packet_125_121(Session);
-                    }
-                }
-            }
-        }
-        static void ActivarTraje(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null)
-                {
-                    if (Session.User.PreLock_Interactuando == true) return;
-                    if (Session.User.PreLock_Disfraz == true) {  Packet_143(Session); return; }
-                    if (Session.User.ModoNinja == true) return;
-                    ActivarTraje_Manager(Session, Parameters);
                 }
             }
         }
@@ -422,11 +390,7 @@ namespace BoomBang.game.handler
                             if (Session.User.Posicion.x != int.Parse(Parameters[2, 0]) || Session.User.Posicion.y != int.Parse(Parameters[3, 0])) return;
                             if (OtherSession.User.Posicion.x != int.Parse(Parameters[5, 0]) || OtherSession.User.Posicion.y != int.Parse(Parameters[6, 0])) return;
                             if (Session.User.Sala.Escenario.uppert == -1 || Session.User.IDEspacial == int.Parse(Parameters[4, 0])) { Session.FinalizarConexion("UppertPower"); return; }
-                            if (Session.User.Sala.Escenario.categoria == 2)
-                            {
-                                IslaInstance Isla = IslasManager.ObtenerIsla(Session.User.Sala.Escenario.IslaID);
-                                if (Isla != null) { if (Isla.uppert == 0) return; }
-                            }
+                          
                             if (Session.User.oro >= 0)
                             {
                              
@@ -748,33 +712,6 @@ namespace BoomBang.game.handler
                     Packet_143(Session);
                 }
             }
-        }
-        private static void ActivarTraje_Manager(SessionInstance Session, string[,] Parameters)
-        {
-            Session.User.ModoNinja = true;
-
-            Session.User.Trayectoria.DetenerMovimiento();
-            Session.User.PreLock_Disfraz = true;
-
-            if (Session.User.nivel_ninja >= 1)
-            {
-                Session.User.colores = Session.User.Colores_traje(Session);
-            }
-            PathfindingHandler.Reprar_Mirada_Z(Session);
-            if (Session.User.ModoNinja == true)
-            {
-                Session.User.ModoNinja = false;
-                return;
-            }
-            Packet_125_120(Session, Session.User.id, 12, Session.User.colores, true);
-        }
-        private static void DesactivarTraje(SessionInstance Session)
-        {
-            Session.User.ModoNinja = false;
-         
-            Session.User.Trayectoria.DetenerMovimiento();
-            Session.User.PreLock_Disfraz = true;
-            PathfindingHandler.Reprar_Mirada_Z(Session);
         }
      
         public static void Coco_Thread(SessionInstance Session, TimeSpan Tiempo, int modelo, SalaInstance Sala, Posicion Posicion = null)

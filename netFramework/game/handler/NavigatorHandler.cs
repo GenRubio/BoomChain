@@ -175,7 +175,7 @@ namespace BoomBang.game.handler
                 IslaInstance Isla = IslasManager.ObtenerIsla(Session.User.Sala.Escenario.IslaID);
                 if (Isla != null)
                 {
-                    server.AppendParameter(new object[] { 4, (Isla.uppert == 0 ? -1 : 0), 1 });///Modificado
+                    server.AppendParameter(new object[] { 4, -1, 1 });///Modificado
                     server.AppendParameter(new object[] { 5, 0, 1 });
                 }
             }

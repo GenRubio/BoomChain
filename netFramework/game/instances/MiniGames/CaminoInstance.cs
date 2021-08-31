@@ -646,7 +646,17 @@ namespace BoomBang.game.instances.MiniGames
         public static string Colores_traje(SessionInstance Session)
         {
             string EXTRA_COLORS = "AAAAAAAAAAAAAAAAAA";
-            return Session.User.nivel_ninja == 0 ? "FFFFFF" + Session.User.colores.Substring(0, 6) + ObtenerCinta(Session.User.nivel_ninja) + Session.User.colores.Substring(18, 6) + EXTRA_COLORS : "000000" + Session.User.colores.Substring(0, 6) + ObtenerCinta(Session.User.nivel_ninja) + Session.User.colores.Substring(18, 6) + EXTRA_COLORS;
+            return Session.User.nivel_ninja == 0 ?
+                "FFFFFF" +
+                Session.User.Personaje.colores.Substring(0, 6) +
+                ObtenerCinta(Session.User.nivel_ninja) +
+                Session.User.Personaje.colores.Substring(18, 6) +
+                EXTRA_COLORS :
+                "000000" +
+                Session.User.Personaje.colores.Substring(0, 6) +
+                ObtenerCinta(Session.User.nivel_ninja) +
+                Session.User.Personaje.colores.Substring(18, 6) +
+                EXTRA_COLORS;
         }
         private static string ObtenerCinta(int NinjaLevel)
         {

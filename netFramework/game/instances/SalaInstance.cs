@@ -580,7 +580,6 @@ namespace BoomBang.game.instances
         public void LoadObjects(SessionInstance Session)
         {
             ServerMessage server = new ServerMessage();
-            Random rd = new Random();
             if (Escenario.es_categoria == 2)
             {
                 server.AddHead(128);
@@ -645,14 +644,7 @@ namespace BoomBang.game.instances
                     server.AppendParameter(Item.rotation);//rotation
                     server.AppendParameter(Item.tam);
                     server.AppendParameter(0);
-                    if (CatalogoManager.lianas_cocos.Contains(Item.objeto_id))
-                    {
-                        server.AppendParameter(""); //Espacio Ocupado
-                    }
-                    else
-                    {
-                        server.AppendParameter(Item.espacio_ocupado); //Espacio Ocupado
-                    }
+                    server.AppendParameter(Item.espacio_ocupado); //Espacio Ocupado
                     server.AppendParameter(Item.colores_hex);//color_1
                     server.AppendParameter(Item.colores_rgb);//color_2
                     server.AppendParameter("0");//Data
@@ -666,16 +658,16 @@ namespace BoomBang.game.instances
             {
                 server.AppendParameter(OtherSession.User.IDEspacial);
                 server.AppendParameter(OtherSession.User.nombre);
-                server.AppendParameter((OtherSession.User.ModoNinja ? 12 : OtherSession.User.avatar));
-                server.AppendParameter((OtherSession.User.ModoNinja ? OtherSession.User.Colores_traje(Session) : OtherSession.User.colores));
+                server.AppendParameter(OtherSession.User.Personaje.avatar);
+                server.AppendParameter(OtherSession.User.Personaje.colores);
                 server.AppendParameter(OtherSession.User.Posicion.x);
                 server.AppendParameter(OtherSession.User.Posicion.y);
                 server.AppendParameter(OtherSession.User.Posicion.z);
                 server.AppendParameter("BoomBang");
                 server.AppendParameter(OtherSession.User.edad);
                 server.AppendParameter(MonthDifference(Convert.ToDateTime(OtherSession.User.fecha_registro), DateTime.Now));//Tiempo registrado   MonthDifference(DateTime.Now, Convert.ToDateTime(Session.User.fecha_registro))
-                server.AppendParameter((OtherSession.User.ModoNinja == true ? 1 : 0));
-                server.AppendParameter((OtherSession.User.puntos_ninja >= 400  ? 12 : 0));//traje ninja
+                server.AppendParameter(0);
+                server.AppendParameter(0);//traje ninja
                 server.AppendParameter(OtherSession.User.UppertSelect);
                 server.AppendParameter(OtherSession.User.UppertLevel());
                 server.AppendParameter(OtherSession.User.CocoSelect);
@@ -727,33 +719,8 @@ namespace BoomBang.game.instances
                 server.AppendParameter(0);
             }
             Session.SendData(server);
-            if (Escenario.Clave != "")
-            {
-                new Thread(() => Cerar_Ceradura(Session, Escenario)).Start();
-            }
         }
-        static void Cerar_Ceradura(SessionInstance Session, EscenarioInstance Escenario)
-        {
-            try
-            {
-                Thread.Sleep(new TimeSpan(0, 0, 1));
-                ServerMessage server1 = new ServerMessage();
-                server1.AddHead(189);
-                server1.AddHead(153);
-                server1.AppendParameter(1);
-                server1.AppendParameter(1);
-                server1.AppendParameter(1);
-                server1.AppendParameter(1);
-                server1.AppendParameter(Convert.ToString(Escenario.id));
-                server1.AppendParameter(1);
-                server1.AppendParameter("1");
-                Session.User.Sala.SendData(server1);
-            }
-            catch
-            {
-
-            }
-        }
+       
         //Packet que carga el objeto (Usuario) en la sala
         public void EnviarRegistro(SessionInstance Session)
         {
@@ -762,16 +729,16 @@ namespace BoomBang.game.instances
             server.AddHead(122);
             server.AppendParameter(Session.User.IDEspacial);
             server.AppendParameter(Session.User.nombre);
-            server.AppendParameter((Session.User.ModoNinja ? 12 : Session.User.avatar));
-            server.AppendParameter((Session.User.ModoNinja ? Session.User.Colores_traje(Session) : Session.User.colores));
+            server.AppendParameter(Session.User.Personaje.avatar);
+            server.AppendParameter(Session.User.Personaje.colores);
             server.AppendParameter(Session.User.Posicion.x);
             server.AppendParameter(Session.User.Posicion.y);
             server.AppendParameter(Session.User.Posicion.z);
             server.AppendParameter("BoomBang");
             server.AppendParameter(Session.User.edad);
             server.AppendParameter(MonthDifference(Convert.ToDateTime(Session.User.fecha_registro), DateTime.Now));//Tiempo registrado   MonthDifference(DateTime.Now, Convert.ToDateTime(Session.User.fecha_registro))
-            server.AppendParameter((Session.User.ModoNinja == true ? 1 : 0));
-            server.AppendParameter((Session.User.puntos_ninja >= 400  ? 12 : 0));//traje ninja
+            server.AppendParameter(0);
+            server.AppendParameter(0);
             server.AppendParameter(Session.User.UppertSelect);
             server.AppendParameter(Session.User.UppertLevel());
             server.AppendParameter(Session.User.CocoSelect);
