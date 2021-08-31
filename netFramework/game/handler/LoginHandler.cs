@@ -23,10 +23,10 @@ namespace BoomBang.game.handler
         }
         private static void iniciar_sesion(SessionInstance Session, string[,] Parameters)
         {
-            string name = Parameters[0, 0];
+            string metamask = Parameters[0, 0];
             string password = Parameters[1, 0];
 
-            UserInstance user = UserDAO.getUser(name, password);
+            UserInstance user = UserDAO.getUser(metamask, password);
             if (user != null)
             {
                 if (user.Personaje != null)

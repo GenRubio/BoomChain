@@ -24,13 +24,13 @@ namespace BoomBang.game.dao
             }
             return null;
         }
-        public static UserInstance getUser(string name, string password)
+        public static UserInstance getUser(string metamask, string password)
         {
             mysql client = new mysql();
-            client.SetParameter("nombre", name);
-            client.SetParameter("token_uid", password);
+            client.SetParameter("metamask", metamask);
+            client.SetParameter("password", password);
             DataRow row = client.ExecuteQueryRow("" +
-                "SELECT * FROM usuarios WHERE nombre = @nombre AND token_uid = @token_uid LIMIT 1");
+                "SELECT * FROM usuarios WHERE metamask = @metamask AND password = @password LIMIT 1");
             if (row != null)
             {
                 return new UserInstance(row);

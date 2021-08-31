@@ -96,21 +96,13 @@
     @csrf
     <div class="form-group">
         <label for="exampleInputEmail1">MetaMask Account ID</label>
-        <input name="account" type="password" class="form-control" id="metamask-input" aria-describedby="emailHelp"
+        <input type="text" class="form-control" id="metamask-input" aria-describedby="emailHelp"
             placeholder="Introduce tu id de MetaMask" required>
     </div>
     <div class="form-group">
         <label for="exampleInputEmail1">Contraseña</label>
-        <input name="password" type="password" class="form-control" id="metamask-input" aria-describedby="emailHelp"
+        <input type="password" class="form-control" id="password-input" aria-describedby="emailHelp"
             placeholder="Introduce tu contarseña" required>
-    </div>
-    <div class="d-flex justify-content-between">
-        <div>
-            <div class="custom-control custom-switch">
-                <input name="auto_login" type="checkbox" class="custom-control-input" id="customSwitch1">
-                <label class="custom-control-label" for="customSwitch1">Auto login</label>
-            </div>
-        </div>
     </div>
     <br><br>
     <button type="submit" class="btn btn-primary btn-block" id="play-button">Iniciar sesíon</button>
@@ -131,7 +123,8 @@
                     method: "POST",
                     data: {
                         "_token": "{{ csrf_token() }}",
-                        "account": $('#metamask-input').val()
+                        "account": $('#metamask-input').val(),
+                        "password": $("#password-input").val()
                     },
                     success: function(data) {
                         if (data.success) {

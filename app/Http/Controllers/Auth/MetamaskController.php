@@ -37,11 +37,11 @@ class MetamaskController extends Controller
     public function loginGame(Request $request)
     {
         $metamask = $request->account;
+        $password = $request->password;
+        
+        $credentials = ['metamask' => $metamask, 'password' => $password];
 
-        $user = $this->getUser($metamask);
-
-        if ($user) {
-            Auth::login($user);
+        if (Auth::attempt($credentials, true)) {
             $message = "";
             $success = true;
         } else {
@@ -55,11 +55,12 @@ class MetamaskController extends Controller
         ], Response::HTTP_CREATED);
     }
 
-    public function loginWeb(Request $request){
+    public function loginWeb(Request $request)
+    {
         $metamask = $request->account;
         $password = $request->password;
 
-        
+
 
         $credentials = ['metamask' => $metamask, 'password' => $password];
         $message = "";
