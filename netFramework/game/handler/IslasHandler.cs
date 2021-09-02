@@ -15,10 +15,8 @@ namespace BoomBang.game.handler
     {
         public static void Start()
         {
-            HandlerManager.RegisterHandler(189120, new ProcessHandler(CrearIsla));
             HandlerManager.RegisterHandler(189124, new ProcessHandler(MostrarIsla));
             HandlerManager.RegisterHandler(189121, new ProcessHandler(CrearZona));
-            HandlerManager.RegisterHandler(189149, new ProcessHandler(EliminarIsla));
             HandlerManager.RegisterHandler(189132, new ProcessHandler(EliminarZona));
             HandlerManager.RegisterHandler(189130, new ProcessHandler(RenombrarZona));
             HandlerManager.RegisterHandler(189129, new ProcessHandler(RenombrarIsla));
@@ -116,21 +114,6 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        private static void EliminarIsla(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null) return;
-                IslaInstance Isla = IslasManager.ObtenerIsla(int.Parse(Parameters[0, 0]));
-                if (Isla != null)
-                {
-                    if (IslasManager.ControlDeSeguridad(Session.User, Isla))
-                    {
-                        new Thread(() => IslasManager.EliminarIsla(Isla)).Start();
-                    }
-                }
-            }
-        }
         private static void CrearZona(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
@@ -170,17 +153,7 @@ namespace BoomBang.game.handler
                 if (Session.User.Sala != null) return;
                 Packet_189_124(Session, int.Parse(Parameters[0, 0]));
             }
-        }
-        private static void CrearIsla(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.PreLock__Proteccion_SQL == true) return;
-                if (Session.User.Sala != null) return;
-                Packet_189_120(Session, Parameters[0, 0], int.Parse(Parameters[1, 0]));
-                Session.User.PreLock__Proteccion_SQL = true;
-            }
-        }
+        }    
         private static void Packet_189_146(SessionInstance Session, string HEX, string Dec)
         {
             ServerMessage server = new ServerMessage();
@@ -266,37 +239,11 @@ namespace BoomBang.game.handler
                     server.AppendParameter(0);
                     server.AppendParameter(0);
                     server.AppendParameter(0);
-                    server.AppendParameter(SalasManager.UsuariosEnSala(Escenario));//Visitantes
+                    server.AppendParameter(0);
                     server.AppendParameter(0);
                     server.AppendParameter((string.IsNullOrEmpty(Escenario.Clave) ? 0 : 1));
                 }
 
-            }
-            else
-            {
-                server.AppendParameter(0);
-            }
-            Session.SendData(server);
-        }
-        private static void Packet_189_120(SessionInstance Session, string Nombre, int Modelo)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(189);
-            server.AddHead(120);
-            if (IslasManager.IslasCreadas(Session.User) < 25)
-            {
-                if (Nombre == "") { Session.FinalizarConexion("Packet_189_120"); return; }
-                if (Utils.checkValidCharacters(Nombre, false))
-                {
-                    if (IslasManager.ObtenerIsla(Nombre) == null)
-                    {
-                        server.AppendParameter(IslasManager.CrearIsla(Session.User, Nombre, Modelo));
-                    }
-                    else
-                    {
-                        server.AppendParameter(0);
-                    }
-                }
             }
             else
             {

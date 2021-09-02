@@ -1,3 +1,4 @@
+using BoomBang.Forms;
 using BoomBang.game.instances;
 using BoomBang.game.instances.manager;
 using BoomBang.game.instances.manager.pathfinding;
@@ -27,7 +28,7 @@ namespace BoomBang.game.handler
                 {
                     if (Session.User.PreLock_Interactuando == true) return;
                     if (Session.User.Sala.PathFinder == false) return;
-                    Session.User.Trayectoria = new Trayectoria(Session);
+                    Session.User.Trayectoria = new Trayectoria(Session, null);
                     List<Posicion> ListPositions = posicions(Parameters[1, 0]);
                     Session.User.Trayectoria.EndLocation = new Point(ListPositions[ListPositions.Count - 1].x, ListPositions[ListPositions.Count - 1].y);
                     Session.User.Trayectoria.IniciarCaminado(ListPositions);

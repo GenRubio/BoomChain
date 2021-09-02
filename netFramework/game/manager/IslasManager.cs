@@ -35,24 +35,6 @@ namespace BoomBang.game.manager
             }
             return false;
         }
-        public static void EliminarIsla(IslaInstance Isla)
-        {
-            using (mysql client = new mysql())
-            {
-                client.SetParameter("id", Isla.id);
-                client.ExecuteNonQuery("DELETE FROM Islas WHERE id = @id");
-                DataRow ver_islas_favoritas = client.ExecuteQueryRow("SELECT * FROM escenarios_favoritos WHERE sala_id = '" + Isla.id + "'");
-                if (ver_islas_favoritas != null)
-                {
-                    client.ExecuteNonQuery("DELETE FROM escenarios_favoritos WHERE sala_id = '" + Isla.id + "'");
-                }
-            }
-            foreach (EscenarioInstance Zona in ZonasIsla(Isla))
-            {
-                EscenariosManager.EliminarEscenario(Zona);
-            }
-            Diccionario_EliminarIsla(Isla);
-        }
         public static int Visitantes(IslaInstance Isla)
         {
             int num = 0;
@@ -67,13 +49,6 @@ namespace BoomBang.game.manager
             if (!IslasActivas.ContainsKey(Isla.id))
             {
                 IslasActivas.Add(Isla.id, Isla.id);
-            }
-        }
-        public static void Diccionario_EliminarIsla(IslaInstance Isla)
-        {
-            if (IslasActivas.ContainsKey(Isla.id))
-            {
-                IslasActivas.Remove(Isla.id);
             }
         }
         public static List<EscenarioInstance> ZonasIsla(IslaInstance Isla)
@@ -98,59 +73,6 @@ namespace BoomBang.game.manager
                 foreach (DataRow row in client.ExecuteQueryTable("SELECT * FROM islas WHERE CreadorID = @id").Rows)
                 {
                     Islas.Add(new IslaInstance(row));
-                }
-            }
-            return Islas;
-        }
-        public static List<IslaInstance> ObtenerIslasFavoritos(int id)
-        {
-            List<IslaInstance> Islas = new List<IslaInstance>();
-            using (mysql client = new mysql())
-            {
-                client.SetParameter("id", id);
-                foreach (DataRow row in client.ExecuteQueryTable("SELECT * FROM escenarios_favoritos WHERE user_id = @id").Rows)
-                {
-                    client.SetParameter("id", row["sala_id"]);
-                    DataRow row2 = client.ExecuteQueryRow("SELECT * FROM islas WHERE id = @id");
-                    if (row2 != null)
-                    {
-                        Islas.Add(new IslaInstance(row2));
-                    }
-                    
-                }
-            }
-            return Islas;
-        }
-        public static List<IslaInstance> ObtenerIslasNombre(string nombre)
-        {
-            List<IslaInstance> Islas = new List<IslaInstance>();
-            using (mysql client = new mysql())
-            {
-                IslaInstance Isla = IslasManager.ObtenerIsla(nombre);
-                if (Isla != null)
-                {
-                    client.SetParameter("id", Isla.nombre);
-                    foreach (DataRow row in client.ExecuteQueryTable("SELECT * FROM islas WHERE nombre = @id").Rows)
-                    {
-                        Islas.Add(new IslaInstance(row));
-                    }
-                }
-            }
-            return Islas;
-        }
-        public static List<IslaInstance> ObtenerIslas(string nombre)
-        {
-            List<IslaInstance> Islas = new List<IslaInstance>();
-            using (mysql client = new mysql())
-            {
-                UserInstance User = UserDAO.getUser(nombre);
-                if (User != null)
-                {
-                    client.SetParameter("id", User.id);
-                    foreach (DataRow row in client.ExecuteQueryTable("SELECT * FROM islas WHERE CreadorID = @id").Rows)
-                    {
-                        Islas.Add(new IslaInstance(row));
-                    }
                 }
             }
             return Islas;
@@ -195,14 +117,6 @@ namespace BoomBang.game.manager
                 }
             }
             return 0;
-        }
-        public static int IslasCreadas(UserInstance User)
-        {
-            using (mysql client = new mysql())
-            {
-                client.SetParameter("id", User.id);
-                return Convert.ToInt32(client.ExecuteScalar("SELECT COUNT(id) FROM islas WHERE CreadorID = @id"));
-            }
         }
         public static IslaInstance ObtenerIsla(int id)
         {

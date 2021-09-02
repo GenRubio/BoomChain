@@ -12,11 +12,13 @@ namespace BoomBang.game.instances.manager.pathfinding
     {
         public List<Posicion> Movimientos = new List<Posicion>();
         private SessionInstance Session;
+        private PersonajeInstance Personaje;
         public Point EndLocation;
         public Posicion LastPosicion { get; set; }
-        public Trayectoria(SessionInstance Session)
+        public Trayectoria(SessionInstance Session, PersonajeInstance Personaje)
         {
             this.Session = Session;
+            this.Personaje = Personaje;
         }
         public void AñadirMovimiento(int x, int y, int z)
         {
@@ -34,197 +36,389 @@ namespace BoomBang.game.instances.manager.pathfinding
         {
             try
             {
-                if (NextPoint.x == Session.User.Posicion.x && NextPoint.y == Session.User.Posicion.y)
+                if (Personaje == null)
                 {
-                    this.Movimientos.Remove(this.Movimientos[0]);
-                }
-                if (Session.User.Posicion.x == NextPoint.x && Session.User.Posicion.y == NextPoint.y)
-                {
-                    this.Movimientos.Remove(this.Movimientos[0]);
-                }
-                Posicion NextStep = NextPoint;
-                UserInstance user = Session.User;
-                if (Movimientos.Count >= 1)
-                {
+                    if (NextPoint.x == Session.User.Posicion.x && NextPoint.y == Session.User.Posicion.y)
+                    {
+                        this.Movimientos.Remove(this.Movimientos[0]);
+                    }
+                    if (Session.User.Posicion.x == NextPoint.x && Session.User.Posicion.y == NextPoint.y)
+                    {
+                        this.Movimientos.Remove(this.Movimientos[0]);
+                    }
+                    Posicion NextStep = NextPoint;
+                    UserInstance user = Session.User;
                     if (Movimientos.Count >= 1)
                     {
-                        if (Session.User.Posicion.x + 2 == NextStep.x)
+                        if (Movimientos.Count >= 1)
                         {
-                            int Resta = NextStep.x - 1;
-                            NextStep.x = Resta;
+                            if (Session.User.Posicion.x + 2 == NextStep.x)
+                            {
+                                int Resta = NextStep.x - 1;
+                                NextStep.x = Resta;
 
+                            }
+                            if (Session.User.Posicion.x - 2 == NextStep.x)
+                            {
+                                int Resta = NextStep.x + 1;
+                                NextStep.x = Resta;
+                            }
+                            if (Session.User.Posicion.y - 2 == NextStep.y)
+                            {
+                                int Resta = NextStep.y + 1;
+                                NextStep.y = Resta;
+                            }
+                            if (Session.User.Posicion.y + 2 == NextStep.y)
+                            {
+                                int Resta = NextStep.y - 1;
+                                NextStep.y = Resta;
+                            }
                         }
-                        if (Session.User.Posicion.x - 2 == NextStep.x)
+                        if (Movimientos.Count >= 2)
                         {
-                            int Resta = NextStep.x + 1;
-                            NextStep.x = Resta;
+                            if (Session.User.Posicion.x + 3 == NextStep.x)
+                            {
+                                int Resta = NextStep.x - 2;
+                                NextStep.x = Resta;
+                            }
+                            if (Session.User.Posicion.x - 3 == NextStep.x)
+                            {
+                                int Resta = NextStep.x + 2;
+                                NextStep.x = Resta;
+                            }
+                            if (Session.User.Posicion.y - 3 == NextStep.y)
+                            {
+                                int Resta = NextStep.y + 2;
+                                NextStep.y = Resta;
+                            }
+                            if (Session.User.Posicion.y + 3 == NextStep.y)
+                            {
+                                int Resta = NextStep.y - 2;
+                                NextStep.y = Resta;
+                            }
                         }
-                        if (Session.User.Posicion.y - 2 == NextStep.y)
+                        if (Movimientos.Count >= 3)
                         {
-                            int Resta = NextStep.y + 1;
-                            NextStep.y = Resta;
+                            if (Session.User.Posicion.x + 4 == NextStep.x)
+                            {
+                                int Resta = NextStep.x - 3;
+                                NextStep.x = Resta;
+                            }
+                            if (Session.User.Posicion.x - 4 == NextStep.x)
+                            {
+                                int Resta = NextStep.x + 3;
+                                NextStep.x = Resta;
+                            }
+                            if (Session.User.Posicion.y - 4 == NextStep.y)
+                            {
+                                int Resta = NextStep.y + 3;
+                                NextStep.y = Resta;
+                            }
+                            if (Session.User.Posicion.y + 4 == NextStep.y)
+                            {
+                                int Resta = NextStep.y - 3;
+                                NextStep.y = Resta;
+                            }
                         }
-                        if (Session.User.Posicion.y + 2 == NextStep.y)
+                        if (Movimientos.Count >= 4)
                         {
-                            int Resta = NextStep.y - 1;
-                            NextStep.y = Resta;
+                            if (Session.User.Posicion.x + 5 == NextStep.x)
+                            {
+                                int Resta = NextStep.x - 4;
+                                NextStep.x = Resta;
+                            }
+                            if (Session.User.Posicion.x - 5 == NextStep.x)
+                            {
+                                int Resta = NextStep.x + 4;
+                                NextStep.x = Resta;
+                            }
+                            if (Session.User.Posicion.y - 5 == NextStep.y)
+                            {
+                                int Resta = NextStep.y + 4;
+                                NextStep.y = Resta;
+                            }
+                            if (Session.User.Posicion.y + 5 == NextStep.y)
+                            {
+                                int Resta = NextStep.y - 4;
+                                NextStep.y = Resta;
+                            }
                         }
-                    }
-                    if (Movimientos.Count >= 2)
-                    {
-                        if (Session.User.Posicion.x + 3 == NextStep.x)
+                        if (Movimientos.Count >= 5)
                         {
-                            int Resta = NextStep.x - 2;
-                            NextStep.x = Resta;
+                            if (Session.User.Posicion.x + 6 == NextStep.x)
+                            {
+                                int Resta = NextStep.x - 5;
+                                NextStep.x = Resta;
+                            }
+                            if (Session.User.Posicion.x - 6 == NextStep.x)
+                            {
+                                int Resta = NextStep.x + 5;
+                                NextStep.x = Resta;
+                            }
+                            if (Session.User.Posicion.y - 6 == NextStep.y)
+                            {
+                                int Resta = NextStep.y + 5;
+                                NextStep.y = Resta;
+                            }
+                            if (Session.User.Posicion.y + 6 == NextStep.y)
+                            {
+                                int Resta = NextStep.y - 5;
+                                NextStep.y = Resta;
+                            }
                         }
-                        if (Session.User.Posicion.x - 3 == NextStep.x)
+                        if (Movimientos.Count >= 6)
                         {
-                            int Resta = NextStep.x + 2;
-                            NextStep.x = Resta;
+                            if (Session.User.Posicion.x + 7 == NextStep.x)
+                            {
+                                int Resta = NextStep.x - 6;
+                                NextStep.x = Resta;
+                            }
+                            if (Session.User.Posicion.x - 7 == NextStep.x)
+                            {
+                                int Resta = NextStep.x + 6;
+                                NextStep.x = Resta;
+                            }
+                            if (Session.User.Posicion.y - 7 == NextStep.y)
+                            {
+                                int Resta = NextStep.y + 6;
+                                NextStep.y = Resta;
+                            }
+                            if (Session.User.Posicion.y + 7 == NextStep.y)
+                            {
+                                int Resta = NextStep.y - 6;
+                                NextStep.y = Resta;
+                            }
                         }
-                        if (Session.User.Posicion.y - 3 == NextStep.y)
-                        {
-                            int Resta = NextStep.y + 2;
-                            NextStep.y = Resta;
-                        }
-                        if (Session.User.Posicion.y + 3 == NextStep.y)
-                        {
-                            int Resta = NextStep.y - 2;
-                            NextStep.y = Resta;
-                        }
-                    }
-                    if (Movimientos.Count >= 3)
-                    {
-                        if (Session.User.Posicion.x + 4 == NextStep.x)
-                        {
-                            int Resta = NextStep.x - 3;
-                            NextStep.x = Resta;
-                        }
-                        if (Session.User.Posicion.x - 4 == NextStep.x)
-                        {
-                            int Resta = NextStep.x + 3;
-                            NextStep.x = Resta;
-                        }
-                        if (Session.User.Posicion.y - 4 == NextStep.y)
-                        {
-                            int Resta = NextStep.y + 3;
-                            NextStep.y = Resta;
-                        }
-                        if (Session.User.Posicion.y + 4 == NextStep.y)
-                        {
-                            int Resta = NextStep.y - 3;
-                            NextStep.y = Resta;
-                        }
-                    }
-                    if (Movimientos.Count >= 4)
-                    {
-                        if (Session.User.Posicion.x + 5 == NextStep.x)
-                        {
-                            int Resta = NextStep.x - 4;
-                            NextStep.x = Resta;
-                        }
-                        if (Session.User.Posicion.x - 5 == NextStep.x)
-                        {
-                            int Resta = NextStep.x + 4;
-                            NextStep.x = Resta;
-                        }
-                        if (Session.User.Posicion.y - 5 == NextStep.y)
-                        {
-                            int Resta = NextStep.y + 4;
-                            NextStep.y = Resta;
-                        }
-                        if (Session.User.Posicion.y + 5 == NextStep.y)
-                        {
-                            int Resta = NextStep.y - 4;
-                            NextStep.y = Resta;
-                        }
-                    }
-                    if (Movimientos.Count >= 5)
-                    {
-                        if (Session.User.Posicion.x + 6 == NextStep.x)
-                        {
-                            int Resta = NextStep.x - 5;
-                            NextStep.x = Resta;
-                        }
-                        if (Session.User.Posicion.x - 6 == NextStep.x)
-                        {
-                            int Resta = NextStep.x + 5;
-                            NextStep.x = Resta;
-                        }
-                        if (Session.User.Posicion.y - 6 == NextStep.y)
-                        {
-                            int Resta = NextStep.y + 5;
-                            NextStep.y = Resta;
-                        }
-                        if (Session.User.Posicion.y + 6 == NextStep.y)
-                        {
-                            int Resta = NextStep.y - 5;
-                            NextStep.y = Resta;
-                        }
-                    }
-                    if (Movimientos.Count >= 6)
-                    {
-                        if (Session.User.Posicion.x + 7 == NextStep.x)
-                        {
-                            int Resta = NextStep.x - 6;
-                            NextStep.x = Resta;
-                        }
-                        if (Session.User.Posicion.x - 7 == NextStep.x)
-                        {
-                            int Resta = NextStep.x + 6;
-                            NextStep.x = Resta;
-                        }
-                        if (Session.User.Posicion.y - 7 == NextStep.y)
-                        {
-                            int Resta = NextStep.y + 6;
-                            NextStep.y = Resta;
-                        }
-                        if (Session.User.Posicion.y + 7 == NextStep.y)
-                        {
-                            int Resta = NextStep.y - 6;
-                            NextStep.y = Resta;
-                        }
-                    }
 
+                    }
+                    if (Session.User.Posicion.x + 1 == NextPoint.x && Session.User.Posicion.y + 1 == NextPoint.y && NextPoint.z != 1)
+                    {
+                        NextPoint.z = 1;
+                    }
+                    else if (Session.User.Posicion.x - 1 == NextPoint.x && Session.User.Posicion.y - 1 == NextPoint.y && NextPoint.z != 2)
+                    {
+                        NextPoint.z = 2;
+                    }
+                    else if (Session.User.Posicion.x + 1 == NextPoint.x && Session.User.Posicion.y - 1 == NextPoint.y && NextPoint.z != 3)
+                    {
+                        NextPoint.z = 3;
+                    }
+                    else if (Session.User.Posicion.x - 1 == NextPoint.x && Session.User.Posicion.y + 1 == NextPoint.y && NextPoint.z != 4)
+                    {
+                        NextPoint.z = 4;
+                    }
+                    else if (Session.User.Posicion.x + 1 == NextPoint.x && Session.User.Posicion.y == NextPoint.y && NextPoint.z != 5)
+                    {
+                        NextPoint.z = 5;
+                    }
+                    else if (Session.User.Posicion.x == NextPoint.x && Session.User.Posicion.y - 1 == NextPoint.y && NextPoint.z != 6)
+                    {
+                        NextPoint.z = 6;
+                    }
+                    else if (Session.User.Posicion.x == NextPoint.x && Session.User.Posicion.y + 1 == NextPoint.y && NextPoint.z != 7)
+                    {
+                        NextPoint.z = 7;
+                    }
+                    else if (Session.User.Posicion.x - 1 == NextPoint.x && Session.User.Posicion.y == NextPoint.y && NextPoint.z != 8)
+                    {
+                        NextPoint.z = 8;
+                    }
                 }
-                if (Session.User.Posicion.x + 1 == NextPoint.x && Session.User.Posicion.y + 1 == NextPoint.y && NextPoint.z != 1)
+                else //IA Patchfinding
                 {
-                    NextPoint.z = 1;
+                    if (NextPoint.x == Personaje.Posicion.x && NextPoint.y == Personaje.Posicion.y)
+                    {
+                        this.Movimientos.Remove(this.Movimientos[0]);
+                    }
+                    if (Personaje.Posicion.x == NextPoint.x && Personaje.Posicion.y == NextPoint.y)
+                    {
+                        this.Movimientos.Remove(this.Movimientos[0]);
+                    }
+                    Posicion NextStep = NextPoint;
+                    if (Movimientos.Count >= 1)
+                    {
+                        if (Movimientos.Count >= 1)
+                        {
+                            if (Personaje.Posicion.x + 2 == NextStep.x)
+                            {
+                                int Resta = NextStep.x - 1;
+                                NextStep.x = Resta;
+
+                            }
+                            if (Personaje.Posicion.x - 2 == NextStep.x)
+                            {
+                                int Resta = NextStep.x + 1;
+                                NextStep.x = Resta;
+                            }
+                            if (Personaje.Posicion.y - 2 == NextStep.y)
+                            {
+                                int Resta = NextStep.y + 1;
+                                NextStep.y = Resta;
+                            }
+                            if (Personaje.Posicion.y + 2 == NextStep.y)
+                            {
+                                int Resta = NextStep.y - 1;
+                                NextStep.y = Resta;
+                            }
+                        }
+                        if (Movimientos.Count >= 2)
+                        {
+                            if (Personaje.Posicion.x + 3 == NextStep.x)
+                            {
+                                int Resta = NextStep.x - 2;
+                                NextStep.x = Resta;
+                            }
+                            if (Personaje.Posicion.x - 3 == NextStep.x)
+                            {
+                                int Resta = NextStep.x + 2;
+                                NextStep.x = Resta;
+                            }
+                            if (Personaje.Posicion.y - 3 == NextStep.y)
+                            {
+                                int Resta = NextStep.y + 2;
+                                NextStep.y = Resta;
+                            }
+                            if (Personaje.Posicion.y + 3 == NextStep.y)
+                            {
+                                int Resta = NextStep.y - 2;
+                                NextStep.y = Resta;
+                            }
+                        }
+                        if (Movimientos.Count >= 3)
+                        {
+                            if (Personaje.Posicion.x + 4 == NextStep.x)
+                            {
+                                int Resta = NextStep.x - 3;
+                                NextStep.x = Resta;
+                            }
+                            if (Personaje.Posicion.x - 4 == NextStep.x)
+                            {
+                                int Resta = NextStep.x + 3;
+                                NextStep.x = Resta;
+                            }
+                            if (Personaje.Posicion.y - 4 == NextStep.y)
+                            {
+                                int Resta = NextStep.y + 3;
+                                NextStep.y = Resta;
+                            }
+                            if (Personaje.Posicion.y + 4 == NextStep.y)
+                            {
+                                int Resta = NextStep.y - 3;
+                                NextStep.y = Resta;
+                            }
+                        }
+                        if (Movimientos.Count >= 4)
+                        {
+                            if (Personaje.Posicion.x + 5 == NextStep.x)
+                            {
+                                int Resta = NextStep.x - 4;
+                                NextStep.x = Resta;
+                            }
+                            if (Personaje.Posicion.x - 5 == NextStep.x)
+                            {
+                                int Resta = NextStep.x + 4;
+                                NextStep.x = Resta;
+                            }
+                            if (Personaje.Posicion.y - 5 == NextStep.y)
+                            {
+                                int Resta = NextStep.y + 4;
+                                NextStep.y = Resta;
+                            }
+                            if (Personaje.Posicion.y + 5 == NextStep.y)
+                            {
+                                int Resta = NextStep.y - 4;
+                                NextStep.y = Resta;
+                            }
+                        }
+                        if (Movimientos.Count >= 5)
+                        {
+                            if (Personaje.Posicion.x + 6 == NextStep.x)
+                            {
+                                int Resta = NextStep.x - 5;
+                                NextStep.x = Resta;
+                            }
+                            if (Personaje.Posicion.x - 6 == NextStep.x)
+                            {
+                                int Resta = NextStep.x + 5;
+                                NextStep.x = Resta;
+                            }
+                            if (Personaje.Posicion.y - 6 == NextStep.y)
+                            {
+                                int Resta = NextStep.y + 5;
+                                NextStep.y = Resta;
+                            }
+                            if (Personaje.Posicion.y + 6 == NextStep.y)
+                            {
+                                int Resta = NextStep.y - 5;
+                                NextStep.y = Resta;
+                            }
+                        }
+                        if (Movimientos.Count >= 6)
+                        {
+                            if (Personaje.Posicion.x + 7 == NextStep.x)
+                            {
+                                int Resta = NextStep.x - 6;
+                                NextStep.x = Resta;
+                            }
+                            if (Personaje.Posicion.x - 7 == NextStep.x)
+                            {
+                                int Resta = NextStep.x + 6;
+                                NextStep.x = Resta;
+                            }
+                            if (Personaje.Posicion.y - 7 == NextStep.y)
+                            {
+                                int Resta = NextStep.y + 6;
+                                NextStep.y = Resta;
+                            }
+                            if (Personaje.Posicion.y + 7 == NextStep.y)
+                            {
+                                int Resta = NextStep.y - 6;
+                                NextStep.y = Resta;
+                            }
+                        }
+
+                    }
+                    if (Personaje.Posicion.x + 1 == NextPoint.x && Personaje.Posicion.y + 1 == NextPoint.y && NextPoint.z != 1)
+                    {
+                        NextPoint.z = 1;
+                    }
+                    else if (Personaje.Posicion.x - 1 == NextPoint.x && Personaje.Posicion.y - 1 == NextPoint.y && NextPoint.z != 2)
+                    {
+                        NextPoint.z = 2;
+                    }
+                    else if (Personaje.Posicion.x + 1 == NextPoint.x && Personaje.Posicion.y - 1 == NextPoint.y && NextPoint.z != 3)
+                    {
+                        NextPoint.z = 3;
+                    }
+                    else if (Personaje.Posicion.x - 1 == NextPoint.x && Personaje.Posicion.y + 1 == NextPoint.y && NextPoint.z != 4)
+                    {
+                        NextPoint.z = 4;
+                    }
+                    else if (Personaje.Posicion.x + 1 == NextPoint.x && Personaje.Posicion.y == NextPoint.y && NextPoint.z != 5)
+                    {
+                        NextPoint.z = 5;
+                    }
+                    else if (Personaje.Posicion.x == NextPoint.x && Personaje.Posicion.y - 1 == NextPoint.y && NextPoint.z != 6)
+                    {
+                        NextPoint.z = 6;
+                    }
+                    else if (Personaje.Posicion.x == NextPoint.x && Personaje.Posicion.y + 1 == NextPoint.y && NextPoint.z != 7)
+                    {
+                        NextPoint.z = 7;
+                    }
+                    else if (Personaje.Posicion.x - 1 == NextPoint.x && Personaje.Posicion.y == NextPoint.y && NextPoint.z != 8)
+                    {
+                        NextPoint.z = 8;
+                    }
                 }
-                else if (Session.User.Posicion.x - 1 == NextPoint.x && Session.User.Posicion.y - 1 == NextPoint.y && NextPoint.z != 2)
-                {
-                    NextPoint.z = 2;
-                }
-                else if (Session.User.Posicion.x + 1 == NextPoint.x && Session.User.Posicion.y - 1 == NextPoint.y && NextPoint.z != 3)
-                {
-                    NextPoint.z = 3;
-                }
-                else if (Session.User.Posicion.x - 1 == NextPoint.x && Session.User.Posicion.y + 1 == NextPoint.y && NextPoint.z != 4)
-                {
-                    NextPoint.z = 4;
-                }
-                else if (Session.User.Posicion.x + 1 == NextPoint.x && Session.User.Posicion.y == NextPoint.y && NextPoint.z != 5)
-                {
-                    NextPoint.z = 5;
-                }
-                else if (Session.User.Posicion.x == NextPoint.x && Session.User.Posicion.y - 1 == NextPoint.y && NextPoint.z != 6)
-                {
-                    NextPoint.z = 6;
-                }
-                else if (Session.User.Posicion.x == NextPoint.x && Session.User.Posicion.y + 1 == NextPoint.y && NextPoint.z != 7)
-                {
-                    NextPoint.z = 7;
-                }
-                else if (Session.User.Posicion.x - 1 == NextPoint.x && Session.User.Posicion.y == NextPoint.y && NextPoint.z != 8)
-                {
-                    NextPoint.z = 8;
-                }
+                
             }
             catch
             {
 
             }
         }
+       
         public void BuscarOtroSendero()
         {
             List<Posicion> Movimientos = PathFinder.FindPath(Session.User.Sala, Session);
@@ -256,14 +450,29 @@ namespace BoomBang.game.instances.manager.pathfinding
         }
         public bool MovementIsVerifield(Posicion NextStep)
         {
-            if (Session.User.Posicion.x == NextStep.x + 1 && Session.User.Posicion.y == NextStep.y + 1) return true;
-            if (Session.User.Posicion.x == NextStep.x - 1 && Session.User.Posicion.y == NextStep.y - 1) return true;
-            if (Session.User.Posicion.x == NextStep.x + 1 && Session.User.Posicion.y == NextStep.y - 1) return true;
-            if (Session.User.Posicion.x == NextStep.x - 1 && Session.User.Posicion.y == NextStep.y + 1) return true;
-            if (Session.User.Posicion.x == NextStep.x - 1 && Session.User.Posicion.y == NextStep.y) return true;
-            if (Session.User.Posicion.x == NextStep.x + 1 && Session.User.Posicion.y == NextStep.y) return true;
-            if (Session.User.Posicion.x == NextStep.x && Session.User.Posicion.y == NextStep.y + 1) return true;
-            if (Session.User.Posicion.x == NextStep.x && Session.User.Posicion.y == NextStep.y - 1) return true;
+            if (Personaje == null)
+            {
+                if (Session.User.Posicion.x == NextStep.x + 1 && Session.User.Posicion.y == NextStep.y + 1) return true;
+                if (Session.User.Posicion.x == NextStep.x - 1 && Session.User.Posicion.y == NextStep.y - 1) return true;
+                if (Session.User.Posicion.x == NextStep.x + 1 && Session.User.Posicion.y == NextStep.y - 1) return true;
+                if (Session.User.Posicion.x == NextStep.x - 1 && Session.User.Posicion.y == NextStep.y + 1) return true;
+                if (Session.User.Posicion.x == NextStep.x - 1 && Session.User.Posicion.y == NextStep.y) return true;
+                if (Session.User.Posicion.x == NextStep.x + 1 && Session.User.Posicion.y == NextStep.y) return true;
+                if (Session.User.Posicion.x == NextStep.x && Session.User.Posicion.y == NextStep.y + 1) return true;
+                if (Session.User.Posicion.x == NextStep.x && Session.User.Posicion.y == NextStep.y - 1) return true;
+            }
+            else
+            {
+                if (Personaje.Posicion.x == NextStep.x + 1 && Personaje.Posicion.y == NextStep.y + 1) return true;
+                if (Personaje.Posicion.x == NextStep.x - 1 && Personaje.Posicion.y == NextStep.y - 1) return true;
+                if (Personaje.Posicion.x == NextStep.x + 1 && Personaje.Posicion.y == NextStep.y - 1) return true;
+                if (Personaje.Posicion.x == NextStep.x - 1 && Personaje.Posicion.y == NextStep.y + 1) return true;
+                if (Personaje.Posicion.x == NextStep.x - 1 && Personaje.Posicion.y == NextStep.y) return true;
+                if (Personaje.Posicion.x == NextStep.x + 1 && Personaje.Posicion.y == NextStep.y) return true;
+                if (Personaje.Posicion.x == NextStep.x && Personaje.Posicion.y == NextStep.y + 1) return true;
+                if (Personaje.Posicion.x == NextStep.x && Personaje.Posicion.y == NextStep.y - 1) return true;
+            }
+            
             return false;
         }
     }

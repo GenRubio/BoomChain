@@ -307,7 +307,7 @@ namespace BoomBang.game.manager
                     }
                     Session.User.Sala = Sala;
                     Session.User.IDEspacial = key;
-                    Session.User.Trayectoria = new Trayectoria(Session);
+                    Session.User.Trayectoria = new Trayectoria(Session, null);
                     Session.User.Sala.Map[Session.User.Posicion.y, Session.User.Posicion.x].FijarSession(Session);
                    
                     Session.User.Sala.EnviarRegistro(Session);

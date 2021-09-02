@@ -75,7 +75,7 @@ namespace BoomBang.game.handler
             server.AppendParameter(-1);
             server.AppendParameter(0);
             server.AppendParameter(0);
-            server.AppendParameter(-1);//tutorial islas
+            server.AppendParameter(0);//tutorial islas
             server.AppendParameter("ES");
             server.AppendParameter(1);
             server.AppendParameter(0);

@@ -13,6 +13,7 @@ namespace BoomBang.server
         public static void Initialize()
         {
             new Thread(Pathfinder).Start();
+            new Thread(PathfinderIA).Start();
             new Thread(Ping).Start();
             new Thread(mGamesCall).Start();
         }
@@ -91,6 +92,65 @@ namespace BoomBang.server
                         {
                             Session.User.Trayectoria.Movimientos.Clear();
                             Session.User.Trayectoria.BuscarOtroSendero();
+                        }
+                    }
+                }
+                catch
+                {
+                    continue;
+                }
+                Thread.Sleep(1);
+            }
+        }
+        private static void PathfinderIA()
+        {
+            while (true)
+            {
+                try
+                {
+                    foreach (SessionInstance Session in UserManager.UsuariosOnline.Values.ToList())
+                    {
+                        foreach(PersonajeInstance personaje in Session.User.personajesList.ToList())
+                        {
+                            if (personaje.Trayectoria == null) continue;
+                            if (personaje.Trayectoria.Movimientos.Count == 0) continue;
+                            if (personaje.PreLock_Interactuando == true) continue;
+                            if (personaje.PreLock_Caminando == true) continue;
+                            if (Session.User.Sala.PathFinder == false) continue;
+
+                            Posicion SiguienteMovimiento = personaje.Trayectoria.SiguienteMovimiento();
+                            if (!personaje.Trayectoria.MovementIsVerifield(SiguienteMovimiento)) continue;
+                            if (SiguienteMovimiento.y < Session.User.Sala.MapSizeY && SiguienteMovimiento.x < Session.User.Sala.MapSizeX)
+                            {
+                                if (Session.User.Sala.Caminable(SiguienteMovimiento))
+                                {
+                                    Session.User.Sala.Map[personaje.Posicion.y, personaje.Posicion.x].FijarSession(null);
+                                    personaje.PreLock_Caminando = true;
+                                    personaje.Posicion = SiguienteMovimiento;
+                                    Session.User.Sala.Map[personaje.Posicion.y, personaje.Posicion.x].FijarSession(Session);
+
+                                    ServerMessage server = new ServerMessage();
+                                    server.AddHead(182);
+                                    server.AppendParameter(1);
+                                    server.AppendParameter(personaje.id);
+                                    server.AppendParameter(SiguienteMovimiento.x);
+                                    server.AppendParameter(SiguienteMovimiento.y);
+                                    server.AppendParameter(SiguienteMovimiento.z);
+                                    server.AppendParameter(750);
+                                    server.AppendParameter(personaje.Trayectoria.Movimientos.Count >= 1 ? 1 : 0);
+                                    Session.User.Sala.SendData(server, Session);
+                                }
+                                else
+                                {
+                                    personaje.Trayectoria.Movimientos.Clear();
+                                    personaje.Trayectoria.BuscarOtroSendero();
+                                }
+                            }
+                            else
+                            {
+                                personaje.Trayectoria.Movimientos.Clear();
+                                personaje.Trayectoria.BuscarOtroSendero();
+                            }
                         }
                     }
                 }
