@@ -2,3 +2,4 @@
 <li class="nav-item"><a class="nav-link" href="{{ backpack_url('dashboard') }}"><i class="la la-home nav-icon"></i> {{ trans('backpack::base.dashboard') }}</a></li>
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('usuario') }}'><i class='nav-icon la la-question'></i> Usuarios</a></li>
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('escenarios-publico') }}'><i class='nav-icon la la-question'></i> Escenarios</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('catalago-objeto') }}'><i class='nav-icon la la-question'></i> Catalago Objetos</a></li>

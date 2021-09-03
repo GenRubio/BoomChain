@@ -59,6 +59,7 @@
       <DependentUpon>Emulator.cs</DependentUpon>
     </Compile>
     <Compile Include="game\dao\AvatarDAO.cs" />
+    <Compile Include="game\dao\CatalagoObjetosDAO.cs" />
     <Compile Include="game\dao\EscenarioDAO.cs" />
     <Compile Include="game\dao\IslaDAO.cs" />
     <Compile Include="game\dao\PersonajeDAO.cs" />

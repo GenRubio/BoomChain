@@ -269,4 +269,10 @@ return [
         4 => 'Isla desierto',
         5 => 'Isla vampiros',
     ],
+
+    'objeto_tipos' => [
+        0 => 'Decorativo',
+        26 => 'Planta',
+        27 => 'PLanta Final',
+    ]
 ];

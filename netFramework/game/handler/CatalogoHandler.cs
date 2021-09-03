@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Threading;
 using BoomBang.Forms;
+using BoomBang.game.dao;
 
 namespace BoomBang.game.handler
 {
@@ -35,9 +36,52 @@ namespace BoomBang.game.handler
         {
             if (Session.User != null)
             {
-                Packet_189_133(Session);
+                ServerMessage server = new ServerMessage();
+                server.AddHead(189);
+                server.AddHead(133);
+                foreach (CatalogObjectInstance Item in CatalagoObjetosDAO.getCatalagoObjetosList())
+                {
+                    server.AppendParameter(Item.id);
+                    server.AppendParameter(-1);
+                    server.AppendParameter(Item.titulo);
+                    server.AppendParameter(Item.swf_name);
+                    server.AppendParameter(Item.descripcion);
+                    server.AppendParameter(Item.price);
+                    server.AppendParameter(-1);
+                    server.AppendParameter(1);
+                    server.AppendParameter(Item.colores_hex);
+                    server.AppendParameter(Item.colores_rgb);
+                    server.AppendParameter(0);
+                    server.AppendParameter(0);
+                    server.AppendParameter("parte_1");
+                    server.AppendParameter("parte_2");
+                    server.AppendParameter("parte_3");
+                    server.AppendParameter("parte_4");
+                    server.AppendParameter(1);
+                    server.AppendParameter(0);
+                    server.AppendParameter(0);
+                    server.AppendParameter(Item.espacio_mapabytes);// something_1
+                    server.AppendParameter(0);//Espacio ocupado 2
+                    server.AppendParameter(0);//Espacio ocupado 3
+                    server.AppendParameter(0);// something_4
+                    server.AppendParameter(0);// something_5
+                    server.AppendParameter(0);// something_6
+                    server.AppendParameter(Item.tipo); //something 10
+                    server.AppendParameter(0);
+                    server.AppendParameter(Item.espacio_mapabytes);
+                    server.AppendParameter(Item.visible);
+                    server.AppendParameter(1);// something_12
+                    server.AppendParameter(1); //something_13
+                    server.AppendParameter(-1); // something_14
+                    server.AppendParameter("1³0"); //Salas usables
+                    server.AppendParameter(Item.rotacion);
+                }
+                Session.SendDataProtected(server);
             }
         }
+
+
+
         private static void CargarMochila(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
@@ -347,7 +391,7 @@ namespace BoomBang.game.handler
             if (Oro == true) { Packet_189_134(Session); }
             if (Oro == false) { Packet_189_137(Session); }
             client.SetParameter("objeto_id", item);
-            DataRow objetos = client.ExecuteQueryRow("SELECT * FROM objetos WHERE id = @objeto_id");
+            DataRow objetos = client.ExecuteQueryRow("SELECT * FROM catalago_objetos WHERE id = @objeto_id");
             if (objetos != null)
             {
                 CatalogObjectInstance objeto = new CatalogObjectInstance(objetos);
@@ -355,145 +399,19 @@ namespace BoomBang.game.handler
                 DataRow usuarios = client.ExecuteQueryRow("SELECT * FROM usuarios WHERE id = @id");
                 if (usuarios != null)
                 {
-                    if ((int)objetos["precio_oro"] > 0)
+                    client.SetParameter("item_id", objeto.id);
+                    client.SetParameter("userid", Session.User.id);
+                    client.SetParameter("hex", objeto.colores_hex);
+                    client.SetParameter("rgb", objeto.colores_rgb);
+                    client.SetParameter("tam", tam);
+                    client.SetParameter("default_data", "");
+                    client.SetParameter("loteria_numero", loteria);
+                    if (client.ExecuteNonQuery("INSERT INTO objetos_comprados (`objeto_id`, `colores_hex`, `colores_rgb`, `usuario_id`, `tam`, `data`, `loteria_numero`) VALUES (@item_id, @hex, @rgb, @userid, @tam, @default_data, @loteria_numero)") == 1)
                     {
-                        if ((int)usuarios["oro"] >= (int)objetos["precio_oro"])
-                        {
-                            
-                            for (int a = 0; a < cantidad; a++)
-                            {
-                                if (a == 0)
-                                {
-                                    client.SetParameter("item_id", objeto.id);
-                                    client.SetParameter("userid", Session.User.id);
-                                    client.SetParameter("hex", objeto.colores_hex);
-                                    client.SetParameter("rgb", objeto.colores_rgb);
-                                    client.SetParameter("tam", tam);
-                                    client.SetParameter("default_data", objeto.default_data);
-                                    client.SetParameter("loteria_numero", loteria);
-                                    if (client.ExecuteNonQuery("INSERT INTO objetos_comprados (`objeto_id`, `colores_hex`, `colores_rgb`, `usuario_id`, `tam`, `data`, `loteria_numero`) VALUES (@item_id, @hex, @rgb, @userid, @tam, @default_data, @loteria_numero)") == 1)
-                                    {
-                                        client.SetParameter("id", objeto.id);
-                                        client.SetParameter("UserID", Session.User.id);
-                                        int compra_id = int.Parse(Convert.ToString(client.ExecuteScalar("SELECT MAX(id) FROM objetos_comprados WHERE objeto_id = @id AND usuario_id = @UserID")));
-                                        Packet_189_139(Session, objeto, compra_id, 1, tam);
-                                    }
-                                }
-                                else if (a > 0 && objeto.swf == "Egg_Teleport")
-                                {
-                                    client.SetParameter("id_objeto", objeto.id);
-                                    client.SetParameter("user_id", Session.User.id);
-                                    DataRow primer_item_muchila = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE objeto_id = @id_objeto AND usuario_id = @user_id AND id_objeto_2 = -1");
-                                    if (primer_item_muchila != null)
-                                    {
-                                        client.SetParameter("item_id", objeto.id);
-                                        client.SetParameter("userid", Session.User.id);
-                                        client.SetParameter("hex", objeto.colores_hex);
-                                        client.SetParameter("rgb", objeto.colores_rgb);
-                                        client.SetParameter("tam", tam);
-                                        client.SetParameter("default_data", objeto.default_data);
-                                        client.SetParameter("loteria_numero", loteria);
-                                        client.SetParameter("id_objeto_2", (int)primer_item_muchila["id"]);
-                                        if (client.ExecuteNonQuery("INSERT INTO objetos_comprados (`objeto_id`, `colores_hex`, `colores_rgb`, `usuario_id`, `tam`, `data`, `loteria_numero`, `id_objeto_2`) VALUES (@item_id, @hex, @rgb, @userid, @tam, @default_data, @loteria_numero, @id_objeto_2)") == 1)
-                                        {
-                                            client.SetParameter("id", objeto.id);
-                                            client.SetParameter("UserID", Session.User.id);
-                                            int compra_id = int.Parse(Convert.ToString(client.ExecuteScalar("SELECT MAX(id) FROM objetos_comprados WHERE objeto_id = @id AND usuario_id = @UserID")));
-                                            Packet_189_139(Session, objeto, compra_id, 1, tam);
-                                        }
-                                    }
-                                    client.SetParameter("id_objeto", objeto.id);
-                                    client.SetParameter("user_id", Session.User.id);
-                                    DataRow actualizar_primer_objeto = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE objeto_id = @id_objeto AND id_objeto_2 = -1 AND usuario_id = @user_id");
-                                    if (actualizar_primer_objeto != null)
-                                    {
-                                        client.SetParameter("id_objeto", objeto.id);
-                                        client.SetParameter("user_id", Session.User.id);
-                                        DataRow detectar_ob_2 = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE usuario_id = @user_id AND objeto_id = @id_objeto AND id_objeto_2 != -1 ORDER BY id DESC");
-                                        if (detectar_ob_2 != null)
-                                        {
-                                            client.SetParameter("user_id", Session.User.id);
-                                            client.SetParameter("id", (int)actualizar_primer_objeto["id"]);
-                                            client.SetParameter("id_objeto_2", (int)detectar_ob_2["id"]);
-                                            client.ExecuteNonQuery("UPDATE objetos_comprados SET id_objeto_2 = @id_objeto_2 WHERE usuario_id = @user_id AND id = @id");
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else if ((int)objetos["precio_plata"] > 0)
-                    {
-                        if ((int)usuarios["plata"] >= (int)objetos["precio_plata"])
-                        {
-                      
-                            for (int a = 0; a < cantidad; a++)
-                            {
-                                if (a == 0)
-                                {
-                                    client.SetParameter("item_id", objeto.id);
-                                    client.SetParameter("userid", Session.User.id);
-                                    client.SetParameter("hex", objeto.colores_hex);
-                                    client.SetParameter("rgb", objeto.colores_rgb);
-                                    client.SetParameter("tam", tam);
-                                    client.SetParameter("default_data", objeto.default_data);
-                                    client.SetParameter("loteria_numero", 0);
-                                    if (client.ExecuteNonQuery("INSERT INTO objetos_comprados (`objeto_id`, `colores_hex`, `colores_rgb`, `usuario_id`, `tam`, `data`, `loteria_numero`) VALUES (@item_id, @hex, @rgb, @userid, @tam, @default_data, @loteria_numero)") == 1)
-                                    {
-                                        client.SetParameter("id", objeto.id);
-                                        client.SetParameter("UserID", Session.User.id);
-                                        int compra_id = int.Parse(Convert.ToString(client.ExecuteScalar("SELECT MAX(id) FROM objetos_comprados WHERE objeto_id = @id AND usuario_id = @UserID")));
-                                        Packet_189_139(Session, objeto, compra_id, 1, tam);
-                                    }
-                                }
-                                if (a > 0 && objeto.swf == "Teleport_Vale")
-                                {
-                                    client.SetParameter("id_objeto", objeto.id);
-                                    client.SetParameter("user_id", Session.User.id);
-                                    DataRow primer_item_muchila = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE objeto_id = @id_objeto AND usuario_id = @user_id AND id_objeto_2 = -1");
-                                    if (primer_item_muchila != null)
-                                    {
-                                        client.SetParameter("item_id", objeto.id);
-                                        client.SetParameter("userid", Session.User.id);
-                                        client.SetParameter("hex", objeto.colores_hex);
-                                        client.SetParameter("rgb", objeto.colores_rgb);
-                                        client.SetParameter("tam", tam);
-                                        client.SetParameter("default_data", objeto.default_data);
-                                        client.SetParameter("loteria_numero", 0);
-                                        client.SetParameter("id_objeto_2", (int)primer_item_muchila["id"]);
-                                        if (client.ExecuteNonQuery("INSERT INTO objetos_comprados (`objeto_id`, `colores_hex`, `colores_rgb`, `usuario_id`, `tam`, `data`, `loteria_numero`, `id_objeto_2`) VALUES (@item_id, @hex, @rgb, @userid, @tam, @default_data, @loteria_numero, @id_objeto_2)") == 1)
-                                        {
-                                            client.SetParameter("id", objeto.id);
-                                            client.SetParameter("UserID", Session.User.id);
-                                            int compra_id = int.Parse(Convert.ToString(client.ExecuteScalar("SELECT MAX(id) FROM objetos_comprados WHERE objeto_id = @id AND usuario_id = @UserID")));
-                                            Packet_189_139(Session, objeto, compra_id, 1, tam);
-                                        }
-                                    }
-                                    client.SetParameter("id_objeto", objeto.id);
-                                    client.SetParameter("user_id", Session.User.id);
-                                    DataRow actualizar_primer_objeto = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE objeto_id = @id_objeto AND id_objeto_2 = -1 AND usuario_id = @user_id");
-                                    if (actualizar_primer_objeto != null)
-                                    {
-                                        client.SetParameter("id_objeto", objeto.id);
-                                        client.SetParameter("user_id", Session.User.id);
-                                        DataRow detectar_ob_2 = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE usuario_id = @user_id AND objeto_id = @id_objeto AND id_objeto_2 != -1 ORDER BY id DESC");
-                                        if (detectar_ob_2 != null)
-                                        {
-                                            client.SetParameter("user_id", Session.User.id);
-                                            client.SetParameter("id", (int)actualizar_primer_objeto["id"]);
-                                            client.SetParameter("id_objeto_2", (int)detectar_ob_2["id"]);
-                                            client.ExecuteNonQuery("UPDATE objetos_comprados SET id_objeto_2 = @id_objeto_2 WHERE usuario_id = @user_id AND id = @id");
-                                        }
-                                    }
-                                }
-                            }
-                            if (objeto.id == 3043)
-                            {
-                                client.SetParameter("id", Session.User.id);
-                                client.ExecuteNonQuery("UPDATE objetos_comprados SET data = 'Conejo: Compro objetos de oro! A buen precio :v' WHERE usuario_id = @id AND objeto_id = 3043");
-                                objeto.default_data = "Conejo: Compro objetos de oro! A buen precio :v";
-                            }
-                        }
+                        client.SetParameter("id", objeto.id);
+                        client.SetParameter("UserID", Session.User.id);
+                        int compra_id = int.Parse(Convert.ToString(client.ExecuteScalar("SELECT MAX(id) FROM objetos_comprados WHERE objeto_id = @id AND usuario_id = @UserID")));
+                        Packet_189_139(Session, objeto, compra_id, 1, tam);
                     }
                 }
             }
@@ -562,117 +480,19 @@ namespace BoomBang.game.handler
         static void Comprar_Oro(SessionInstance Session, mysql client, string[,] Parameters)
         {
             int objeto_id = int.Parse(Parameters[0, 0]);
-            client.SetParameter("objeto_id", objeto_id);
-            DataRow objetos = client.ExecuteQueryRow("SELECT * FROM  objetos WHERE id = @objeto_id");
+            client.SetParameter("id", objeto_id);
+            DataRow objetos = client.ExecuteQueryRow("SELECT * FROM  catalago_objetos WHERE id = @id");
             if (objetos != null)
             {
                 client.SetParameter("user_id", Session.User.id);
                 DataRow usuario = client.ExecuteQueryRow("SELECT * FROM usuarios WHERE id = @user_id");
                 if (usuario != null)
                 {
-                    if ((int)usuario["oro"] >= (int)objetos["precio_oro"])
-                    {
-                        if (listas.Llaves_Casas.Contains(objeto_id))
-                        {
-                            client.SetParameter("id_user", Session.User.id);
-                            client.SetParameter("id_objeto", objeto_id);
-                            DataRow muchila = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE usuario_id = @id_user AND objeto_id = @id_objeto");
-                            if (muchila != null)
-                            {
-                                NotificacionesManager.NotifiChat(Session, "Catálogo: Ya tienes este objeto comprado. Algunos objetos solo pueden ser comprados 1 vez.");
-                                ServerMessage server = new ServerMessage();
-                                server.AddHead(189);
-                                server.AddHead(134);
-                                server.AppendParameter(1);
-                                Session.SendData(server);
-                                return;
-                            }
-                        }
-                        if ((int)objetos["vip"] == 1) { return; }
-                        if (listas.Objetos_Catalogo_Oro.Contains(objeto_id))
-                        {
-                            client.SetParameter("id_user", Session.User.id);
-                            client.SetParameter("objeto_id", objeto_id);
-                            DataRow muchila = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE usuario_id = @id_user AND objeto_id = @objeto_id");
-                            if (muchila != null)
-                            {
-                                NotificacionesManager.NotifiChat(Session, "Catálogo: Ya tienes este objeto comprado. Algunos objetos solo pueden ser comprados 1 vez.");
-                                ServerMessage server = new ServerMessage();
-                                server.AddHead(189);
-                                server.AddHead(134);
-                                server.AppendParameter(1);
-                                Session.SendData(server);
-                                return;
-                            }
-                        }
-                        int loteria_numero = 0;
-                        if (objeto_id == 871)//Loteria Semanal
-                        {
-                            DataRow loteria = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE NOT (loteria_numero < (SELECT MAX(loteria_numero) FROM objetos_comprados))");
-                            loteria_numero = (int)loteria["loteria_numero"];
-                            loteria_numero++;
-                        }
-                      
-                        int cantidad = 1;
-                        if ((string)objetos["swf"] == "Egg_Teleport") { cantidad = 2; }
-                        Packet_Aceptar_Compra(Session, objeto_id, false, 0, 0, loteria_numero, true, Parameters[1, 0], cantidad);
+                    int cantidad = 1;
 
-                    }
-                    else
-                    {
-                        ServerMessage server = new ServerMessage();
-                        server.AddHead(189);
-                        server.AddHead(134);
-                        server.AppendParameter(1);
-                        Session.SendData(server);
-                    }
+                    Packet_Aceptar_Compra(Session, objeto_id, false, 0, 0, 0, true, Parameters[1, 0], cantidad);
                 }
             }
-        }
-        private static void Packet_189_133(SessionInstance Session)
-        {
-            mysql client = new mysql();
-            ServerMessage server = new ServerMessage();
-            server.AddHead(189);
-            server.AddHead(133);
-            foreach (CatalogObjectInstance Item in CatalogoManager.ObtenerCatalogo())
-            {
-                server.AppendParameter(Item.id);
-                server.AppendParameter(-1);
-                server.AppendParameter(Item.titulo);
-                server.AppendParameter(Item.swf);
-                server.AppendParameter(Item.descripcion);
-                server.AppendParameter(Item.precio_oro == -1 ? Item.precio_plata : Item.precio_oro);
-                server.AppendParameter(-1);
-                server.AppendParameter(Item.categoria);
-                server.AppendParameter(Item.colores_hex);
-                server.AppendParameter(Item.colores_rgb);
-                server.AppendParameter(0);
-                server.AppendParameter(0);
-                server.AppendParameter(Item.parte_1);
-                server.AppendParameter(Item.parte_2);
-                server.AppendParameter(Item.parte_3);
-                server.AppendParameter(Item.parte_4);
-                server.AppendParameter(Item.tam_n);
-                server.AppendParameter(Item.tam_g);
-                server.AppendParameter(Item.tam_p);
-                server.AppendParameter(Item.espacio_ocupado_n);// something_1
-                server.AppendParameter(0);//Espacio ocupado 2
-                server.AppendParameter(0);//Espacio ocupado 3
-                server.AppendParameter(Item.something_4);// something_4
-                server.AppendParameter(Item.something_5);// something_5
-                server.AppendParameter(Item.something_6);// something_6
-                server.AppendParameter(Item.tipo_arrastre); //something 10
-                server.AppendParameter(0);
-                server.AppendParameter(Item.espacio_mapabytes);
-                server.AppendParameter(Item.visible);
-                server.AppendParameter(Item.tipo_rare);// something_12
-                server.AppendParameter(Item.arrastrable); //something_13
-                server.AppendParameter(-1); // something_14
-                server.AppendParameter(Item.salas_usables); //something_15
-                server.AppendParameter(Item.rotacion);
-            }
-            Session.SendDataProtected(server);
         }
         private static void Packet_189_180(SessionInstance Session, mysql client)
         {
@@ -932,7 +752,7 @@ namespace BoomBang.game.handler
             server.AppendParameter(0);
             server.AppendParameter(0);
             server.AppendParameter(tam);
-            server.AppendParameter(item.espacio_ocupado_n);
+            server.AppendParameter(item.espacio_mapabytes);
             server.AppendParameter(0);
             server.AppendParameter(0);
             server.AppendParameter(Cantidad);
