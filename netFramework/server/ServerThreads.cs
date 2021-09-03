@@ -13,9 +13,12 @@ namespace BoomBang.server
         public static void Initialize()
         {
             new Thread(Pathfinder).Start();
-            new Thread(PathfinderIA).Start();
             new Thread(Ping).Start();
             new Thread(mGamesCall).Start();
+
+            //IA Personajes Timers
+            new Thread(PathfinderIA).Start();
+            new Thread(SendUpperIA).Start();
         }
         private static void mGamesCall()
         {
@@ -102,6 +105,44 @@ namespace BoomBang.server
                 Thread.Sleep(1);
             }
         }
+        private static void SendUpperIA()
+        {
+            while (true)
+            {
+                try
+                {
+                    foreach (SessionInstance Session in UserManager.UsuariosOnline.Values.ToList())
+                    {
+                        foreach (PersonajeInstance personaje in Session.User.personajesList.ToList())
+                        {
+                            if (personaje.PreLock_Interactuando == true) continue;
+                            if (personaje.startWalk == false) continue;
+                            if (personaje.activeSendUpper == false) continue;
+
+                            foreach (PersonajeInstance adversario in Session.User.personajesList.ToList())
+                            {
+                                if (adversario.startWalk == false) continue;
+                                if (adversario.activeSendUpper == false) continue;
+                                if (personaje.id == adversario.id) continue;
+                                if (adversario.PreLock_Interactuando == true) continue;
+
+                                int Derecha = personaje.Posicion.x - adversario.Posicion.x;
+                                int Izquierda = personaje.Posicion.y - adversario.Posicion.y;
+                                if (Derecha == 1 && Izquierda == 1)
+                                {
+                                    personaje.sendUpper(Session, adversario);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    continue;
+                }
+                Thread.Sleep(1);
+            }
+        }
         private static void PathfinderIA()
         {
             while (true)
@@ -116,6 +157,7 @@ namespace BoomBang.server
                             if (personaje.Trayectoria.Movimientos.Count == 0) continue;
                             if (personaje.PreLock_Interactuando == true) continue;
                             if (personaje.PreLock_Caminando == true) continue;
+                            if (personaje.startWalk == false) continue;
                             if (Session.User.Sala.PathFinder == false) continue;
 
                             Posicion SiguienteMovimiento = personaje.Trayectoria.SiguienteMovimiento();

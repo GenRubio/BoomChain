@@ -26,6 +26,9 @@ namespace BoomBang.game.instances
         public Posicion Posicion { get; set; }
         public Trayectoria Trayectoria { get; set; }
         public PathFinder PathFinder { get; set; }
+        //Extra Settings
+        public bool startWalk = false;
+        public bool activeSendUpper = false;
 
         public PersonajeInstance(DataRow row, int id)
         {
@@ -207,7 +210,70 @@ namespace BoomBang.game.instances
             Session.SendData(server);
         }
         #endregion
-        #region Patchfinding
+        #region IA Send Upper
+        public void sendUpper(SessionInstance Session, PersonajeInstance adversario)
+        {
+            this.Time_Interactuando = Time.GetCurrentAndAdd(AddType.Segundos, 14);
+            adversario.Time_Interactuando = Time.GetCurrentAndAdd(AddType.Segundos, 17);
+
+            this.Trayectoria.DetenerMovimiento();
+            adversario.Trayectoria.DetenerMovimiento();
+
+            new Thread(() => upperKick(Session, adversario)).Start();
+
+            ServerMessage server = new ServerMessage();
+            server.AddHead(145);
+            server.AppendParameter(4);
+            server.AppendParameter(this.id);
+            server.AppendParameter(this.Posicion.x);
+            server.AppendParameter(this.Posicion.y);
+            server.AppendParameter(adversario.id);
+            server.AppendParameter(adversario.Posicion.x);
+            server.AppendParameter(adversario.Posicion.y);
+            Session.User.Sala.SendData(server, Session);
+        }
+        private void upperKick(SessionInstance Session, PersonajeInstance adversario)
+        {
+            try
+            {
+                Thread.Sleep(new TimeSpan(0, 0, 16));
+
+                moveUserStartPostionWalkArea(Session, adversario);
+                Session.User.Sala.Map[adversario.Posicion.y, adversario.Posicion.x].FijarSession(null);
+                adversario.Posicion.x = Session.User.Sala.Puerta.x;
+                adversario.Posicion.y = Session.User.Sala.Puerta.y;
+                moveUserStartPostionDoorArea(Session, adversario);
+            }
+            catch
+            {
+                return;
+            }
+        }
+        private void moveUserStartPostionWalkArea(SessionInstance Session, PersonajeInstance adversario)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(182);
+            server.AppendParameter(1);
+            server.AppendParameter(adversario.id);
+            server.AppendParameter(0);
+            server.AppendParameter(0);
+            server.AppendParameter(adversario.Posicion.z);
+            server.AppendParameter(750);
+            server.AppendParameter(1);
+            Session.User.Sala.SendData(server, Session);
+        }
+        private void moveUserStartPostionDoorArea(SessionInstance Session, PersonajeInstance adversario)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(135);
+            server.AppendParameter(adversario.id);
+            server.AppendParameter(Session.User.Sala.Puerta.x);
+            server.AppendParameter(Session.User.Sala.Puerta.y);
+            server.AppendParameter(4);
+            Session.User.Sala.SendData(server, Session);
+        }
+        #endregion
+        #region IA Patchfinding
         public void startAutoWalkIA(SessionInstance Session)
         {
             List<string> points = new List<string>();
@@ -236,6 +302,7 @@ namespace BoomBang.game.instances
             points.Add("1012110137");
             points.Add("1112312125131251412515125");
 
+            this.startWalk = true;
             new Thread(() => autoWalkTimer(Session, points)).Start();
         }
         private void autoWalkTimer(SessionInstance Session, List<string>points)

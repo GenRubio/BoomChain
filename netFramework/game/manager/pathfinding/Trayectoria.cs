@@ -437,7 +437,10 @@ namespace BoomBang.game.instances.manager.pathfinding
             IsMovementCorrupt(NextStep);
             if (!MovementIsVerifield(NextStep))
             {
-                Emulator.Form.WriteLine("Movimiento denegado", "error");
+                if (Personaje == null)
+                {
+                    Emulator.Form.WriteLine("Movimiento denegado", "error");
+                }
                 DetenerMovimiento();
                 BuscarOtroSendero();
                 return null;
