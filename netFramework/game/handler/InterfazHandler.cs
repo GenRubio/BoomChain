@@ -567,6 +567,28 @@ namespace BoomBang.game.handler
                     personaje.activeSendUpper = true;
                 }
             }
+            if (mensaje == "objeto")
+            {
+                ServerMessage server = new ServerMessage();
+                server.AddHead(189);
+                server.AddHead(136);
+                server.AppendParameter(2246);
+                server.AppendParameter(84);
+                server.AppendParameter(1);
+                server.AppendParameter(Session.User.id);
+                server.AppendParameter(11);
+                server.AppendParameter(11);
+                server.AppendParameter(0);
+                server.AppendParameter("tam_n");
+                server.AppendParameter("");
+                server.AppendParameter("14,19");
+                server.AppendParameter("37F2FF");
+                server.AppendParameter("72,72,100");
+                server.AppendParameter("0");
+                server.AppendParameter("0");
+                server.AppendParameter("");
+                Session.User.Sala.SendData(server, Session);
+            }
         }
         private static void sendPublicChatPacket(SessionInstance Session, string value)
         {

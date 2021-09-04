@@ -79,24 +79,6 @@ namespace BoomBang.game.handler
             {
                 if (Session.User.Sala != null) return;
                 int id_sala = int.Parse(Parameters[1, 0]);
-                if (int.Parse(Parameters[1, 0]) == 30 && int.Parse(Parameters[0, 0]) == 1)//Cementerio Entradas
-                {
-                    Random rd = new Random();
-                    int[] areas = { 50, 46, 26, 30 };
-                    id_sala = areas[rd.Next(0, 4)]; //0+1+2+3
-                }
-                else if (int.Parse(Parameters[1, 0]) == 78 && int.Parse(Parameters[0, 0]) == 1)//Madriguera Entradas
-                {
-                    Random rd = new Random();
-                    int[] areas = { 83, 82, 90, 84 };
-                    id_sala = areas[rd.Next(0, 4)]; //0+1+2+3
-                }
-                else if (int.Parse(Parameters[1, 0]) == 57 && int.Parse(Parameters[0, 0]) == 1)//Bosque Nevado Entradas
-                {
-                    Random rd = new Random();
-                    int[] areas = { 60, 64, 72, 63 };
-                    id_sala = areas[rd.Next(0, 4)]; //0+1+2+3
-                }
                 if (!SalasManager.IrAlli(Session, int.Parse(Parameters[0, 0]), id_sala))
                 {
                     Packet_128_120(Session);

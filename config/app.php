@@ -272,7 +272,7 @@ return [
 
     'objeto_tipos' => [
         0 => 'Decorativo',
-        26 => 'Planta',
-        27 => 'PLanta Final',
+        26 => 'Interactuable',
+        27 => 'Con movimiento',
     ]
 ];

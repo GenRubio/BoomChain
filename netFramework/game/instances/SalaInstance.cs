@@ -249,10 +249,7 @@ namespace BoomBang.game.instances
             {
                 try
                 {
-                    if (!CatalogoManager.lianas_cocos.Contains(Compra.objeto_id))
-                    {
-                        this.Map[Posicion.y, Posicion.x].FijarCompra(Compra);
-                    }             
+                    this.Map[Posicion.y, Posicion.x].FijarCompra(Compra);
                 }
                 catch
                 {
@@ -394,11 +391,7 @@ namespace BoomBang.game.instances
             server.AddHead(128);
             server.AddHead(120);
             server.AppendParameter(1);
-            if (Escenario.categoria == 4) { server.AppendParameter(Escenario.categoria); }
-            else
-            {
-                server.AppendParameter(Escenario.es_categoria);
-            }
+            server.AppendParameter(Escenario.es_categoria);
             server.AppendParameter(0);
             server.AppendParameter(0);
             server.AppendParameter(0);
@@ -633,10 +626,6 @@ namespace BoomBang.game.instances
                 server.AppendParameter(ObjetosEnSala.Count);
                 foreach (BuyObjectInstance Item in ObjetosEnSala.Values)
                 {
-                    if (listas.Plantas.Contains(Item.objeto_id))
-                    {
-                        PlantasManager.cargar_planta(Session, Item);
-                    }
                     server.AppendParameter(Item.id);
                     server.AppendParameter(Item.objeto_id);
                     server.AppendParameter(Item.posX);
@@ -649,7 +638,12 @@ namespace BoomBang.game.instances
                     server.AppendParameter(Item.colores_rgb);//color_2
                     server.AppendParameter("0");//Data
                     server.AppendParameter("0");//Other
-                    server.AppendParameter(Item.data);
+                    server.AppendParameter("");
+
+                    if (Time.GetDifference(Item.Planta_agua) > 0)
+                    {
+                        new Thread(() => Item.regarPlanta(Session)).Start();
+                    }
                 }
                 server.AppendParameter(0);
                 server.AppendParameter(Usuarios.Count);

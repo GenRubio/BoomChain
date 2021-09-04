@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using BoomBang.Forms;
 using BoomBang.game.dao;
+using BoomBang.SocketsWeb;
 
 namespace BoomBang.game.handler
 {
@@ -19,8 +20,7 @@ namespace BoomBang.game.handler
         {
             HandlerManager.RegisterHandler(189133, new ProcessHandler(CargarCatalogo));
             HandlerManager.RegisterHandler(189180, new ProcessHandler(CargarMochila));
-            HandlerManager.RegisterHandler(189134, new ProcessHandler(Comprar_Oro));
-            HandlerManager.RegisterHandler(189137, new ProcessHandler(Comprar_Plata));
+            HandlerManager.RegisterHandler(189134, new ProcessHandler(buyObject));
             HandlerManager.RegisterHandler(189181, new ProcessHandler(CargarObjeto));
             HandlerManager.RegisterHandler(189136, new ProcessHandler(PonerObjeto));
             HandlerManager.RegisterHandler(189142, new ProcessHandler(CambiarColores));
@@ -28,7 +28,6 @@ namespace BoomBang.game.handler
             HandlerManager.RegisterHandler(189140, new ProcessHandler(Quitar_Objeto));
             HandlerManager.RegisterHandler(189143, new ProcessHandler(VoltearObjeto));
             HandlerManager.RegisterHandler(189158, new ProcessHandler(Control));
-            HandlerManager.RegisterHandler(189165, new ProcessHandler(Dar_Bebida));
             HandlerManager.RegisterHandler(189159, new ProcessHandler(ActivarObjeto));
             HandlerManager.RegisterHandler(189144, new ProcessHandler(CambiarTamañoObjeto));
         }
@@ -80,8 +79,6 @@ namespace BoomBang.game.handler
             }
         }
 
-
-
         private static void CargarMochila(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
@@ -90,25 +87,20 @@ namespace BoomBang.game.handler
                 Packet_189_180(Session, client);
             }
         }
-        private static void Comprar_Oro(SessionInstance Session, string[,] Parameters)
+        private static void buyObject(SessionInstance Session, string[,] Parameters)
         {
-            if (Session.User != null)
+            if (Session.User != null && Session.User.Sala != null)
             {
-                if (Session.User.Sala != null)
+                int objeto_id = int.Parse(Parameters[0, 0]);
+
+                CatalogObjectInstance Item = CatalagoObjetosDAO.getItem(objeto_id);
+                if (Item != null)
                 {
-                    mysql client = new mysql();
-                    Comprar_Oro(Session, client, Parameters);
-                }
-            }
-        }
-        private static void Comprar_Plata(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User != null)
-            {
-                if (Session.User.Sala != null)
-                {
-                    mysql client = new mysql();
-                    Comprar_Plata(Session, client, Parameters);
+                    BuyObjectInstance buyObject = BuyObjectDAO.addAndGetBuyObject(Session.User, Item);
+                    if (buyObject != null)
+                    {
+                        CallPackage.addItemUserBack(Session, Item, buyObject, 1);
+                    }
                 }
             }
         }
@@ -134,7 +126,14 @@ namespace BoomBang.game.handler
             string Espacio_Ocupado = Parameters[7, 0];
             string Colores_Hex = Parameters[8, 0];
             string Colores_Rgb = Parameters[9, 0];
-            BuyObjectInstance Compra = CatalogoManager.ObtenerCompra(compra_id);
+
+            if (Session.User.Sala.Escenario.Creador.id != Session.User.id)
+            {
+                Session.FinalizarConexion("PonerObjeto");
+                return;
+            }
+
+            BuyObjectInstance Compra = BuyObjectDAO.getBuyObject(compra_id);
             if (Compra != null)
             {
                 if (Compra.usuario_id != Session.User.id) return;
@@ -142,19 +141,51 @@ namespace BoomBang.game.handler
                 if (Compra.id != compra_id) return;
                 if (Compra.objeto_id != Objeto_id) return;
                 if (Session.User.Sala.ObjetosEnSala.ContainsKey(Compra.id)) return;
-                if (Session.User.Sala.Escenario.Creador.id != Session.User.id) { Session.FinalizarConexion("PonerObjeto"); return; }
-                
-                if (CatalogoManager.ColocarObjeto(Session.User.Sala, Compra, compra_id, x, y, tam, rotation, Espacio_Ocupado))
+
+                BuyObjectInstance newObject = new BuyObjectInstance(compra_id,
+                    Objeto_id,
+                    Zona_ID,
+                    Session.User.id,
+                    x,
+                    y,
+                    Colores_Hex,
+                    Colores_Rgb,
+                    rotation,
+                    tam,
+                    Espacio_Ocupado,
+                    0,
+                    0);
+ 
+                if (BuyObjectDAO.putObjectInArea(Session.User.Sala, Compra, newObject))
                 {
-                   
-                    Packet_189_136(Session, Compra);
-                    Packet_189_169(Session, compra_id, Objeto_id);
-                    if (listas.Plantas.Contains(Compra.objeto_id))
+                    Compra.posX = newObject.posX;
+                    Compra.posY = newObject.posY;
+                    Compra.sala_id = Session.User.Sala.id;
+                    Compra.espacio_ocupado = newObject.espacio_ocupado;
+                    Compra.tam = newObject.tam;
+                    Compra.putObjectSala(Session);
+                    Compra.removeObjectBack(Session);
+
+                    CatalogObjectInstance Item = CatalagoObjetosDAO.getItem(Compra.objeto_id);
+                    if (Item != null && Item.Planta != null)
                     {
-                        Compra.Planta_agua = Time.GetCurrentAndAdd(AddType.Dias, 1);
-                        Compra.Planta_sol = Time.GetCurrentAndAdd(AddType.Dias, 7);
-                        new Thread(() => PlantasManager.planta_sql(Compra)).Start();
-                        new Thread(() => planta_regada(Session, Compra)).Start();
+                        Compra.Planta_agua = Time.GetCurrentAndAdd(AddType.Horas, Item.Planta.limit_riegue_time);
+                        Compra.Planta_sol = Time.GetCurrentAndAdd(AddType.Horas, Item.Planta.creation_time);
+                        new Thread(() => Compra.regarPlanta(Session)).Start();
+                    }
+
+                    Session.User.Sala.ObjetosEnSala.Add(Compra.id, Compra);
+                    if (Session.User.Sala.ObjetosEnSala.ContainsKey(Compra.id))
+                    {
+                        Session.User.Sala.FijarChutas(Compra);
+                        /*
+                        0,0 > Posicion central
+                        0,1 > Trajectoria derecha - abajo
+                        1,0 > Trajectoria derecha - arriba
+                        -1,0 > Trajectoria esquerda - abajo
+                        0, -1 > Trajectoria esquerda - arriba
+                        1,1 > Derecha
+                        */
                     }
                 }
             }
@@ -165,7 +196,7 @@ namespace BoomBang.game.handler
             int Compra_ID = int.Parse(Parameters[0, 0]);
             string hex = Parameters[1, 0];
             string rgb = Parameters[2, 0];
-            BuyObjectInstance Compra = CatalogoManager.ObtenerCompra(Compra_ID);
+            BuyObjectInstance Compra = BuyObjectDAO.getBuyObject(Compra_ID);
             if (Compra != null)
             {
                 if (Compra.usuario_id != Session.User.id) return;
@@ -196,7 +227,7 @@ namespace BoomBang.game.handler
             string ocupe = Parameters[4, 0];
             string tam = Parameters[5, 0];
             int rotation = int.Parse(Parameters[6, 0]);
-            BuyObjectInstance Compra = CatalogoManager.ObtenerCompra(Compra_ID);
+            BuyObjectInstance Compra = BuyObjectDAO.getBuyObject(Compra_ID);
             if (Compra != null)
             {
                 if (Compra.usuario_id != Session.User.id) return;
@@ -227,12 +258,12 @@ namespace BoomBang.game.handler
         {
             int Compra_ID = int.Parse(Parameters[0, 0]);
             mysql client = new mysql();
-            BuyObjectInstance Compra = CatalogoManager.ObtenerCompra(Compra_ID);
+            BuyObjectInstance Compra = BuyObjectDAO.getBuyObject(Compra_ID);
             if (Compra != null)
             {
                 if (Compra.usuario_id != Session.User.id) return;
                 if (Session.User.Sala.Escenario.Creador.id != Session.User.id) { Session.FinalizarConexion("Quitar_Objeto"); return; }
-                if (CatalogoManager.QuitarObjeto(Session.User.Sala, Compra))
+                if (BuyObjectDAO.removeObjectSala(Session.User.Sala, Compra))
                 {
                     DataRow row = client.ExecuteQueryRow("SELECT * FROM objetos WHERE id = '" + Compra.objeto_id + "'");
                     CatalogObjectInstance item = new CatalogObjectInstance(row);
@@ -275,7 +306,7 @@ namespace BoomBang.game.handler
                     {
                         NewRotation = int.Parse(rotation);
                     }
-                    BuyObjectInstance Item = CatalogoManager.ObtenerCompra(ID);
+                    BuyObjectInstance Item = BuyObjectDAO.getBuyObject(ID);
                     if (Item != null)
                     {
                         if (!Session.User.Sala.ObjetosEnSala.ContainsKey(Item.id)) return;
@@ -298,7 +329,7 @@ namespace BoomBang.game.handler
         {
             int ID = Convert.ToInt32(Parameters[0, 0]);
             int Estado = Convert.ToInt32(Parameters[1, 0]);
-            BuyObjectInstance Item = CatalogoManager.ObtenerCompra(ID);
+            BuyObjectInstance Item = BuyObjectDAO.getBuyObject(ID);
             if (Item != null)
             {
                 if (Item.usuario_id != Session.User.id) return;
@@ -307,46 +338,7 @@ namespace BoomBang.game.handler
                 Packet_189_158(Session, ID, Estado);
             }
         }
-        static void Dar_Bebida(SessionInstance Session, string[,] Parameters)
-        {
-            mysql client = new mysql();
-            int compra_id = int.Parse(Parameters[0, 0]);
-            ServerMessage server = new ServerMessage();
-            server.AddHead(189);
-            server.AddHead(165);
-            server.AppendParameter(compra_id);///Objeto id
-            Session.User.Sala.SendData(server, Session);
-
-            BuyObjectInstance Compra = CatalogoManager.ObtenerCompra(compra_id);
-
-            if (Time.GetDifference(Compra.Planta_agua) > 0)
-            {
-                Compra.Planta_agua = Time.GetCurrentAndAdd(AddType.Dias, 1);
-                client.ExecuteNonQuery("UPDATE objetos_comprados SET planta_agua = '" + Compra.Planta_agua + "' WHERE id = '" + Compra.id + "'");
-            }
-            else
-            {
-                Compra.Planta_sol = Time.GetCurrentAndAdd(AddType.Dias, 7);
-                Compra.Planta_agua = Time.GetCurrentAndAdd(AddType.Dias, 1);
-                client.ExecuteNonQuery("UPDATE objetos_comprados SET planta_agua = '" + Compra.Planta_agua + "' WHERE id = '" + Compra.id + "'");
-                client.ExecuteNonQuery("UPDATE objetos_comprados SET planta_sol = '" + Compra.Planta_sol + "' WHERE id = '" + Compra.id + "'");
-            }
-            new Thread(() => planta_regada(Session, Compra)).Start();
-        }
-        static void planta_regada(SessionInstance Session, BuyObjectInstance Compra)
-        {
-            Thread.Sleep(new TimeSpan(0, 0, 1));
-            ServerMessage planta = new ServerMessage();
-            planta.AddHead(189);
-            planta.AddHead(173);
-            planta.AppendParameter(Compra.id);
-            planta.AppendParameter((86400 - Time.GetDifference(Compra.Planta_agua)) / 12);
-            planta.AppendParameter(Time.GetDifference(Compra.Planta_agua));
-            planta.AppendParameter((604800 - Time.GetDifference(Compra.Planta_sol)) / 4);
-            planta.AppendParameter(Time.GetDifference(Compra.Planta_sol));
-            planta.AppendParameter(1);
-            Session.User.Sala.SendData(planta);
-        }
+        
         static void ActivarObjeto(SessionInstance Session, string[,] Parameters)
         {
             Packet_189_159(Session, Parameters);
@@ -365,7 +357,7 @@ namespace BoomBang.game.handler
                     string size_rotation = Parameters[5, 0];
                     string rotation = Parameters[6, 0];
 
-                    BuyObjectInstance Item = CatalogoManager.ObtenerCompra(ID);
+                    BuyObjectInstance Item = BuyObjectDAO.getBuyObject(ID);
                     if (Item != null)
                     {
                         if (!Session.User.Sala.ObjetosEnSala.ContainsKey(Item.id)) return;
@@ -382,115 +374,6 @@ namespace BoomBang.game.handler
                             }
                         }
                     }
-                }
-            }
-        }
-        static void Packet_Aceptar_Compra(SessionInstance Session, int item, bool Objeto_Normal, int Items_Nesesarios, int Item_id, int loteria, bool Oro, string tam, int cantidad)
-        {
-            mysql client = new mysql();
-            if (Oro == true) { Packet_189_134(Session); }
-            if (Oro == false) { Packet_189_137(Session); }
-            client.SetParameter("objeto_id", item);
-            DataRow objetos = client.ExecuteQueryRow("SELECT * FROM catalago_objetos WHERE id = @objeto_id");
-            if (objetos != null)
-            {
-                CatalogObjectInstance objeto = new CatalogObjectInstance(objetos);
-                client.SetParameter("id", Session.User.id);
-                DataRow usuarios = client.ExecuteQueryRow("SELECT * FROM usuarios WHERE id = @id");
-                if (usuarios != null)
-                {
-                    client.SetParameter("item_id", objeto.id);
-                    client.SetParameter("userid", Session.User.id);
-                    client.SetParameter("hex", objeto.colores_hex);
-                    client.SetParameter("rgb", objeto.colores_rgb);
-                    client.SetParameter("tam", tam);
-                    client.SetParameter("default_data", "");
-                    client.SetParameter("loteria_numero", loteria);
-                    if (client.ExecuteNonQuery("INSERT INTO objetos_comprados (`objeto_id`, `colores_hex`, `colores_rgb`, `usuario_id`, `tam`, `data`, `loteria_numero`) VALUES (@item_id, @hex, @rgb, @userid, @tam, @default_data, @loteria_numero)") == 1)
-                    {
-                        client.SetParameter("id", objeto.id);
-                        client.SetParameter("UserID", Session.User.id);
-                        int compra_id = int.Parse(Convert.ToString(client.ExecuteScalar("SELECT MAX(id) FROM objetos_comprados WHERE objeto_id = @id AND usuario_id = @UserID")));
-                        Packet_189_139(Session, objeto, compra_id, 1, tam);
-                    }
-                }
-            }
-        }
-        static void Comprar_Plata(SessionInstance Session, mysql client, string[,] Parameters)
-        {
-            int objeto_id = int.Parse(Parameters[0, 0]);
-            client.SetParameter("objeto_id", objeto_id);
-            DataRow objetos = client.ExecuteQueryRow("SELECT * FROM objetos WHERE id = @objeto_id");
-            if (objetos != null)
-            {
-                client.SetParameter("user_id", Session.User.id);
-                DataRow usuario = client.ExecuteQueryRow("SELECT * FROM usuarios WHERE id = @user_id");
-                if (usuario != null)
-                {
-                    if ((int)usuario["plata"] >= (int)objetos["precio_plata"])
-                    {
-                        if (listas.Llaves_Casas.Contains(objeto_id))
-                        {
-                            client.SetParameter("id_user", Session.User.id);
-                            client.SetParameter("id_objeto", objeto_id);
-                            DataRow muchila = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE usuario_id = @id_user AND objeto_id = @id_objeto");
-                            if (muchila != null)
-                            {
-                                NotificacionesManager.NotifiChat(Session, "Catálogo: Ya tienes este objeto comprado. Algunos objetos solo pueden ser comprados 1 vez.");
-                                ServerMessage server = new ServerMessage();
-                                server.AddHead(189);
-                                server.AddHead(134);
-                                server.AppendParameter(1);
-                                Session.SendData(server);
-                                return;
-                            }
-                        }
-                        if ((int)objetos["vip"] == 1) { return; }
-                        if (listas.Objetos_Catalogo_Plata.Contains(objeto_id))
-                        {
-                            client.SetParameter("id_user", Session.User.id);
-                            client.SetParameter("objeto_id", objeto_id);
-                            DataRow muchila = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE usuario_id = @id_user AND objeto_id = @objeto_id");
-                            if (muchila != null)
-                            {
-                                NotificacionesManager.NotifiChat(Session, "Catálogo: Ya tienes este objeto comprado. Algunos objetos solo pueden ser comprados 1 vez.");
-                                ServerMessage server = new ServerMessage();
-                                server.AddHead(189);
-                                server.AddHead(134);
-                                server.AppendParameter(1);
-                                Session.SendData(server);
-                                return;
-                            }
-                        }
-                        int cantidad = 1;
-                        if ((string)objetos["swf"] == "Teleport_Vale") { cantidad = 2; }
-                        Packet_Aceptar_Compra(Session, objeto_id, false, 0, 0, 0, false, Parameters[1, 0], cantidad);
-                    }
-                    else
-                    {
-                        ServerMessage server = new ServerMessage();
-                        server.AddHead(189);
-                        server.AddHead(134);
-                        server.AppendParameter(1);
-                        Session.SendData(server);
-                    }
-                }
-            }
-        }
-        static void Comprar_Oro(SessionInstance Session, mysql client, string[,] Parameters)
-        {
-            int objeto_id = int.Parse(Parameters[0, 0]);
-            client.SetParameter("id", objeto_id);
-            DataRow objetos = client.ExecuteQueryRow("SELECT * FROM  catalago_objetos WHERE id = @id");
-            if (objetos != null)
-            {
-                client.SetParameter("user_id", Session.User.id);
-                DataRow usuario = client.ExecuteQueryRow("SELECT * FROM usuarios WHERE id = @user_id");
-                if (usuario != null)
-                {
-                    int cantidad = 1;
-
-                    Packet_Aceptar_Compra(Session, objeto_id, false, 0, 0, 0, true, Parameters[1, 0], cantidad);
                 }
             }
         }
@@ -552,95 +435,7 @@ namespace BoomBang.game.handler
             server.AppendParameter(Compra.colores_rgb);
             server.AppendParameter("0");
             server.AppendParameter("0");
-            if (listas.Objetos_Area.Contains(Compra.objeto_id))
-            {
-                if (Compra.objeto_id == 602)//ID de Igloo en catalago
-                {
-                    int id_sala = crear_sala_objeto(Session, Compra, "Igloo", 16);// 16 es el modelo de escenario16.swf = Igloo
-                    server.AppendParameter(new object[] { Compra.id, 0, id_sala, Compra.open == 0 ? "" : "1", id_sala, 12, 0 });
-                    Compra.data = Convert.ToString(id_sala);
-                }
-                else if (Compra.objeto_id == 142)//ID de tienda camuflaje en catalago
-                {
-                    int id_sala = crear_sala_objeto(Session, Compra, "Tienda Camuflaje", 8);// 
-                    server.AppendParameter(new object[] { Compra.id, 0, id_sala, Compra.open == 0 ? "" : "1", id_sala, 12, 0 });
-                    Compra.data = Convert.ToString(id_sala);
-                }
-                else if (Compra.objeto_id == 128)//ID de calabazaaargh! en catalago
-                {
-                    int id_sala = crear_sala_objeto(Session, Compra, "Calabazaaargh!", 15);// 
-                    server.AppendParameter(new object[] { Compra.id, 0, id_sala, Compra.open == 0 ? "" : "1", id_sala, 12, 0 });
-                    Compra.data = Convert.ToString(id_sala);
-                }
-                else if (Compra.objeto_id == 613)//ID de tienda voodoo en catalago
-                {
-                    int id_sala = crear_sala_objeto(Session, Compra, "Tienda Voodoo", 7);// 
-                    server.AppendParameter(new object[] { Compra.id, 0, id_sala, Compra.open == 0 ? "" : "1", id_sala, 12, 0 });
-                    Compra.data = Convert.ToString(id_sala);
-                }
-                else if (Compra.objeto_id == 612)//ID de tienda tribal en catalago
-                {
-                    int id_sala = crear_sala_objeto(Session, Compra, "Tienda Tribal", 7);// 
-                    server.AppendParameter(new object[] { Compra.id, 0, id_sala, Compra.open == 0 ? "" : "1", id_sala, 12, 0 });
-                    Compra.data = Convert.ToString(id_sala);
-                }
-                else if (Compra.objeto_id == 611)//ID de tienda fuego en catalago
-                {
-                    int id_sala = crear_sala_objeto(Session, Compra, "Tienda Fuego", 7);// 
-                    server.AppendParameter(new object[] { Compra.id, 0, id_sala, Compra.open == 0 ? "" : "1", id_sala, 12, 0 });
-                    Compra.data = Convert.ToString(id_sala);
-                }
-                else if (Compra.objeto_id == 603)//ID de tienda india en catalago
-                {
-                    int id_sala = crear_sala_objeto(Session, Compra, "Tienda India", 7);// 
-                    server.AppendParameter(new object[] { Compra.id, 0, id_sala, Compra.open == 0 ? "" : "1", id_sala, 12, 0 });
-                    Compra.data = Convert.ToString(id_sala);
-                }
-                else if (Compra.objeto_id == 976)//ID de barco pirata en catalago
-                {
-                    int id_sala = crear_sala_objeto(Session, Compra, "Barco Pirata", 18);// 
-                    server.AppendParameter(new object[] { Compra.id, 0, id_sala, Compra.open == 0 ? "" : "1", id_sala, 12, 0 });
-                    Compra.data = Convert.ToString(id_sala);
-                }
-                else if (Compra.objeto_id == 892)//ID de casa china en catalago
-                {
-                    int id_sala = crear_sala_objeto(Session, Compra, "Okiya", 20);// 
-                    server.AppendParameter(new object[] { Compra.id, 0, id_sala, Compra.open == 0 ? "" : "1", id_sala, 12, 0 });
-                    Compra.data = Convert.ToString(id_sala);
-                }
-                else if (Compra.objeto_id == 888)//ID de casa china dojo en catalago
-                {
-                    int id_sala = crear_sala_objeto(Session, Compra, "Dojo", 19);// 
-                    server.AppendParameter(new object[] { Compra.id, 0, id_sala, Compra.open == 0 ? "" : "1", id_sala, 12, 0 });
-                    Compra.data = Convert.ToString(id_sala);
-                }
-                else if (Compra.objeto_id == 654)//ID de torre mágica en catalago
-                {
-                    int id_sala = crear_sala_objeto(Session, Compra, "Torre Mágica", 22);// 
-                    server.AppendParameter(new object[] { Compra.id, 0, id_sala, Compra.open == 0 ? "" : "1", id_sala, 12, 0 });
-                    Compra.data = Convert.ToString(id_sala);
-                }
-                else if (Compra.objeto_id == 444)//ID de madriguera en catalago
-                {
-                    int id_sala = crear_sala_objeto(Session, Compra, "Madriguera", 17);// 
-                    server.AppendParameter(new object[] { Compra.id, 0, id_sala, Compra.open == 0 ? "" : "1", id_sala, 12, 0 });
-                    Compra.data = Convert.ToString(id_sala);
-                }
-                if (!SalasManager.Salas_Privadas.ContainsKey(Convert.ToInt32(Compra.data)))
-                {
-                    mysql client = new mysql();
-                    DataRow row = client.ExecuteQueryRow("SELECT * FROM escenarios_privados WHERE id = '" + Convert.ToInt32(Compra.data) + "'");
-                    if (row != null)
-                    {
-                        EscenarioInstance Escenario = new EscenarioInstance(row);
-                        SalasManager.Salas_Privadas.Add(Convert.ToInt32(Compra.data), new SalaInstance(Convert.ToInt32(Compra.data), Escenario));
-                    }
-                }
-            }
-            else
-            {
-                server.AppendParameter(Compra.data);
-            }
+            server.AppendParameter("");
             Session.User.Sala.SendData(server, Session);
         }
         private static void borar_sala_creada_objeto(BuyObjectInstance Compra)

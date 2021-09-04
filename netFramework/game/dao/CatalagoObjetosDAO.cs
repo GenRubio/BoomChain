@@ -23,5 +23,17 @@ namespace BoomBang.game.dao
             }
             return objetos;
         }
+        public static CatalogObjectInstance getItem(int id)
+        {
+            mysql client = new mysql();
+            client.SetParameter("id", id);
+            DataRow row = client.ExecuteQueryRow("" +
+                "SELECT * FROM catalago_objetos WHERE id = @id AND active = 1 AND visible = 1");
+            if (row != null)
+            {
+                return new CatalogObjectInstance(row);
+            }
+            return null;
+        }
     }
 }

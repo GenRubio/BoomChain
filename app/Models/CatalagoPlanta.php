@@ -5,7 +5,7 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 
-class CatalagoObjeto extends Model
+class CatalagoPlanta extends Model
 {
     use CrudTrait;
 
@@ -15,22 +15,14 @@ class CatalagoObjeto extends Model
     |--------------------------------------------------------------------------
     */
 
-    protected $table = 'catalago_objetos';
+    protected $table = 'catalago_plantas';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
     protected $fillable = [
-        'titulo',
-        'descripcion',
-        'swf_name',
-        'price',
-        'tipo',
-        'colores_hex',
-        'colores_rgb',
-        'espacio_mapabytes',
-        'rotacion',
-        'visible',
-        'active',
+        'catalago_objeto_id',
+        'creation_time',
+        'limit_riegue_time',
     ];
     // protected $hidden = [];
     // protected $dates = [];
@@ -46,8 +38,9 @@ class CatalagoObjeto extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-    public function planta(){
-        return $this->hasOne(CatalagoPlanta::class, 'catalago_objeto_id', 'id');
+
+    public function objeto(){
+        return $this->hasOne(CatalagoObjeto::class, 'id', 'catalago_objeto_id');
     }
     /*
     |--------------------------------------------------------------------------

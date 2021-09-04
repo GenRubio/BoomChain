@@ -19,6 +19,7 @@ namespace BoomBang.game.manager
                 FlowerHandler.Start();
                 NavigatorHandler.Start();
                 CatalogoHandler.Start();
+                PlantasHandler.Start();
                 PathfindingHandler.Start();
                 InterfazHandler.Start();
                 IslasHandler.Start();

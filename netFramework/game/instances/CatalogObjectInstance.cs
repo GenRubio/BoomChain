@@ -1,4 +1,5 @@
 using BoomBang.Forms;
+using BoomBang.game.dao;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -22,7 +23,7 @@ namespace BoomBang.game.instances
         public int rotacion;
         public int visible;
         public int active;
-
+        public CatalagoPlantaInstance Planta;
         public CatalogObjectInstance(DataRow row)
         {
             this.id = (int)row["id"];
@@ -44,6 +45,11 @@ namespace BoomBang.game.instances
             this.rotacion = (int)row["rotacion"];
             this.visible = (int)row["visible"];
             this.active = (int)row["active"];
+            this.Planta = setPlanta();
+        }
+        private CatalagoPlantaInstance setPlanta()
+        {
+            return CatalagoPlantaDAO.getPlanta(this.id);
         }
     }
 }

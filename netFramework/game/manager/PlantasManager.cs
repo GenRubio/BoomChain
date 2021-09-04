@@ -1,4 +1,5 @@
-﻿using BoomBang.game.manager;
+using BoomBang.game.dao;
+using BoomBang.game.manager;
 using BoomBang.server;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace BoomBang.game.instances.manager
             mysql client = new mysql();
             client.SetParameter("id", objeto.id);
             DataRow objetos_comprado = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE id = @id");
-            BuyObjectInstance Compra = CatalogoManager.ObtenerCompra((int)objetos_comprado["id"]);
+            BuyObjectInstance Compra = BuyObjectDAO.getBuyObject((int)objetos_comprado["id"]);
             if (Compra.Planta_agua - Compra.Planta_sol < 0 && Time.GetDifference(Compra.Planta_sol) <= 0)//planta murio
             {
                 Compra.Planta_agua = 0;
@@ -57,7 +58,7 @@ namespace BoomBang.game.instances.manager
             int numero_random = rd.Next(1, 50);
             client.SetParameter("id", id_compra);
             DataRow parametros_compra = client.ExecuteQueryRow("SELECT * FROM objetos_comprados WHERE id = @id");
-            BuyObjectInstance compromiso = CatalogoManager.ObtenerCompra(id_compra);
+            BuyObjectInstance compromiso = BuyObjectDAO.getBuyObject(id_compra);
             int compra_objeto_id = (int)parametros_compra["objeto_id"];
             switch (compra_objeto_id)
             {
@@ -161,29 +162,11 @@ namespace BoomBang.game.instances.manager
             client.ExecuteNonQuery("UPDATE objetos_comprados SET objeto_id = @id_objeto, colores_hex = @hex, colores_rgb = @rgb WHERE id = @id");
             new Thread(() => change_planta(Session, Compra)).Start();
         }
-        static void objetos_manager_change(SessionInstance Session, int compra_id)
-        {
-            BuyObjectInstance borar_objeto = CatalogoManager.ObtenerCompra(compra_id);
-            if (borar_objeto != null)
-            {
-                if (CatalogoManager.QuitarObjeto(Session.User.Sala, borar_objeto))
-                {
-                    Packet_189_140(Session, borar_objeto);
-                }      
-            }
-            BuyObjectInstance poner_objeto = CatalogoManager.ObtenerCompra(compra_id);
-            if (poner_objeto != null)
-            {
-                if (CatalogoManager.ColocarObjeto(Session.User.Sala, poner_objeto, compra_id, poner_objeto.posX, poner_objeto.posY, poner_objeto.tam, poner_objeto.rotation, poner_objeto.espacio_ocupado))
-                {
-                    Packet_189_136(Session, poner_objeto.id);
-                }
-            }
-        }
+     
         static void change_planta(SessionInstance Session, BuyObjectInstance Compra)
         {
             Thread.Sleep(new TimeSpan(0, 0, 1));
-            objetos_manager_change(Session, Compra.id);
+         
         }
         static void Packet_189_173(SessionInstance Session, BuyObjectInstance Compra)
         {
@@ -205,7 +188,7 @@ namespace BoomBang.game.instances.manager
         }
         static void Packet_189_136(SessionInstance Session, int id_compra)
         {
-            BuyObjectInstance Compra = CatalogoManager.ObtenerCompra(id_compra);
+            BuyObjectInstance Compra = BuyObjectDAO.getBuyObject(id_compra);
             ServerMessage server = new ServerMessage();
             server.AddHead(189);
             server.AddHead(136);
@@ -223,7 +206,7 @@ namespace BoomBang.game.instances.manager
             server.AppendParameter(Compra.colores_rgb);
             server.AppendParameter("0");
             server.AppendParameter("0");
-            server.AppendParameter(Compra.data);
+            server.AppendParameter("");
             Session.User.Sala.SendData(server, Session);
         }
         static void Packet_189_140(SessionInstance Session, BuyObjectInstance Compra)

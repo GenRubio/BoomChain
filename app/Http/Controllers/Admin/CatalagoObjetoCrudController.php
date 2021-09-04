@@ -48,8 +48,6 @@ class CatalagoObjetoCrudController extends CrudController
             'label' => 'Activo',
             'type' => 'check'
         ]);
-
-
     }
 
     protected function basicFields()
@@ -69,7 +67,7 @@ class CatalagoObjetoCrudController extends CrudController
                 'name' => 'price',
                 'label' => 'Precio',
                 'type' => 'number',
-                'default' => 0
+                'default' => 0,
             ],
             [
                 'name' => 'swf_name',
@@ -90,6 +88,7 @@ class CatalagoObjetoCrudController extends CrudController
                 'name' => 'espacio_mapabytes',
                 'label' => 'Espacion ocupado en MapaBytes',
                 'type' => 'text',
+                'value' => '0,0',
             ],
             [
                 'name' => 'tipo',
@@ -106,6 +105,7 @@ class CatalagoObjetoCrudController extends CrudController
                 'name' => 'active',
                 'label' => 'Activo',
                 'type' => 'checkbox',
+                'default' => 1,
             ],
         ]);
     }

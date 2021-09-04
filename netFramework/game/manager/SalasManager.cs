@@ -85,52 +85,9 @@ namespace BoomBang.game.manager
             {
                 if (Escenario.es_categoria == 1)
                 {
-                    if (Escenario.id == 30)//Cementerio contador global
+                    if (Salas_Publicas.ContainsKey(Escenario.id))
                     {
-                        foreach (var sala in Salas_Publicas.Values)
-                        {
-                            if (sala.Escenario.id >= 26 && sala.Escenario.id <= 55)
-                            {
-                                num += Salas_Publicas[sala.id].Visitantes;
-                            }
-                        }
-                    }
-                    else if (Escenario.id == 57)//Bosque nevado contador global
-                    {
-                        foreach (var sala in Salas_Publicas.Values)
-                        {
-                            if (sala.Escenario.id >= 57 && sala.Escenario.id <= 74)
-                            {
-                                num += Salas_Publicas[sala.id].Visitantes;
-                            }
-                        }
-                    }
-                    else if (Escenario.id == 78) //Madriguera contador global
-                    {
-                        foreach (var sala in Salas_Publicas.Values)
-                        {
-                            if (sala.Escenario.id >= 78 && sala.Escenario.id <= 96)
-                            {
-                                num += Salas_Publicas[sala.id].Visitantes;
-                            }
-                        }
-                    }
-                    else if (Escenario.id == 214) //Isla Perdida
-                    {
-                        foreach (var sala in Salas_Publicas.Values)
-                        {
-                            if (sala.Escenario.id >= 214 && sala.Escenario.id <= 238)
-                            {
-                                num += Salas_Publicas[sala.id].Visitantes;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (Salas_Publicas.ContainsKey(Escenario.id))
-                        {
-                            num += Salas_Publicas[Escenario.id].Visitantes;
-                        }
+                        num += Salas_Publicas[Escenario.id].Visitantes;
                     }
                 }
                 if (Escenario.es_categoria == 0)
@@ -138,14 +95,6 @@ namespace BoomBang.game.manager
                     if (Salas_Privadas.ContainsKey(Escenario.id))
                     {
                         num += Salas_Privadas[Escenario.id].Visitantes;
-                        SalaInstance sala = Salas_Privadas[Escenario.id];
-                        foreach (BuyObjectInstance Item in sala.ObjetosEnSala.Values)
-                        {
-                            if (listas.Objetos_Area.Contains(Item.objeto_id) && Salas_Privadas.ContainsKey(Convert.ToInt32(Item.data)))
-                            {
-                                num += Salas_Privadas[Convert.ToInt32(Item.data)].Visitantes;
-                            }
-                        }
                     }
                 }
                 if (Escenario.es_categoria == 2) return RingInstance.Jugadores;
@@ -161,7 +110,6 @@ namespace BoomBang.game.manager
             {
                 if (Salas_Publicas.ContainsKey(id))
                 {
-                    SalaInstance Sala = Salas_Publicas[id];
                     if (Entrar_Sala(Session, Salas_Publicas[id], DoorPosition))
                     {
                         Salas_Publicas[id].CargarEscenario(Session);
@@ -170,7 +118,6 @@ namespace BoomBang.game.manager
                 }
                 else
                 {
-                    SalaInstance Sala = Salas_Publicas[id];
                     if (CrearSala(EscenariosManager.ObtenerEscenario(es_categoria, id)))
                     {
                         if (Salas_Publicas.ContainsKey(id))

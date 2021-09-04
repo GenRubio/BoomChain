@@ -59,7 +59,9 @@
       <DependentUpon>Emulator.cs</DependentUpon>
     </Compile>
     <Compile Include="game\dao\AvatarDAO.cs" />
+    <Compile Include="game\dao\BuyObjectDAO.cs" />
     <Compile Include="game\dao\CatalagoObjetosDAO.cs" />
+    <Compile Include="game\dao\CatalagoPlantaDAO.cs" />
     <Compile Include="game\dao\EscenarioDAO.cs" />
     <Compile Include="game\dao\IslaDAO.cs" />
     <Compile Include="game\dao\PersonajeDAO.cs" />
@@ -74,14 +76,14 @@
     <Compile Include="game\handler\NavigatorHandler.cs" />
     <Compile Include="game\handler\PathfindingHandler.cs" />
     <Compile Include="game\handler\PingHandler.cs" />
+    <Compile Include="game\handler\PlantasHandler.cs" />
     <Compile Include="game\instances\BuyObjectInstance.cs" />
+    <Compile Include="game\instances\CatalagoPlantaInstance.cs" />
     <Compile Include="game\instances\CatalogObjectInstance.cs" />
     <Compile Include="game\instances\EscenarioInstance.cs" />
-    <Compile Include="game\instances\IntercambioInstance.cs" />
     <Compile Include="game\instances\IslaInstance.cs" />
     <Compile Include="game\instances\PersonajeInstance.cs" />
     <Compile Include="game\listas.cs" />
-    <Compile Include="game\manager\BuyObjectDAO.cs" />
     <Compile Include="game\manager\Interfazmanager.cs" />
     <Compile Include="game\manager\npcManager.cs" />
     <Compile Include="game\manager\pathfinding\PathFinder.cs" />
@@ -99,7 +101,6 @@
     <Compile Include="game\instances\SessionInstance.cs" />
     <Compile Include="game\instances\TrampaInstance.cs" />
     <Compile Include="game\instances\UserInstance.cs" />
-    <Compile Include="game\manager\CatalogoManager.cs" />
     <Compile Include="game\manager\EscenariosManager.cs" />
     <Compile Include="game\manager\HandlerManager.cs" />
     <Compile Include="game\manager\InvokerManager.cs" />

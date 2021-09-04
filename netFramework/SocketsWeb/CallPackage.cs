@@ -25,7 +25,7 @@ namespace BoomBang.SocketsWeb
             server.AppendParameter(Item.colores_rgb);
             server.AppendParameter(0);
             server.AppendParameter(0);
-            server.AppendParameter(1);
+            server.AppendParameter("tam_n");
             server.AppendParameter(Item.espacio_mapabytes);
             server.AppendParameter(0);
             server.AppendParameter(0);

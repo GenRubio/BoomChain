@@ -21,4 +21,5 @@ Route::group([
     Route::crud('escenarios-publico', 'EscenariosPublicoCrudController');
   
     Route::crud('catalago-objeto', 'CatalagoObjetoCrudController');
+    Route::crud('catalago-planta', 'CatalagoPlantaCrudController');
 });
