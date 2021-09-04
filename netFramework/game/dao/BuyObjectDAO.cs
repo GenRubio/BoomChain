@@ -77,20 +77,15 @@ namespace BoomBang.game.dao
             }
             return null;
         }
-        public static bool removeObjectSala(SalaInstance Sala, BuyObjectInstance Compra)
+        public static bool removeObjectSala(BuyObjectInstance Compra)
         {
-            if (Sala.ObjetosEnSala.ContainsKey(Compra.id))
+            using (mysql client = new mysql())
             {
-                using (mysql client = new mysql())
+                client.SetParameter("id", Compra.id);
+                client.SetParameter("sala_id", 0);
+                if (client.ExecuteNonQuery("UPDATE objetos_comprados SET sala_id = @sala_id WHERE id = @id") == 1)
                 {
-                    client.SetParameter("id", Compra.id);
-                    client.SetParameter("sala_id", 0);
-                    if (client.ExecuteNonQuery("UPDATE objetos_comprados SET sala_id = @sala_id WHERE id = @id") == 1)
-                    {
-                        Sala.EliminarChutas(Compra);
-                        Sala.ObjetosEnSala.Remove(Compra.id);
-                        return true;
-                    }
+                    return true;
                 }
             }
             return false;

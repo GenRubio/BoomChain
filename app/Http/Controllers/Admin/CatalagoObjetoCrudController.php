@@ -88,7 +88,7 @@ class CatalagoObjetoCrudController extends CrudController
                 'name' => 'espacio_mapabytes',
                 'label' => 'Espacion ocupado en MapaBytes',
                 'type' => 'text',
-                'value' => '0,0',
+                'default' => '0,0',
             ],
             [
                 'name' => 'tipo',

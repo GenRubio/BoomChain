@@ -15,6 +15,8 @@ class IslaCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
 
+    protected $user_id;
+    
     public function setup()
     {
         CRUD::setModel(\App\Models\Isla::class);
@@ -82,6 +84,7 @@ class IslaCrudController extends CrudController
                 'name' => 'descripcion',
                 'label' => 'Descripcion',
                 'type' => 'text',
+                'default' => 'Haz uso de este espacio para describir tu isla!',
             ],
             [
                 'name' => 'modelo',

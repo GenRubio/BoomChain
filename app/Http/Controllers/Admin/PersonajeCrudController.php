@@ -15,6 +15,8 @@ class PersonajeCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
 
+    protected $user_id;
+    
     public function setup()
     {
         CRUD::setModel(\App\Models\Personaje::class);

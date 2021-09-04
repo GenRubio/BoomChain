@@ -22,10 +22,10 @@ namespace BoomBang.game.handler
             HandlerManager.RegisterHandler(189180, new ProcessHandler(CargarMochila));
             HandlerManager.RegisterHandler(189134, new ProcessHandler(buyObject));
             HandlerManager.RegisterHandler(189181, new ProcessHandler(CargarObjeto));
-            HandlerManager.RegisterHandler(189136, new ProcessHandler(PonerObjeto));
+            HandlerManager.RegisterHandler(189136, new ProcessHandler(putObjectSala));
             HandlerManager.RegisterHandler(189142, new ProcessHandler(CambiarColores));
             HandlerManager.RegisterHandler(189145, new ProcessHandler(MoverObjeto));
-            HandlerManager.RegisterHandler(189140, new ProcessHandler(Quitar_Objeto));
+            HandlerManager.RegisterHandler(189140, new ProcessHandler(removeObjectSala));
             HandlerManager.RegisterHandler(189143, new ProcessHandler(VoltearObjeto));
             HandlerManager.RegisterHandler(189158, new ProcessHandler(Control));
             HandlerManager.RegisterHandler(189159, new ProcessHandler(ActivarObjeto));
@@ -114,7 +114,7 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        private static void PonerObjeto(SessionInstance Session, string[,] Parameters)
+        private static void putObjectSala(SessionInstance Session, string[,] Parameters)
         {
             int compra_id = int.Parse(Parameters[0, 0]);
             int Zona_ID = int.Parse(Parameters[1, 0]);
@@ -172,6 +172,8 @@ namespace BoomBang.game.handler
                         Compra.Planta_agua = Time.GetCurrentAndAdd(AddType.Horas, Item.Planta.limit_riegue_time);
                         Compra.Planta_sol = Time.GetCurrentAndAdd(AddType.Horas, Item.Planta.creation_time);
                         new Thread(() => Compra.regarPlanta(Session)).Start();
+
+                        BuyObjectDAO.updatePlantaAguaAndSol(Compra);
                     }
 
                     Session.User.Sala.ObjetosEnSala.Add(Compra.id, Compra);
@@ -254,32 +256,38 @@ namespace BoomBang.game.handler
                 }
             }
         }
-        static void Quitar_Objeto(SessionInstance Session, string[,] Parameters)
+        private static void removeObjectSala(SessionInstance Session, string[,] Parameters)
         {
             int Compra_ID = int.Parse(Parameters[0, 0]);
-            mysql client = new mysql();
+
             BuyObjectInstance Compra = BuyObjectDAO.getBuyObject(Compra_ID);
             if (Compra != null)
             {
                 if (Compra.usuario_id != Session.User.id) return;
-                if (Session.User.Sala.Escenario.Creador.id != Session.User.id) { Session.FinalizarConexion("Quitar_Objeto"); return; }
-                if (BuyObjectDAO.removeObjectSala(Session.User.Sala, Compra))
+                if (Session.User.Sala.Escenario.Creador.id != Session.User.id) {
+                    Session.FinalizarConexion("Quitar_Objeto");
+                    return;
+                }
+                if (Session.User.Sala.ObjetosEnSala.ContainsKey(Compra.id))
                 {
-                    DataRow row = client.ExecuteQueryRow("SELECT * FROM objetos WHERE id = '" + Compra.objeto_id + "'");
-                    CatalogObjectInstance item = new CatalogObjectInstance(row);
-                  
-                    if (listas.Objetos_Area.Contains(Compra.objeto_id))
+                    if (BuyObjectDAO.removeObjectSala(Compra))
                     {
-                        borar_sala_creada_objeto(Compra);
-                    }
-                  
-                    Packet_189_140(Session, Compra);
-                    Packet_189_139(Session, item, Compra.id, 1, Compra.tam);
-                    if (listas.Plantas.Contains(Compra.objeto_id))
-                    {
-                        Compra.Planta_agua = 0;
-                        Compra.Planta_sol = 0;
-                        PlantasManager.planta_sql(Compra);
+                        Session.User.Sala.EliminarChutas(Compra);
+                        Session.User.Sala.ObjetosEnSala.Remove(Compra.id);
+
+                        CatalogObjectInstance Item = CatalagoObjetosDAO.getItem(Compra.objeto_id);
+                        if (Item != null)
+                        {
+                            Compra.addObjectBack(Session);
+                            Compra.removeObjectSala(Session);
+
+                            if (Item.Planta != null)
+                            {
+                                Compra.Planta_agua = 0;
+                                Compra.Planta_sol = 0;
+                                BuyObjectDAO.updatePlantaAguaAndSol(Compra);
+                            }
+                        }
                     }
                 }
             }
@@ -527,32 +535,7 @@ namespace BoomBang.game.handler
             server.AppendParameter(Session.User.Sala.ObjetosEnSala[Compra.id].rotation);
             Session.User.Sala.SendData(server, Session);
         }
-        private static void Packet_189_140(SessionInstance Session, BuyObjectInstance Compra)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(189);
-            server.AddHead(140);
-            server.AppendParameter(Compra.id);
-            Session.User.Sala.SendData(server, Session);
-        }
-        private static void Packet_189_139(SessionInstance Session, CatalogObjectInstance item, int compra_id, int Cantidad, string tam)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(189);
-            server.AddHead(139);
-            server.AppendParameter(compra_id);
-            server.AppendParameter(item.id);
-            server.AppendParameter(item.colores_hex);
-            server.AppendParameter(item.colores_rgb);
-            server.AppendParameter(0);
-            server.AppendParameter(0);
-            server.AppendParameter(tam);
-            server.AppendParameter(item.espacio_mapabytes);
-            server.AppendParameter(0);
-            server.AppendParameter(0);
-            server.AppendParameter(Cantidad);
-            Session.SendData(server);
-        }
+      
         private static void Packet_189_143(SessionInstance Session, int ID, int NewRotation, string coor)
         {
             ServerMessage server = new ServerMessage();

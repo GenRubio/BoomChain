@@ -17,9 +17,11 @@ Route::group([
         Route::crud('user-data', 'UserDataCrudController');
         Route::crud('personajes', 'PersonajeCrudController');
         Route::crud('islas', 'IslaCrudController');
+        Route::crud('mochila-objetos', 'ObjetosCompradoCrudController');
     });
     Route::crud('escenarios-publico', 'EscenariosPublicoCrudController');
   
     Route::crud('catalago-objeto', 'CatalagoObjetoCrudController');
     Route::crud('catalago-planta', 'CatalagoPlantaCrudController');
+   
 });

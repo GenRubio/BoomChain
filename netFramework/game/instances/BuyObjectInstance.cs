@@ -82,6 +82,32 @@ namespace BoomBang.game.instances
             server.AppendParameter(1);
             Session.User.Sala.SendData(server);
         }
+        public void addObjectBack(SessionInstance Session)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(189);
+            server.AddHead(140);
+            server.AppendParameter(this.id);
+            Session.User.Sala.SendData(server, Session);
+        }
+        public void removeObjectSala(SessionInstance Session)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(189);
+            server.AddHead(139);
+            server.AppendParameter(this.id);
+            server.AppendParameter(this.objeto_id);
+            server.AppendParameter(this.colores_hex);
+            server.AppendParameter(this.colores_rgb);
+            server.AppendParameter(0);
+            server.AppendParameter(0);
+            server.AppendParameter(tam);
+            server.AppendParameter(this.espacio_ocupado);
+            server.AppendParameter(0);
+            server.AppendParameter(0);
+            server.AppendParameter(1);
+            Session.SendData(server);
+        }
         public void removeObjectBack(SessionInstance Session)
         {
             ServerMessage server = new ServerMessage();
