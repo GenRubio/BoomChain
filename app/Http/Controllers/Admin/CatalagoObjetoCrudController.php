@@ -24,6 +24,11 @@ class CatalagoObjetoCrudController extends CrudController
     protected function setupListOperation()
     {
         $this->crud->addColumn([
+            'name' => 'image',
+            'label' => 'Imagen',
+            'type'  => 'image',
+        ]);
+        $this->crud->addColumn([
             'name' => 'titulo',
             'label' => 'Nombre',
             'type' => 'text'
@@ -68,6 +73,11 @@ class CatalagoObjetoCrudController extends CrudController
                 'label' => 'Precio',
                 'type' => 'number',
                 'default' => 0,
+            ],
+            [
+                'name' => 'image',
+                'label' => 'Imagen',
+                'type' => 'image',
             ],
             [
                 'name' => 'swf_name',

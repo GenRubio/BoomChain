@@ -9,7 +9,9 @@
         "backpack/crud": "4.1.*",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "intervention/image": "^2.6",
         "laravel/framework": "^8.54",
+        "laravel/helpers": "^1.4",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.3"
     },
