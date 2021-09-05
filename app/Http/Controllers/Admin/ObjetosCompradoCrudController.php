@@ -65,11 +65,47 @@ class ObjetosCompradoCrudController extends CrudController
         ]);
     }
 
+
+    protected function basicFields()
+    {
+        $this->crud->addFields([
+            [
+                'label' => 'Catalago objeto',
+                'type' => 'select2',
+                'name' => 'objeto_id',
+                'model'     => "App\Models\CatalagoObjeto",
+                'attribute' => 'titulo',
+                'options'   => (function ($query) {
+                    return $query->where('catalago_objetos.visible', 1)
+                        ->where('catalago_objetos.active', 1)
+                        ->get();
+                }),
+            ],
+            [
+                'name' => 'colores_hex',
+                'type' => 'hidden',
+            ],
+            [
+                'name' => 'colores_rgb',
+                'type' => 'hidden',
+            ],
+            [
+                'name' => 'espacio_ocupado',
+                'type' => 'hidden',
+            ],
+            [
+                'name' => 'usuario_id',
+                'type' => 'hidden',
+                'value' => $this->user_id
+            ],
+        ]);
+    }
+
     protected function setupCreateOperation()
     {
         CRUD::setValidation(ObjetosCompradoRequest::class);
 
-        CRUD::setFromDb(); // fields
+        $this->basicFields();
 
     }
 

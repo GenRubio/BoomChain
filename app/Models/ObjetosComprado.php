@@ -67,4 +67,27 @@ class ObjetosComprado extends Model
     | MUTATORS
     |--------------------------------------------------------------------------
     */
+    public function setColoresHexAttribute($value = null){
+        if ($value){
+            $this->attributes['colores_hex'] = $value;
+        }else{
+            $this->attributes['colores_hex'] = $this->objeto->colores_hex;
+        } 
+    }
+
+    public function setColoresRgbAttribute($value = null){
+        if ($value){
+            $this->attributes['colores_rgb'] = $value;
+        }else{
+            $this->attributes['colores_rgb'] = $this->objeto->colores_rgb;
+        } 
+    }
+
+    public function setEspacioOcupadoAttribute($value = null){
+        if ($value){
+            $this->attributes['espacio_ocupado'] = $value;
+        }else{
+            $this->attributes['espacio_ocupado'] = "";
+        } 
+    }
 }

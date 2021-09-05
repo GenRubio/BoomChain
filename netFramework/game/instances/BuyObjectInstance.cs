@@ -67,6 +67,32 @@ namespace BoomBang.game.instances
             this.Planta_sol = Planta_sol;
             this.Planta_agua = Planta_agua;
         }
+        public void moveObjectSala(SessionInstance Session)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(189);
+            server.AddHead(145);
+            server.AppendParameter(Session.User.Sala.ObjetosEnSala[this.id].id);
+            server.AppendParameter(Session.User.Sala.ObjetosEnSala[this.id].posX);
+            server.AppendParameter(Session.User.Sala.ObjetosEnSala[this.id].posY);
+            server.AppendParameter(Session.User.Sala.ObjetosEnSala[this.id].espacio_ocupado);
+            server.AppendParameter(Session.User.Sala.ObjetosEnSala[this.id].tam);
+            server.AppendParameter(Session.User.Sala.ObjetosEnSala[this.id].rotation);
+            Session.User.Sala.SendData(server, Session);
+        }
+        public void updateColors(SessionInstance Session, string[,] Parameters)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(189);
+            server.AddHead(142);
+            server.AppendParameter(Session.User.Sala.ObjetosEnSala[this.id].id);
+            server.AppendParameter(Session.User.Sala.ObjetosEnSala[this.id].colores_hex);
+            server.AppendParameter(Session.User.Sala.ObjetosEnSala[this.id].colores_rgb);
+            server.AppendParameter(Parameters[3, 0]);
+            server.AppendParameter(Parameters[4, 0]);
+            server.AppendParameter(Parameters[5, 0]);
+            Session.User.Sala.SendData(server, Session);
+        }
         public void regarPlanta(SessionInstance Session)
         {
             Thread.Sleep(new TimeSpan(0, 0, 1));

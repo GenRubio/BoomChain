@@ -74,6 +74,7 @@
     <Compile Include="game\handler\LoginHandler.cs" />
     <Compile Include="game\handler\MiniGamesHandler.cs" />
     <Compile Include="game\handler\NavigatorHandler.cs" />
+    <Compile Include="game\handler\ObjetosHandler.cs" />
     <Compile Include="game\handler\PathfindingHandler.cs" />
     <Compile Include="game\handler\PingHandler.cs" />
     <Compile Include="game\handler\PlantasHandler.cs" />
