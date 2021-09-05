@@ -10253,3 +10253,129 @@ button.toast-close-button {
     padding: 15px 50px 15px 15px;
   }
 }
+.block {
+  display: block;
+}
+
+.none {
+  display: none;
+}
+
+.settings-button {
+  font-size: 38px;
+  position: absolute;
+  margin-left: 946px;
+  margin-top: 16px;
+  height: 50px;
+  width: 50px;
+  background-color: #ffffff78;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #1622ad9e;
+}
+
+.icon-settings {
+  margin-left: 6px;
+  margin-top: -2px;
+}
+
+.container-height-left {
+  height: 658px;
+  width: 440px;
+  background-color: white;
+}
+
+.container-height-right {
+  height: 658px;
+  width: 601px;
+  margin-left: 413px;
+}
+
+.internal-right-container {
+  height: 100%;
+  width: 100%;
+  background-repeat: repeat;
+}
+
+#login-page {
+  cursor: context-menu;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.position {
+  position: absolute;
+}
+
+.comando-reload {
+  z-index: 3;
+  position: absolute;
+  margin-left: 491px;
+  margin-top: 256px;
+  border-radius: 6px;
+  height: 61px;
+  width: 473px;
+  border: 1px solid #9e9b9b;
+  background-color: white;
+}
+
+.logo-image-div {
+  z-index: 3;
+  margin-left: 559px;
+  position: absolute;
+  height: 255px;
+  width: 354px;
+  overflow: hidden;
+}
+
+.logo-image-img {
+  height: auto;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: 0.3s;
+  max-width: none;
+  width: 100%;
+}
+
+.form-control {
+  border: none !important;
+  font-size: 16px !important;
+  height: calc(1.6em + 0.75rem + 10px) !important;
+  background-color: #f5f5f5;
+}
+
+.form-control-register {
+  border: none !important;
+  font-size: 14px !important;
+  height: calc(1.6em + 0.75rem + 8px) !important;
+  background-color: #f5f5f5;
+}
+
+.form-control:hover {
+  background-color: #f5f5f5;
+}
+
+.btn-primary {
+  height: 47px !important;
+  font-size: 18px;
+}
+
+.separator-left {
+  width: 187px;
+  margin-top: -5px;
+}
+
+.separator-right {
+  width: 187px;
+  margin-top: -5px;
+}
+
+.o-separator {
+  margin-left: 5px;
+  margin-right: 5px;
+}

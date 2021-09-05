@@ -8,3 +8,9 @@
 @import '~bootstrap/scss/bootstrap';
 
 @import "toastr";
+
+@import "config";
+@import "pages/launcher/game";
+@import "pages/launcher/escenario";
+@import "pages/launcher/flowerPower";
+@import "pages/launcher/login";

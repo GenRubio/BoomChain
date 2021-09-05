@@ -1,13 +1,4 @@
-<style>
-    .block {
-        display: block;
-    }
 
-    .none {
-        display: none;
-    }
-
-</style>
 {{-- ----------------------------------------------Contenedores------------------------------------------------ --}}
 
 @include('launcher.components.escenario.escenario')

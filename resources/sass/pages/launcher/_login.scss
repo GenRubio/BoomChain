@@ -1,0 +1,91 @@
+
+
+.container-height-left {
+    @include dimension(658px, 440px);
+    background-color: white;
+}
+
+.container-height-right {
+    @include dimension(658px, 601px);
+    margin-left: 413px;
+}
+
+.internal-right-container {
+    @include dimension(100%, 100%);
+    background-repeat: repeat;
+}
+
+#login-page {
+    cursor: context-menu;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.position {
+    position: absolute;
+}
+
+.comando-reload {
+    z-index: 3;
+    position: absolute;
+    margin-left: 491px;
+    margin-top: 256px;
+    border-radius: 6px;
+    @include dimension(61px, 473px);
+    border: 1px solid #9e9b9b;
+    background-color: white;
+}
+
+.logo-image-div {
+    z-index: 3;
+    margin-left: 559px;
+    position: absolute;
+    @include dimension(255px, 354px);
+    overflow: hidden;
+}
+
+.logo-image-img {
+    @include image-auto-height();
+}
+
+.form-control {
+    border: none !important;
+    font-size: 16px !important;
+    height: calc(1.6em + 0.75rem + 10px) !important;
+    background-color: #f5f5f5;
+}
+
+.form-control-register {
+    border: none !important;
+    font-size: 14px !important;
+    height: calc(1.6em + 0.75rem + 8px) !important;
+    background-color: #f5f5f5;
+}
+
+.form-control:hover {
+    background-color: #f5f5f5;
+}
+
+.btn-primary {
+    height: 47px !important;
+    font-size: 18px;
+}
+
+.separator-left {
+    width: 187px;
+    margin-top: -5px;
+}
+
+.separator-right {
+    width: 187px;
+    margin-top: -5px;
+}
+
+.o-separator {
+    margin-left: 5px;
+    margin-right: 5px;
+}

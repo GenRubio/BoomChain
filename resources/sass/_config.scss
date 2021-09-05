@@ -1,0 +1,27 @@
+
+@mixin dimension($height, $width) {
+    height: $height;
+    width: $width;
+}
+
+@mixin image-auto-height {
+    height: auto;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: 0.3s;
+    max-width: none;
+    width: 100%;
+}
+
+@mixin image-auto-width {
+    height: 100%;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: 0.3s;
+    max-width: none;
+    width: auto;
+}
