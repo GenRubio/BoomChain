@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    @include('partials.nav-bar')
+    
     <h1>Hola</h1>
 @endsection
 

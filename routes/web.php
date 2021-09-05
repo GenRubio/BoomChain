@@ -3,10 +3,12 @@
 use App\Http\Controllers\Auth\MetamaskController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Home\HomeController;
+use App\Http\Controllers\Home\MarketController;
 use App\Http\Controllers\Launcher\PlayController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/market', [MarketController::class, 'index'])->name('market');
 
 Route::prefix('metamask')->group(function () {
     Route::post('/', [MetamaskController::class, 'index'])->name('metamask.index');
@@ -14,6 +16,7 @@ Route::prefix('metamask')->group(function () {
     Route::post('/login-web', [MetamaskController::class, 'loginWeb'])->name('metamask.login.web');
     Route::post('/register', [MetamaskController::class, 'register'])->name('metamask.register');
     Route::get('/log-out', [MetamaskController::class, 'logOut'])->name('user.logout');
+
 });
 
 Route::prefix('launcher')->group(function () {

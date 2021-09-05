@@ -20,6 +20,7 @@
 </head>
 
 <body>
+    @include('partials.nav-bar')
     @yield('content')
 </body>
 @yield('personal-script')
