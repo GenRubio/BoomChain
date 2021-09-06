@@ -20,7 +20,7 @@ namespace BoomBang.Forms
     public partial class Emulator : Form
     {
         public static string estado = "Premier";//GitHub
-        public static string vercion = "v4.0.1";
+        public static string vercion = "v4.0.2";
         public static bool threads_especiales = true;
         public static bool ver_conexion_usuarios = true;
         public static readonly Encoding Encoding = Encoding.GetEncoding("iso-8859-1");
