@@ -22,17 +22,22 @@ namespace BoomBang.game.handler
         }
         private static void FijarSendero(SessionInstance Session, string[,] Parameters)
         {
-            if (Session.User != null)
+            if (Middleware.sala(Session))
             {
-                if (Session.User.Sala != null)
+                if (Session.User.PreLock_Interactuando == true) return;
+                if (Session.User.Sala.PathFinder == false) return;
+
+                Session.User.Trayectoria = new Trayectoria(Session, null);
+                List<Posicion> ListPositions = posicions(Parameters[1, 0]);
+
+                int endLocationX = ListPositions[ListPositions.Count - 1].x;
+                int endLocationY = ListPositions[ListPositions.Count - 1].y;
+                Session.User.Trayectoria.EndLocation = new Point(endLocationX, endLocationY);
+                Session.User.Trayectoria.IniciarCaminado(ListPositions);
+
+                if (Session.User.PreLock_Acciones_Ficha == true)
                 {
-                    if (Session.User.PreLock_Interactuando == true) return;
-                    if (Session.User.Sala.PathFinder == false) return;
-                    Session.User.Trayectoria = new Trayectoria(Session, null);
-                    List<Posicion> ListPositions = posicions(Parameters[1, 0]);
-                    Session.User.Trayectoria.EndLocation = new Point(ListPositions[ListPositions.Count - 1].x, ListPositions[ListPositions.Count - 1].y);
-                    Session.User.Trayectoria.IniciarCaminado(ListPositions);
-                    if (Session.User.PreLock_Acciones_Ficha == true) { Session.User.Time_Acciones_Ficha = 0; }
+                    Session.User.Time_Acciones_Ficha = 0;
                 }
             }
         }
@@ -50,38 +55,21 @@ namespace BoomBang.game.handler
             }
             return listaPosiciones;
         }
-        public static void Reprar_Mirada_Z (SessionInstance Session)
+        private static void MirarZ(SessionInstance Session, string[,] Parameters)
         {
-            Session.User.Posicion.z = 4;
-            Packet_135(Session, Session.User.Posicion.x, Session.User.Posicion.y, Session.User.Posicion.z);
-        }
-        static void MirarZ(SessionInstance Session, string[,] Parameters)
-        {
-    
-            if (Session.User.PreLock_Mirada == true) return;
-            if (Session.User != null)
+            if (Middleware.sala(Session))
             {
-                if (Session.User.Sala != null)
+                if (Session.User.PreLock_Mirada == true) return;
+
+                int Z = int.Parse(Parameters[1, 0]);
+                if (Z >= 1 && Z <= 8)
                 {
-                    int Z = int.Parse(Parameters[1, 0]);
-                    if (Z >= 1 && Z <= 8)
-                    {
-                        Session.User.PreLock_Mirada = true;
-                        Session.User.Posicion.z = Z;
-                        Packet_135(Session, Session.User.Posicion.x, Session.User.Posicion.y, Session.User.Posicion.z);
-                    }
+                    Session.User.PreLock_Mirada = true;
+                    Session.User.Posicion.z = Z;
+
+                    Session.User.Personaje.sendChangeMiradaPosition(Session);
                 }
             }
-        }
-        private static void Packet_135(SessionInstance Session, int x, int y, int z)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(135);
-            server.AppendParameter(Session.User.IDEspacial);
-            server.AppendParameter(x);
-            server.AppendParameter(y);
-            server.AppendParameter(z);
-            Session.User.Sala.SendData(server, Session);
         }
     }
 }

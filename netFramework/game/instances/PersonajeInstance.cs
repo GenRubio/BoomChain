@@ -68,6 +68,71 @@ namespace BoomBang.game.instances
                 return true;
             }
         }
+        #region UserInstance Packets
+        public void sendChangeMiradaPosition(SessionInstance Session)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(135);
+            server.AppendParameter(Session.User.IDEspacial);
+            server.AppendParameter(Session.User.Posicion.x);
+            server.AppendParameter(Session.User.Posicion.y);
+            server.AppendParameter(Session.User.Posicion.z);
+            Session.User.Sala.SendData(server, Session);
+        }
+        public void sendPrivateChat(SessionInstance Session, SessionInstance otherSession, string message)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(136);
+            server.AppendParameter(Session.User.IDEspacial);
+            server.AppendParameter(message);
+            server.AppendParameter(Session.User.admin == 1 ? 2 : 1);
+            Session.SendData(server);
+            otherSession.SendData(server);
+        }
+        public void sendPublicChat(SessionInstance Session, string message)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(133);
+            server.AppendParameter(Session.User.IDEspacial);
+            server.AppendParameter(message);
+            server.AppendParameter(Session.User.admin == 1 ? 2 : 1);
+            Session.User.Sala.SendData(server, Session);
+        }
+        public void sendAction(SessionInstance Session, int action)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(134);
+            server.AppendParameter(Session.User.IDEspacial);
+            server.AppendParameter(action);
+            Session.User.Sala.SendData(server, Session);
+        }
+        #endregion
+        #region IA Packets
+        public void sendChatMessage(SessionInstance Session, string message)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(133);
+            server.AppendParameter(this.id);
+            server.AppendParameter(message);
+            server.AppendParameter(Session.User.admin == 1 ? 2 : 1);
+            Session.SendData(server);
+        }
+        public void sendSpecialAction(SessionInstance Session, int action)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(139);
+            //Second Perosnaje parameters
+            server.AppendParameter(action);
+            server.AppendParameter(Session.User.IDEspacial);
+            server.AppendParameter(Session.User.Posicion.x);
+            server.AppendParameter(Session.User.Posicion.y);
+            //First Perosnaje parameters
+            server.AppendParameter(this.id);
+            server.AppendParameter(this.Posicion.x);
+            server.AppendParameter(this.Posicion.y);
+            Session.SendData(server);
+        }
+        #endregion
         #region IA Personaje
         public void putAvatarInArea(SessionInstance Session, bool randomPosition)
         {
@@ -176,38 +241,6 @@ namespace BoomBang.game.instances
                 }
             }
             return new Posicion(Location.X, Location.Y);
-        }
-        public void sendChatMessage(SessionInstance Session, string message)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(133);
-            server.AppendParameter(this.id);
-            server.AppendParameter(message);
-            server.AppendParameter(Session.User.admin == 1 ? 2 : 1);
-            Session.SendData(server);
-        }
-        public void sendAction(SessionInstance Session, int action)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(134);
-            server.AppendParameter(this.id);
-            server.AppendParameter(action);
-            Session.SendData(server);
-        }
-        public void sendSpecialAction(SessionInstance Session, int action)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(139);
-            //Second Perosnaje parameters
-            server.AppendParameter(action);
-            server.AppendParameter(Session.User.IDEspacial);
-            server.AppendParameter(Session.User.Posicion.x);
-            server.AppendParameter(Session.User.Posicion.y);
-            //First Perosnaje parameters
-            server.AppendParameter(this.id);
-            server.AppendParameter(this.Posicion.x);
-            server.AppendParameter(this.Posicion.y);
-            Session.SendData(server);
         }
         #endregion
         #region IA Send Upper

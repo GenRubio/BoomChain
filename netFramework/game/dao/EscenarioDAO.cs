@@ -10,7 +10,20 @@ using System.Threading.Tasks;
 namespace BoomBang.game.dao
 {
     class EscenarioDAO
-    { 
+    {
+        public static Dictionary<int, BuyObjectInstance> getEscenarioObjects(int id)
+        {
+            Dictionary<int, BuyObjectInstance> objects = new Dictionary<int, BuyObjectInstance>();
+
+            mysql client = new mysql();
+            client.SetParameter("sala_id", id);
+            foreach (DataRow row in client.ExecuteQueryTable("SELECT * FROM objetos_comprados WHERE sala_id = @sala_id").Rows)
+            {
+                BuyObjectInstance Item = new BuyObjectInstance(row);
+                objects.Add(Item.id, Item);
+            }
+            return objects;
+        }
         public static EscenarioInstance getEscenarioPrivate(int id)
         {
             mysql client = new mysql();

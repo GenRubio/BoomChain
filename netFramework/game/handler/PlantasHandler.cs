@@ -19,35 +19,46 @@ namespace BoomBang.game.handler
         }
         private static void regarPlanta(SessionInstance Session, string[,] Parameters)
         {
-            int compra_id = int.Parse(Parameters[0, 0]);
-
-            BuyObjectInstance Compra = BuyObjectDAO.getBuyObject(compra_id);
-            if (Compra != null)
+            if (Middleware.sala(Session))
             {
-                CatalogObjectInstance Item = CatalagoObjetosDAO.getItem(Compra.objeto_id);
-                if (Item != null && Item.Planta != null)
-                {
-                    if (Time.GetDifference(Compra.Planta_agua) > 0)
-                    {
-                        Compra.Planta_agua = Time.GetCurrentAndAdd(AddType.Horas, Item.Planta.limit_riegue_time);
-                        BuyObjectDAO.updatePlantaAgua(Compra);
-                    }
-                    else
-                    {
-                        Compra.Planta_sol = Time.GetCurrentAndAdd(AddType.Horas, Item.Planta.creation_time);
-                        Compra.Planta_agua = Time.GetCurrentAndAdd(AddType.Horas, Item.Planta.limit_riegue_time);
-                        BuyObjectDAO.updatePlantaAguaAndSol(Compra);
-                    }
-                }
-                
-                ServerMessage server = new ServerMessage();
-                server.AddHead(189);
-                server.AddHead(165);
-                server.AppendParameter(compra_id);
-                Session.User.Sala.SendData(server, Session);
+                int compra_id = int.Parse(Parameters[0, 0]);
 
-                new Thread(() => Compra.regarPlanta(Session)).Start();
+                BuyObjectInstance Compra = getCompra(compra_id);
+                if (Compra != null)
+                {
+                    CatalogObjectInstance Item = getItem(Compra.objeto_id);
+                    if (Item != null && Item.Planta != null)
+                    {
+                        if (Time.GetDifference(Compra.Planta_agua) > 0)
+                        {
+                            Compra.Planta_agua = Time.GetCurrentAndAdd(AddType.Horas, Item.Planta.limit_riegue_time);
+                            BuyObjectDAO.updatePlantaAgua(Compra);
+                        }
+                        else
+                        {
+                            Compra.Planta_sol = Time.GetCurrentAndAdd(AddType.Horas, Item.Planta.creation_time);
+                            Compra.Planta_agua = Time.GetCurrentAndAdd(AddType.Horas, Item.Planta.limit_riegue_time);
+                            BuyObjectDAO.updatePlantaAguaAndSol(Compra);
+                        }
+                    }
+
+                    ServerMessage server = new ServerMessage();
+                    server.AddHead(189);
+                    server.AddHead(165);
+                    server.AppendParameter(compra_id);
+                    Session.User.Sala.SendData(server, Session);
+
+                    new Thread(() => Compra.regarPlanta(Session)).Start();
+                }
             }
+        }
+        private static CatalogObjectInstance getItem(int id)
+        {
+            return CatalagoObjetosDAO.getItem(id);
+        }
+        private static BuyObjectInstance getCompra(int id)
+        {
+            return BuyObjectDAO.getBuyObject(id);
         }
     }
 }

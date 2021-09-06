@@ -472,16 +472,8 @@ namespace BoomBang.game.handler
                         Session.User.Time_Acciones_Ficha = Time.GetCurrentAndAdd(AddType.Segundos, 8);
                         break;
                 }
-                sendAvatarAccionPacket(Session, accion);
+                Session.User.Personaje.sendAction(Session, accion);
             }
-        }
-        private static void sendAvatarAccionPacket(SessionInstance Session, int accion)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(134);
-            server.AppendParameter(Session.User.IDEspacial);
-            server.AppendParameter(accion);
-            Session.User.Sala.SendData(server, Session);
         }
         private static void ChatPrivado(SessionInstance Session, string[,] Parameters)
         {
@@ -492,23 +484,12 @@ namespace BoomBang.game.handler
                && Session.User.PreLock_BloqueoChat == false
                && Utils.checkValidCharacters(mensaje, false))
             {
-                sendPrivateMessagePacket(Session, mensaje, userId);
+                SessionInstance otherSession = Session.User.Sala.ObtenerSession(userId);
+                if (otherSession != null)
+                {
+                    Session.User.Personaje.sendPrivateChat(Session, otherSession, mensaje);
+                }
                 Session.User.PreLock_BloqueoChat = true;
-            }
-        }
-        private static void sendPrivateMessagePacket(SessionInstance Session, string message, int userId)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(136);
-            server.AppendParameter(Session.User.IDEspacial);
-            server.AppendParameter(message);
-            server.AppendParameter((Session.User.admin == 1 ? 2 : 1));
-            Session.SendData(server);
-
-            SessionInstance userSession = Session.User.Sala.ObtenerSession(userId);
-            if (userSession != null)
-            {
-                userSession.SendDataProtected(server);
             }
         }
         private static void ChatPublico(SessionInstance Session, string[,] Parameters)
@@ -519,7 +500,8 @@ namespace BoomBang.game.handler
                 && Session.User.PreLock_BloqueoChat == false
                 && Utils.checkValidCharacters(mensaje, false))
             {
-                sendPublicChatPacket(Session, mensaje);
+                Session.User.Personaje.sendPublicChat(Session, mensaje);
+
                 if (Session.User.admin == 1)
                 {
                     adminChatCommands(Session, mensaje);
@@ -589,15 +571,6 @@ namespace BoomBang.game.handler
                 server.AppendParameter("");
                 Session.User.Sala.SendData(server, Session);
             }
-        }
-        private static void sendPublicChatPacket(SessionInstance Session, string value)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(133);
-            server.AppendParameter(Session.User.IDEspacial);
-            server.AppendParameter(value);
-            server.AppendParameter(Session.User.admin == 1 ? 2 : 1);
-            Session.User.Sala.SendData(server, Session);
         }
         private static void UppertPower(SessionInstance Session, SessionInstance OtherSession, string[,] Parameters)
         {

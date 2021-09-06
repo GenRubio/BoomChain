@@ -11,6 +11,13 @@ namespace BoomBang.game.dao
 {
     class BuyObjectDAO
     {
+        public static void updateFlipObjectSala(BuyObjectInstance Compra)
+        {
+            mysql client = new mysql();
+            client.SetParameter("id", Compra.id);
+            client.SetParameter("rotation", Compra.rotation);
+            client.ExecuteNonQuery("UPDATE objetos_comprados SET rotation = @rotation WHERE id = @id");
+        }
         public static bool moveObjectSala(BuyObjectInstance Compra)
         {
             mysql client = new mysql();

@@ -1,3 +1,4 @@
+using BoomBang.Forms;
 using BoomBang.game.dao;
 using BoomBang.game.instances;
 using BoomBang.game.manager;
@@ -20,6 +21,41 @@ namespace BoomBang.game.handler
             HandlerManager.RegisterHandler(189140, new ProcessHandler(removeObjectSala));
             HandlerManager.RegisterHandler(189142, new ProcessHandler(updateColorsSala));
             HandlerManager.RegisterHandler(189145, new ProcessHandler(moveObjectSala));
+            HandlerManager.RegisterHandler(189143, new ProcessHandler(flipObjectSala));
+        }
+        private static void flipObjectSala(SessionInstance Session, string[,] Parameters)
+        {
+            if (Session.User.Sala != null)
+            {
+                int NewRotation = 0;
+                int ID = Convert.ToInt32(Parameters[0, 0]);
+                string coor = Parameters[4, 0];
+                string size_rotation = Parameters[5, 0];
+                string rotation = Parameters[6, 0];
+
+                if (rotation == string.Empty)
+                {
+                    NewRotation = int.Parse(size_rotation);
+                }
+                else
+                {
+                    NewRotation = int.Parse(rotation);
+                }
+
+                BuyObjectInstance Compra = BuyObjectDAO.getBuyObject(ID);
+                if (Compra != null)
+                {
+                    if (!Session.User.Sala.ObjetosEnSala.ContainsKey(Compra.id)) return;
+                    if (Compra.usuario_id == Session.User.id)
+                    {
+                        Session.User.Sala.ObjetosEnSala[Compra.id].rotation = NewRotation;
+                        Compra.rotation = NewRotation;
+
+                        BuyObjectDAO.updateFlipObjectSala(Compra);
+                        Compra.updateObjectFlip(Session);
+                    }
+                }
+            }
         }
         private static void moveObjectSala(SessionInstance Session, string[,] Parameters)
         {

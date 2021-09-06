@@ -16,7 +16,6 @@ namespace BoomBang.game.handler
 {
     class LoginHandler
     {
-        
         public static void Start()
         {
             HandlerManager.RegisterHandler(120130, iniciar_sesion);
@@ -27,74 +26,30 @@ namespace BoomBang.game.handler
             string password = Parameters[1, 0];
 
             UserInstance user = UserDAO.getUser(metamask, password);
-            if (user != null)
+            if (user != null && user.Personaje != null)
             {
-                if (user.Personaje != null)
+                if (UserManager.usuarioOnline(user) == false)
                 {
-                    if (UserManager.usuarioOnline(user) == false)
-                    {
-                        Session.User = user;
-                        IniciarSesion(Session);
-                        UserManager.UsuariosOnline.Add(Session.User.id, Session);
-                    }
+                    Session.User = user;
+
+                    Session.User.loginGame(Session);
+
+                    new Thread(() => UserDAO.updateConnection(Session.User, Session.IP));
+                    UserManager.UsuariosOnline.Add(Session.User.id, Session);
+
+                    sendFormMessage("[UserManager] -> Se ha conectado el usuario " + Session.User.nombre + ".");
+                    Emulator.Form.UpdateTitle();
                 }
-                else
-                {
-                    string console = "Error al iniciar cliente no tiene perosnaje " + Session.IP;
-                    Emulator.Form.WriteLine(console);
-                }
-                
             }
             else
             {
-                string console = "Error al iniciar cliente " + Session.IP;
-                Emulator.Form.WriteLine(console);
+                sendFormMessage("Error al iniciar cliente " + Session.IP);
             }
         }
-        private static void IniciarSesion(SessionInstance Session)
+        private static void sendFormMessage(string message)
         {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(120);
-            server.AddHead(130);
-            server.AppendParameter(1);
-            server.AppendParameter(Session.User.nombre);
-            server.AppendParameter(Session.User.Personaje.avatar);
-            server.AppendParameter(Session.User.Personaje.colores);
-            server.AppendParameter(Session.User.email);
-            server.AppendParameter(Session.User.edad);
-            server.AppendParameter(2);
-            server.AppendParameter("Hola, Soy nuevo en BoomBang.");
-            server.AppendParameter(0);
-            server.AppendParameter(Session.User.id);
-            server.AppendParameter(Session.User.admin);
-            server.AppendParameter(Session.User.oro);
-            server.AppendParameter(-1);
-            server.AppendParameter(200);
-            server.AppendParameter(5);
-            server.AppendParameter(0);
-            server.AppendParameter(-1);
-            server.AppendParameter(0);
-            server.AppendParameter(0);
-            server.AppendParameter(0);//tutorial islas
-            server.AppendParameter("ES");
-            server.AppendParameter(1);
-            server.AppendParameter(0);
-            server.AppendParameter(0);
-            server.AppendParameter(0);
-            server.AppendParameter(0);
-            server.AppendParameter("");
-            server.AppendParameter(0);
-            server.AppendParameter(0);
-            server.AppendParameter(new object[] { 1, 0 });
-            server.AppendParameter(0);
-            server.AppendParameter(-1);
-            Session.SendDataProtected(server);
-
-            new Thread(() => UserDAO.updateConnection(Session.User, Session.IP));
-
-            string console = "[UserManager] -> Se ha conectado el usuario " + Session.User.nombre + ".";
+            string console = message;
             Emulator.Form.WriteLine(console);
-            Emulator.Form.UpdateTitle();
         }
     }
 }

@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using BoomBang.Forms;
+using BoomBang.game.dao;
 
 namespace BoomBang.game.instances
 {
@@ -73,110 +74,26 @@ namespace BoomBang.game.instances
         public int MapSizeY { get; set; }
         public Posicion Puerta { get; private set; }
         public int Contar_Objetos { get; set; }
-        //Codigo Luis
-        public bool DesplazarObjeto(SessionInstance Session, BuyObjectInstance Item, Point Desplazamiento)
+        public bool Entrable = true;
+        public bool PathFinder = true;
+
+        public SalaInstance(int id, EscenarioInstance Escenario)
         {
-            if (Session.User == null) return false;
-            if (Session.User.Sala == null) return false;
-            if (!Usuarios.ContainsKey(Session.User.IDEspacial)) return false;
-            if (Usuarios[Session.User.IDEspacial].User.id != Session.User.id) return false;
-            if (UsuariosEnObjetos.ContainsKey(Session.User.id))
+            this.id = id;
+            this.Escenario = Escenario;
+            this.Usuarios = new Dictionary<int, SessionInstance>();
+            this.ObjetosEnSala = new Dictionary<int, BuyObjectInstance>();
+            this.ConfigurarSala();
+            if (this.Escenario.es_categoria == 0)
             {
-                UsuariosEnObjetos[Session.User.id].Desplazable = Desplazamiento;
-                return true;
+                LoadObjects();
             }
-            return false;
-        }
-        public bool SubirEnObjeto(SessionInstance Session, BuyObjectInstance Item, int pos)
-        {
-            if (Session.User == null) return false;
-            if (Session.User.Sala == null) return false;
-            if (!Usuarios.ContainsKey(Session.User.IDEspacial)) return false;
-            if (Usuarios[Session.User.IDEspacial].User.id != Session.User.id) return false;
-            if (!UsuariosEnObjetos.ContainsKey(Session.User.id))
+            if (this.Escenario.es_categoria == 2)
             {
-                foreach (var UsuarioEnObjeto in UsuariosEnObjetos.Values)
-                {
-                    if (UsuarioEnObjeto.Item.id == Item.id && UsuarioEnObjeto.Posicion == pos) return false;
-                }
-                UsuariosEnObjetos.Add(Session.User.id, new UsuarioEnObjeto(Item, Session, pos));
-                if (UsuariosEnObjetos.ContainsKey(Session.User.id))
-                {
-                    Packet(Session, new TimeSpan(0, 0, 0), this, null, true);
-                    return true;
-                }
-            }
-            return false;
-        }
-        public bool BajarEnObjeto(SessionInstance Session, bool ByExit)
-        {
-            if (Session.User == null) return false;
-            if (Session.User.Sala == null) return false;
-            if (UsuariosEnObjetos.ContainsKey(Session.User.id))
-            {
-                UsuarioEnObjeto UsuarioEnObjeto = UsuariosEnObjetos[Session.User.id];
-                if (UsuariosEnObjetos.Remove(Session.User.id))
-                {
-                    ServerMessage server = new ServerMessage();
-                    server.AddHead(189);
-                    server.AddHead(167);
-                    server.AppendParameter(UsuarioEnObjeto.Item.id);
-                    server.AppendParameter(UsuarioEnObjeto.Session.User.id);
-                    server.AppendParameter(UsuarioEnObjeto.Posicion);
-                    this.SendData(server);
-                    if (!ByExit)
-                    {
-                        Session.User.Posicion.x = Session.User.Sala.Puerta.x;
-                        Session.User.Posicion.y = Session.User.Sala.Puerta.y;
-                        Session.User.Sala.Map[Session.User.Posicion.y, Session.User.Posicion.x].FijarSession(null);
-                        Packet(Session, new TimeSpan(0, 0, 0), this, Session.User.Posicion, true);
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-        private static void Packet(SessionInstance Session, TimeSpan Time, SalaInstance Sala, Posicion Posicion = null, bool UsingLook = false)
-        {
-            Thread.Sleep(Time);
-            if (Session.User == null) return;
-            if (Session.User.Sala == null) return;
-            if (Session.User.Sala.id == Sala.id && Session.User.Sala.Escenario.categoria == Sala.Escenario.categoria)
-            {
-                if (Posicion != null)
-                {
-                    Session.User.Posicion = Posicion;
-                }
-                else
-                {
-                    Session.User.Posicion = new Posicion(0, 0, 4);
-                }
-                if (UsingLook)
-                {
-                    ServerMessage server = new ServerMessage();
-                    server.AddHead(135);
-                    server.AppendParameter(Session.User.IDEspacial);
-                    server.AppendParameter(Session.User.Posicion.x);
-                    server.AppendParameter(Session.User.Posicion.y);
-                    server.AppendParameter(Session.User.Posicion.z);
-                    Session.User.Sala.SendData(server, Session);
-                }
-                else
-                {
-                    ServerMessage server = new ServerMessage();
-                    server.AddHead(182);
-                    server.AppendParameter(1);
-                    server.AppendParameter(Session.User.IDEspacial);
-                    server.AppendParameter(Session.User.Posicion.x);
-                    server.AppendParameter(Session.User.Posicion.y);
-                    server.AppendParameter(Session.User.Posicion.z);
-                    server.AppendParameter(750);
-                    server.AppendParameter(1);
-                    Sala.SendData(server);
-                }
+                DoGame();
             }
         }
-        //End Codigo
+        #region Positions
         public Point GetRandomPlace()
         {
             List<Point> Output = new List<Point>();
@@ -210,18 +127,7 @@ namespace BoomBang.game.instances
             }
             return position;
         }
-        public bool Entrable = true;
-        public bool PathFinder = true;
-        public SalaInstance(int id, EscenarioInstance Escenario)
-        {
-            this.id = id;
-            this.Escenario = Escenario;
-            this.Usuarios = new Dictionary<int, SessionInstance>();
-            this.ObjetosEnSala = new Dictionary<int, BuyObjectInstance>();
-            this.ConfigurarSala();
-            if (this.Escenario.es_categoria == 0) LoadObjects();
-            if (this.Escenario.es_categoria == 2) DoGame();
-        }
+        #endregion
         #region GameInstance
         public RingInstance Ring;
         public CocosInstance Cocos;
@@ -243,6 +149,7 @@ namespace BoomBang.game.instances
             }
         }
         #endregion
+        #region Objects Sala Postions
         public void FijarChutas(BuyObjectInstance Compra)
         {
             foreach (var Posicion in ObtenerPoscionesByChutas(Compra.espacio_ocupado))
@@ -301,28 +208,14 @@ namespace BoomBang.game.instances
             }
             return Posiciones;
         }
+        #endregion
         private void LoadObjects()
         {
-            using (mysql client = new mysql())
+            this.ObjetosEnSala = EscenarioDAO.getEscenarioObjects(Escenario.id);
+            foreach(BuyObjectInstance Item in this.ObjetosEnSala.Values.ToList())
             {
-                ObjetosEnSala.Clear();
-                client.SetParameter("Id", Escenario.id);
-                foreach (DataRow row in client.ExecuteQueryTable("SELECT * FROM objetos_comprados WHERE sala_id = @Id").Rows)
-                {
-                    BuyObjectInstance Item = new BuyObjectInstance(row);
-                    ObjetosEnSala.Add(Item.id, Item);
-                    FijarChutas(Item);
-                }
+                FijarChutas(Item);
             }
-        }
-        public void Alerta(string texto)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(133);
-            server.AppendParameter(0);
-            server.AppendParameter(texto);
-            server.AppendParameter(3);
-            SendData(server);
         }
         private void ConfigurarSala()
         {
@@ -331,48 +224,46 @@ namespace BoomBang.game.instances
                 int x = 11;
                 int y = 11;
                 string mapa = string.Empty;
-                using (mysql client = new mysql())
+
+                if (Escenario.es_categoria == 2)//mgame
                 {
-                    client.SetParameter("id", Escenario.modelo);
-                    if (Escenario.es_categoria == 2)//mgame
+                    MapaSalaInstance mapaSala = MapaSalaDAO.getGame(Escenario.modelo);
+                    if (mapaSala != null)
                     {
-                        DataRow row = client.ExecuteQueryRow("SELECT * FROM mapas_mgame WHERE id = @id");
-                        if (row != null)
-                        {
-                            mapa = (string)row["mapa"];
-                        }
+                        mapa = mapaSala.mapa;
                     }
-                    if (Escenario.es_categoria == 1)//publico
+                }
+                if (Escenario.es_categoria == 1)//publico
+                {
+                    MapaSalaInstance mapaSala = MapaSalaDAO.getPublico(Escenario.modelo);
+                    if (mapaSala != null)
                     {
-                        DataRow row = client.ExecuteQueryRow("SELECT * FROM mapas_publicos WHERE id = @id");
-                        if (row != null)
-                        {
-                            x = (int)row["PosX"];
-                            y = (int)row["PosY"];
-                            mapa = (string)row["mapa"];
-                        }
+                        x = mapaSala.posX;
+                        y = mapaSala.posY;
+                        mapa = mapaSala.mapa;
                     }
-                    if (Escenario.es_categoria == 0)//privado
+                }
+                if (Escenario.es_categoria == 0)//privado
+                {
+                    MapaSalaInstance mapaSala = MapaSalaDAO.getPrivado(Escenario.modelo);
+                    if (mapaSala != null)
                     {
-                        DataRow row = client.ExecuteQueryRow("SELECT * FROM mapas_privados WHERE id = @id");
-                        if (row != null)
-                        {
-                            x = (int)row["PosX"];
-                            y = (int)row["PosY"];
-                            mapa = (string)row["mapa"];
-                        }
+                        x = mapaSala.posX;
+                        y = mapaSala.posY;
+                        mapa = mapaSala.mapa;
                     }
-                    this.Puerta = new Posicion(x, y);
-                    string[] MapaString = mapa.Split(Convert.ToChar("\n"));
-                    this.Map = new Chutas[MapaString.Length, MapaString[0].Length];
-                    this.MapSizeX = MapaString.Length;
-                    this.MapSizeY = MapaString[0].Length;
-                    for (int Y = 0; Y < MapaString.Length - 1; Y++)
+                }
+
+                this.Puerta = new Posicion(x, y);
+                string[] MapaString = mapa.Split(Convert.ToChar("\n"));
+                this.Map = new Chutas[MapaString.Length, MapaString[0].Length];
+                this.MapSizeX = MapaString.Length;
+                this.MapSizeY = MapaString[0].Length;
+                for (int Y = 0; Y < MapaString.Length - 1; Y++)
+                {
+                    for (int X = 0; X < MapaString[0].Length; X++)
                     {
-                        for (int X = 0; X < MapaString[0].Length; X++)
-                        {
-                            this.Map[Y, X] = (MapaString[Y][X] == '0') ? new Chutas(true) : new Chutas(false);
-                        }
+                        this.Map[Y, X] = (MapaString[Y][X] == '0') ? new Chutas(true) : new Chutas(false);
                     }
                 }
             }

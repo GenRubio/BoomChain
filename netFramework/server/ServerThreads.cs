@@ -203,7 +203,6 @@ namespace BoomBang.server
                 Thread.Sleep(1);
             }
         }
-
         private static void mGamesCall_Manager()
         {
             MiniGamesManager.BuscarParticipantes(GameType.Ring, 2);

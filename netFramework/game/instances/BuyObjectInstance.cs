@@ -67,6 +67,16 @@ namespace BoomBang.game.instances
             this.Planta_sol = Planta_sol;
             this.Planta_agua = Planta_agua;
         }
+        public void updateObjectFlip(SessionInstance Session)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(189);
+            server.AddHead(143);
+            server.AppendParameter(this.id);
+            server.AppendParameter(this.rotation);
+            server.AppendParameter(this.espacio_ocupado);
+            Session.User.Sala.SendData(server, Session);
+        }
         public void moveObjectSala(SessionInstance Session)
         {
             ServerMessage server = new ServerMessage();

@@ -21,7 +21,6 @@ namespace BoomBang.game.handler
             HandlerManager.RegisterHandler(189133, new ProcessHandler(CargarCatalogo));
             HandlerManager.RegisterHandler(189180, new ProcessHandler(CargarMochila));
             HandlerManager.RegisterHandler(189181, new ProcessHandler(CargarObjeto));
-            HandlerManager.RegisterHandler(189143, new ProcessHandler(VoltearObjeto));
             HandlerManager.RegisterHandler(189158, new ProcessHandler(Control));
             HandlerManager.RegisterHandler(189159, new ProcessHandler(ActivarObjeto));
             HandlerManager.RegisterHandler(189144, new ProcessHandler(CambiarTamañoObjeto));
@@ -89,47 +88,6 @@ namespace BoomBang.game.handler
                 if (Session.User.Sala != null)
                 {
                     Packet_189_181(Session, Parameters);
-                }
-            }
-        }
-        static void VoltearObjeto(SessionInstance Session, string[,] Parameters)
-        {
-            if (Session.User.Sala != null)
-            {
-                using (mysql client = new mysql())
-                {
-                    int NewRotation = 0;
-                    int ID = Convert.ToInt32(Parameters[0, 0]);
-                    int ItemID = Convert.ToInt32(Parameters[1, 0]);
-                    int x = Convert.ToInt32(Parameters[2, 0]);
-                    int y = Convert.ToInt32(Parameters[3, 0]);
-                    string coor = Parameters[4, 0];
-                    string size_rotation = Parameters[5, 0];
-                    string rotation = Parameters[6, 0];
-                    if (rotation == string.Empty)
-                    {
-                        NewRotation = int.Parse(size_rotation);
-                    }
-                    else
-                    {
-                        NewRotation = int.Parse(rotation);
-                    }
-                    BuyObjectInstance Item = BuyObjectDAO.getBuyObject(ID);
-                    if (Item != null)
-                    {
-                        if (!Session.User.Sala.ObjetosEnSala.ContainsKey(Item.id)) return;
-                        if (Item.usuario_id == Session.User.id)
-                        {
-                            client.SetParameter("id", Item.id);
-                            client.SetParameter("r", NewRotation);
-                            if (client.ExecuteNonQuery("UPDATE objetos_comprados SET rotation = @r WHERE id = @id") == 1)
-                            {
-                                Session.User.Sala.ObjetosEnSala[Item.id].rotation = NewRotation;
-                                Item.rotation = NewRotation;
-                                Packet_189_143(Session, ID, NewRotation, coor);
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -224,16 +182,7 @@ namespace BoomBang.game.handler
             }
             Session.SendData(server);
         }
-        private static void Packet_189_143(SessionInstance Session, int ID, int NewRotation, string coor)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(189);
-            server.AddHead(143);
-            server.AppendParameter(ID);
-            server.AppendParameter(NewRotation);
-            server.AppendParameter(coor);
-            Session.User.Sala.SendData(server, Session);
-        }
+
         private static void Packet_189_158(SessionInstance Session, int ID, int Estado)
         {
             ServerMessage server = new ServerMessage();

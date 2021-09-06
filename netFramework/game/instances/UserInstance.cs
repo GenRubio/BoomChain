@@ -77,6 +77,7 @@ namespace BoomBang.game.instances
         public string token_uid = "";
         public PersonajeInstance Personaje;
         public List<PersonajeInstance> personajesList;
+
         public UserInstance(DataRow row)
         {
             this.id = (int)row["id"];
@@ -128,6 +129,49 @@ namespace BoomBang.game.instances
         {
             return PersonajeDAO.getUserPersonaje(this.id);
         }
+
+        #region Packets
+        public void loginGame(SessionInstance Session)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(120);
+            server.AddHead(130);
+            server.AppendParameter(1);
+            server.AppendParameter(this.nombre);
+            server.AppendParameter(this.Personaje.avatar);
+            server.AppendParameter(this.Personaje.colores);
+            server.AppendParameter(this.email);
+            server.AppendParameter(this.edad);
+            server.AppendParameter(2);
+            server.AppendParameter("Hola, Soy nuevo en BoomBang.");
+            server.AppendParameter(0);
+            server.AppendParameter(this.id);
+            server.AppendParameter(this.admin);
+            server.AppendParameter(this.oro);
+            server.AppendParameter(-1);
+            server.AppendParameter(200);
+            server.AppendParameter(5);
+            server.AppendParameter(0);
+            server.AppendParameter(-1);
+            server.AppendParameter(0);
+            server.AppendParameter(0);
+            server.AppendParameter(0);//tutorial islas
+            server.AppendParameter("ES");
+            server.AppendParameter(1);
+            server.AppendParameter(0);
+            server.AppendParameter(0);
+            server.AppendParameter(0);
+            server.AppendParameter(0);
+            server.AppendParameter("");
+            server.AppendParameter(0);
+            server.AppendParameter(0);
+            server.AppendParameter(new object[] { 1, 0 });
+            server.AppendParameter(0);
+            server.AppendParameter(-1);
+            Session.SendDataProtected(server);
+        }
+        #endregion
+        #region Data Levels
         public int UppertLevel()
         {
            if (rings_ganados >= 1 && rings_ganados <= 9) return 1;
@@ -235,7 +279,7 @@ namespace BoomBang.game.instances
                 return 400;
             }
         }
-
+        #endregion
         #region Locks
         private double Time_SendUppert = Time.TiempoActual();
         public bool PreLock_EnviandoUppert
