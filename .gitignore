@@ -15,6 +15,7 @@ yarn-error.log
 /.vscode
 /electron/node_modules
 /electron/out
-netFramework/.vs/BoomBang/*
-netFramework/bin/Debug/*
-netFramework/obj/Debug/*
+netFramework/obj/Debug/BoomBang.csprojAssemblyReference.cache
+netFramework/.vs/BoomBang/v16/Server/sqlite3/storage.ide-shm
+netFramework/.vs/BoomBang/v16/Server/sqlite3/storage.ide-wal
+netFramework/.vs/BoomBang/v16/.suo
