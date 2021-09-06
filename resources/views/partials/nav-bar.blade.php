@@ -324,7 +324,7 @@
     <div id="navbarCollapse" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
             <li><a href="#">Home</a></li>
-            <li><a href="#">About</a></li>
+            <li><a href="/market">MarketPlace</a></li>
             <li class="dropdown">
                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">Services <b class="caret"></b></a>
                 <ul class="dropdown-menu">

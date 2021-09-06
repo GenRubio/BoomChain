@@ -5,6 +5,5 @@
 @endsection
 
 @section('content')
-    @include('partials.nav-bar')
     <h1>Dashboard</h1>
 @endsection
