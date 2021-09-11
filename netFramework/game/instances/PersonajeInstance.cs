@@ -69,6 +69,27 @@ namespace BoomBang.game.instances
             }
         }
         #region UserInstance Packets
+        public void updateDescription(SessionInstance Session)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(158);
+            server.AppendParameter(Session.User.IDEspacial);
+            server.AppendParameter(Session.User.bocadillo);
+            Session.User.Sala.SendData(server, Session);
+        }
+        public void sendAlertBadPosition(SessionInstance Session)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(144);
+            Session.SendDataProtected(server);
+        }
+        public void sendAlertUserInteractuando(SessionInstance Session)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(143);
+            server.AppendParameter(1);
+            Session.SendDataProtected(server);
+        }
         public void sendChangeMiradaPosition(SessionInstance Session)
         {
             ServerMessage server = new ServerMessage();

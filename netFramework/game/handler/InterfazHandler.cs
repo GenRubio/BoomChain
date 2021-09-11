@@ -41,9 +41,14 @@ namespace BoomBang.game.handler
             HandlerManager.RegisterHandler(138, new ProcessHandler(unknown));
         }
         private static void unknown(SessionInstance Session, string[,] Parameter){}
-        static void None_210_125(SessionInstance Session, string[,] Parameter)
+        private static void None_210_125(SessionInstance Session, string[,] Parameter)
         {
-             Packet_210_125(Session);
+            ServerMessage server = new ServerMessage();
+            server.AddHead(210);
+            server.AddHead(125);
+            server.AppendParameter(1);
+            server.AppendParameter(1);
+            Session.SendData(server);
         }
         private static void Votos(SessionInstance Session, string[,] Parameters)
         {
@@ -203,26 +208,18 @@ namespace BoomBang.game.handler
                 && Session.User.PreLock_Ficha != true
                 && Utils.checkValidCharacters(description, false) == true)
             {
-                new Thread(() => AvatarDAO.updateDescription(Session.User.id, description)).Start();
-
                 Session.User.bocadillo = description;
                 Session.User.PreLock_Ficha = true;
 
-                updateUserDescriptionPacket(Session);
+                Session.User.Personaje.updateDescription(Session);
+                new Thread(() => AvatarDAO.updateDescription(Session.User.id, description)).Start();
             }
             else
             {
                 Utils.errorMessage(Session);
             }
         }
-        private static void updateUserDescriptionPacket(SessionInstance Session)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(158);
-            server.AppendParameter(Session.User.IDEspacial);
-            server.AppendParameter(Session.User.bocadillo);
-            Session.User.Sala.SendData(server, Session);
-        }
+
         static void Aceptar_Interaccion(SessionInstance Session, string[,] Parameters)
         {
             if (Session.User != null)
@@ -380,34 +377,18 @@ namespace BoomBang.game.handler
         {
             try
             {
-                if (Session.User != null)
+                if (Middleware.sala(Session))
                 {
-                    if (Session.User.Sala != null)
-                    {
-                        if (Session.User.Sala.Usuarios.ContainsKey(int.Parse(Parameters[1, 0]))
-                            && Session.User.Sala.Usuarios.ContainsKey(int.Parse(Parameters[4, 0])))
-                        {
-                            SessionInstance OtherSession = Session.User.Sala.Usuarios[int.Parse(Parameters[4, 0])];
-                            if (Session.User.Posicion.x != int.Parse(Parameters[2, 0])
-                                || Session.User.Posicion.y != int.Parse(Parameters[3, 0]))
-                            {
-                                return;
-                            }
-                            if (OtherSession.User.Posicion.x != int.Parse(Parameters[5, 0])
-                                || OtherSession.User.Posicion.y != int.Parse(Parameters[6, 0]))
-                            {
-                                return;
-                            }
-                            if (Session.User.Sala.Escenario.uppert == -1
-                                || Session.User.IDEspacial == int.Parse(Parameters[4, 0]))
-                            {
-                                Session.FinalizarConexion("UppertPower");
-                                return;
-                            }
+                    int user2IdSala = int.Parse(Parameters[4, 0]);
 
+                    SessionInstance OtherSession = getUserInSala(Session, user2IdSala);
+                    if (OtherSession != null)
+                    {
+                        if (prepareSendUpper(Session, OtherSession, Parameters))
+                        {
                             int Derecha = Session.User.Posicion.x - OtherSession.User.Posicion.x;
                             int Izquierda = Session.User.Posicion.y - OtherSession.User.Posicion.y;
-                            if (Derecha == 1 && Izquierda == 1)
+                            if (Derecha == 1 && Izquierda == 1 || Derecha == -1 && Izquierda == -1)
                             {
                                 if (Session.User.PreLock_Interactuando != true
                                     && OtherSession.User.PreLock_Interactuando != true)
@@ -415,16 +396,15 @@ namespace BoomBang.game.handler
                                     Session.User.Trayectoria.DetenerMovimiento();
                                     OtherSession.User.Trayectoria.DetenerMovimiento();
                                     UppertPower(Session, OtherSession, Parameters);
-
                                 }
                                 else
                                 {
-                                    Packet_143(Session);
+                                    Session.User.Personaje.sendAlertUserInteractuando(Session);
                                 }
                             }
                             else
                             {
-                                Packet_144(Session);
+                                Session.User.Personaje.sendAlertBadPosition(Session);
                             }
                         }
                     }
@@ -435,6 +415,55 @@ namespace BoomBang.game.handler
                 return;
             }
         }
+        private static bool prepareSendUpper(SessionInstance Session, SessionInstance OtherSession, string[,] Parameters)
+        {
+            int user1IdSala = int.Parse(Parameters[1, 0]);
+            int user2IdSala = int.Parse(Parameters[4, 0]);
+
+            int user1PosX = int.Parse(Parameters[2, 0]);
+            int user1PosY = int.Parse(Parameters[3, 0]);
+            int user2PosX = int.Parse(Parameters[5, 0]);
+            int user2PosY = int.Parse(Parameters[6, 0]);
+
+            if (!existUserInSala(Session, user1IdSala) || !existUserInSala(Session, user2IdSala))
+            {
+                Session.FinalizarConexion("UppertPower");
+                return false;
+            }
+            if (Session.User.Posicion.x != user1PosX || Session.User.Posicion.y != user1PosY)
+            {
+                Session.FinalizarConexion("UppertPower");
+                return false;
+            }
+            if (OtherSession.User.Posicion.x != user2PosX || OtherSession.User.Posicion.y != user2PosY)
+            {
+                Session.FinalizarConexion("UppertPower");
+                return false;
+            }
+            if (Session.User.Sala.Escenario.uppert == -1 || Session.User.IDEspacial == user2IdSala)
+            {
+                Session.FinalizarConexion("UppertPower");
+                return false;
+            }
+            if (OtherSession.User.Posicion.x == Session.User.Sala.Puerta.x
+                && OtherSession.User.Posicion.y == Session.User.Sala.Puerta.y
+                || Session.User.Posicion.x == Session.User.Sala.Puerta.x
+                && Session.User.Posicion.y == Session.User.Sala.Puerta.y)
+            {
+                return false;
+            }
+            return true;
+        }
+        private static SessionInstance getUserInSala(SessionInstance Session, int id)
+        {
+            return Session.User.Sala.Usuarios[id];
+        }
+        private static bool existUserInSala(SessionInstance Session, int id)
+        {
+            return Session.User.Sala.Usuarios.ContainsKey(id);
+        }
+
+
         private static void Acciones(SessionInstance Session, string[,] Parameters)
         {
             int accion = int.Parse(Parameters[1, 0]);
@@ -500,13 +529,9 @@ namespace BoomBang.game.handler
                 && Session.User.PreLock_BloqueoChat == false
                 && Utils.checkValidCharacters(mensaje, false))
             {
+                ChatCommandsManager.checkCommand(Session, mensaje);
+
                 Session.User.Personaje.sendPublicChat(Session, mensaje);
-
-                if (Session.User.admin == 1)
-                {
-                    adminChatCommands(Session, mensaje);
-                }
-
                 Session.User.PreLock_BloqueoChat = true;
             }
             else
@@ -514,70 +539,10 @@ namespace BoomBang.game.handler
                 Utils.errorMessage(Session);
             }
         }
-        private static void adminChatCommands(SessionInstance Session, string mensaje)
-        {
-            if (mensaje == "putAvatars")
-            {
-                foreach (PersonajeInstance personaje in Session.User.personajesList.ToList())
-                {
-                    personaje.putAvatarInArea(Session, true);
-                }
-            }
-            if (mensaje == "chatAvatar")
-            {
-                Session.User.Personaje.sendChatMessage(Session, "Hola");
-            }
-            if (mensaje == "action")
-            {
-                Session.User.Personaje.sendAction(Session, 1);
-            }
-            if (mensaje == "specialAction")
-            {
-                Session.User.Personaje.sendSpecialAction(Session, 1);
-            }
-            if (mensaje == "autoWalk")
-            {
-                foreach (PersonajeInstance personaje in Session.User.personajesList.ToList())
-                {
-                    personaje.startAutoWalkIA(Session);
-                }
-            }
-            if (mensaje == "sendUpper")
-            {
-                foreach (PersonajeInstance personaje in Session.User.personajesList.ToList())
-                {
-                    personaje.activeSendUpper = true;
-                }
-            }
-            if (mensaje == "objeto")
-            {
-                ServerMessage server = new ServerMessage();
-                server.AddHead(189);
-                server.AddHead(136);
-                server.AppendParameter(2246);
-                server.AppendParameter(84);
-                server.AppendParameter(1);
-                server.AppendParameter(Session.User.id);
-                server.AppendParameter(11);
-                server.AppendParameter(11);
-                server.AppendParameter(0);
-                server.AppendParameter("tam_n");
-                server.AppendParameter("");
-                server.AppendParameter("14,19");
-                server.AppendParameter("37F2FF");
-                server.AppendParameter("72,72,100");
-                server.AppendParameter("0");
-                server.AppendParameter("0");
-                server.AppendParameter("");
-                Session.User.Sala.SendData(server, Session);
-            }
-        }
+
         private static void UppertPower(SessionInstance Session, SessionInstance OtherSession, string[,] Parameters)
         {
-            if (OtherSession.User.Posicion.x == Session.User.Sala.Puerta.x && Session.User.Sala.Usuarios[int.Parse(Parameters[4, 0])].User.Posicion.y == Session.User.Sala.Puerta.y || Session.User.Posicion.x == Session.User.Sala.Puerta.x && Session.User.Posicion.y == Session.User.Sala.Puerta.y)
-            {
-                return;
-            }
+         
             Session.User.Time_Interactuando = Time.GetCurrentAndAdd(AddType.Segundos, 14);
             OtherSession.User.Time_Interactuando = Time.GetCurrentAndAdd(AddType.Segundos, 17);
             Session.User.Trayectoria.DetenerMovimiento();
@@ -607,12 +572,6 @@ namespace BoomBang.game.handler
                 OtherSession.User.uppers_recibidos++;
                 Session.User.Sala.ActualizarEstadisticas(Session.User);
                 Session.User.Sala.ActualizarEstadisticas(OtherSession.User);
-            }
-            if (Session.User.uppers_enviados == 25 || Session.User.uppers_enviados == 50 || Session.User.uppers_enviados == 100 || Session.User.uppers_enviados == 200 || Session.User.uppers_enviados == 500 || Session.User.uppers_enviados == 1500 || Session.User.uppers_enviados == 3000 || Session.User.uppers_enviados == 6000 || Session.User.uppers_enviados == 9000)
-            {
-                NotificacionesManager.NotifiChat(Session, "Sabio: Felicidades has subido de Upper :)");
-                Session.User.UppertSelect = Session.User.UppertLevel();
-                NotificacionesManager.Juegos(Session, 2);
             }
             Packet_145(Session, OtherSession);
         }
@@ -808,15 +767,7 @@ namespace BoomBang.game.handler
                 return;
             } 
         }
-        private static void Packet_210_125(SessionInstance Session)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(210);
-            server.AddHead(125);
-            server.AppendParameter(1);
-            server.AppendParameter(1);
-            Session.SendData(server);
-        }
+
         private static void Packet_167(SessionInstance Session)
         {
             ServerMessage server = new ServerMessage();
@@ -875,13 +826,6 @@ namespace BoomBang.game.handler
             server.AppendParameter(nivel);
             Session.User.Sala.SendData(server, Session);
         }
-        private static void Packet_144(SessionInstance Session)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(144);
-            Session.SendDataProtected(server);
-        }
-       
         private static void Packet_145(SessionInstance Session, SessionInstance OtherSession)
         {
             ServerMessage server = new ServerMessage();

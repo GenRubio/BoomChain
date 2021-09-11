@@ -11,15 +11,13 @@ const {
 } = require("electron");
 const path = require("path");
 
-let MainWindowMinimized = false;
-let NotificationsEnabled = true;
-let SecondWindowOpen = false;
+
+const run = "dev";
 let mainWindow;
-let gameLauncherWindow;
 var iconpath = path.join(__dirname, "icon.ico");
 var pjson = require(__dirname + "/package.json");
 let pluginName;
-var devTools = true;
+
 
 
 if (require("electron-squirrel-startup")) {
@@ -59,9 +57,11 @@ const createWindow = () => {
         resizable: false,
     });
 
+    if (run == "dev"){
+        mainWindow.webContents.session.clearStorageData();
+    }
     mainWindow.loadURL("http://127.0.0.1:8000/launcher/play");
     mainWindow.setMenu(null);
-    //devToolsMainWindow();
     mainWindow.show();
 
     mainWindow.webContents.on("did-finish-load", () => {});

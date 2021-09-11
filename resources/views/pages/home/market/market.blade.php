@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-
+@include('partials.nav-bar')
     {{--TOP MENÚ  --}}
     <div style="top:70px; width:100%; position:fixed; border-bottom-width:1px; background-color: gray">
         <div style="display:inline-flex">
