@@ -11,6 +11,26 @@ namespace BoomBang.game.dao
 {
     class EscenarioDAO
     {
+        public static void deleteEscenarioPrivado(int id)
+        {
+            mysql client = new mysql();
+            client.SetParameter("id", id);
+            client.ExecuteNonQuery("DELETE FROM escenarios_privados WHERE id = @id");
+        }
+        public static List<EscenarioInstance> getEscenariosAreas()
+        {
+            List<EscenarioInstance> escenarios = new List<EscenarioInstance>();
+
+            mysql client = new mysql();
+            client.SetParameter("visible", 1);
+            foreach (DataRow row in client.ExecuteQueryTable("" +
+                "SELECT * FROM escenarios_publicos WHERE visible = @visible ORDER BY Prioridad ASC").Rows)
+            {
+                escenarios.Add(new EscenarioInstance(row));
+            }
+
+            return escenarios;
+        }
         public static Dictionary<int, BuyObjectInstance> getEscenarioObjects(int id)
         {
             Dictionary<int, BuyObjectInstance> objects = new Dictionary<int, BuyObjectInstance>();

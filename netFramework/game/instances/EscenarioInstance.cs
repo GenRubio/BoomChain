@@ -60,5 +60,16 @@ namespace BoomBang.game.instances
                 }
             }
         }
+
+        public void changeColors(SessionInstance Session)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(189);
+            server.AddHead(146);
+            server.AppendParameter(this.id);
+            server.AppendParameter(this.color_1);
+            server.AppendParameter(this.color_2);
+            Session.User.Sala.SendData(server, Session);
+        }
     }
 }

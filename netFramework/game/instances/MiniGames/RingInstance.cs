@@ -16,8 +16,8 @@ namespace BoomBang.game.instances.MiniGames
     {
         public Dictionary<int, SessionInstance> Participantes = new Dictionary<int, SessionInstance>();
         public SalaInstance sala { get; set; }
-        public int Contador = 65;
-        public int Tiempo_Atas = 360;
+        public int Contador = MiniGamesManager.timeStartGame;
+        public int Tiempo_Atas = MiniGamesManager.timeEndGame;
         public bool Iniciado = false;
         public bool Ganador = false;
         public bool NSP = false;
@@ -125,14 +125,7 @@ namespace BoomBang.game.instances.MiniGames
             if (Participantes.ContainsKey(Session.User.IDEspacial))
             {
                 Session.User.Jugando = false;
-                if (sala.Escenario.id == 2 && NSP == false)
-                {
-                  
-                }
-                if (sala.Escenario.id == 3 && NSP == false)
-                {
-                   
-                }
+
                 Participantes.Remove(Session.User.IDEspacial);
                 if (MiniGamesManager.Inscripciones_Ring.ContainsKey(Session.User.id))
                 {
@@ -329,15 +322,19 @@ namespace BoomBang.game.instances.MiniGames
                     if (!Inscripcion.Session.Client.Connected) continue;
                     if (Inscripcion.Type != type) continue;
                     if (Inscripcion.Session.User.Jugando) continue;
+
                     Participantes.Add(Inscripcion.Session);
-                    if (Participantes.Count == 4) break;///Llamada ring
+                    if (Participantes.Count == MiniGamesManager.gamersLimitRing)
+                    {
+                        break;
+                    }
                 }
                 catch
                 {
                     continue;
                 }
             }
-            if (Participantes.Count == 4)///Llamada ring
+            if (Participantes.Count == MiniGamesManager.gamersLimitRing)///Llamada ring
             {
                 SalaInstance Sala = Buscar_Juego(type);
                 if (Sala != null) new Llamada(Participantes, Sala);
@@ -382,10 +379,6 @@ namespace BoomBang.game.instances.MiniGames
                 }
                 return num;
             }
-        }
-        public static void Entrega_Trofeo_Semanal(SessionInstance Session)
-        {
-
         }
         public bool Participando(SessionInstance Session)
         {

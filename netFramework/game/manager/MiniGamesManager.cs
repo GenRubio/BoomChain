@@ -1,4 +1,4 @@
-﻿using BoomBang.game.instances;
+using BoomBang.game.instances;
 using BoomBang.game.instances.MiniGames;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace BoomBang.game.manager
 {
     public class Llamada
     {
-        
+
         public Llamada(List<SessionInstance> Participantes, SalaInstance Sala)
         {
             new Thread(() => Llamar(Participantes, Sala)).Start();
@@ -62,6 +62,10 @@ namespace BoomBang.game.manager
     }
     class MiniGamesManager
     {
+        public static int gamersLimitRing = 2;
+        public static int timeStartGame = 15 * 2;
+        public static int timeEndGame = 20;
+
         public static Dictionary<int, Inscripcion> Inscripciones_Ring = new Dictionary<int, Inscripcion>();
         public static Dictionary<int, Inscripcion> Inscripciones_CocosLocos = new Dictionary<int, Inscripcion>();
         public static Dictionary<int, Inscripcion> Inscripciones_Camino = new Dictionary<int, Inscripcion>();

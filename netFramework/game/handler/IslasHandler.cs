@@ -1,3 +1,4 @@
+using BoomBang.game.dao;
 using BoomBang.game.instances;
 using BoomBang.game.manager;
 using BoomBang.server;
@@ -27,16 +28,19 @@ namespace BoomBang.game.handler
         {
             if (Session.User != null
                 && Session.User.PreLock__Proteccion_SQL != true
-                && Session.User.Sala != null)
+                && Session.User.Sala == null)
             {
-                IslaInstance Isla = IslasManager.ObtenerIsla(int.Parse(Parameters[0, 0]));
+                int islaId = int.Parse(Parameters[0, 0]);
+                string description = Parameters[1, 0];
+
+                IslaInstance Isla = IslasManager.ObtenerIsla(islaId);
                 if (Isla != null)
                 {
                     if (IslasManager.ControlDeSeguridad(Session.User, Isla))
                     {
-                        if (Utils.checkValidCharacters(Parameters[1, 0], false))
+                        if (Utils.checkValidCharacters(description, false))
                         {
-                            new Thread(() => IslasManager.CambiarDescripcion(Isla, Parameters[1, 0])).Start();
+                            new Thread(() => IslasManager.CambiarDescripcion(Isla, description)).Start();
                         }
                         Session.User.PreLock__Proteccion_SQL = true;
                     }
@@ -45,34 +49,41 @@ namespace BoomBang.game.handler
         }
         private static void CambiarColores(SessionInstance Session, string[,] Parameters)
         {
-            if (Session.User != null)
+            if (Session.User != null && Session.User.Sala != null && Session.User.PreLock__Proteccion_SQL != true)
             {
-                if (Session.User.PreLock__Proteccion_SQL == true) return;
-                if (Session.User.Sala != null)
+                if (EscenariosManager.ControlDeSeguridad(Session.User, Session.User.Sala.Escenario))
                 {
-                    if (EscenariosManager.ControlDeSeguridad(Session.User, Session.User.Sala.Escenario))
-                    {
-                        new Thread(() => EscenariosManager.CambiarColores(Session.User.Sala.Escenario, Parameters[0, 0], Parameters[1, 0])).Start();
-                        Packet_189_146(Session, Parameters[0, 0], Parameters[1, 0]);
-                        Session.User.PreLock__Proteccion_SQL = true;
-                    }
+                    string colorsHEX = Parameters[0, 0];
+                    string colorsRGB = Parameters[1, 0];
+
+                    Session.User.Sala.Escenario.color_1 = colorsHEX;
+                    Session.User.Sala.Escenario.color_2 = colorsRGB;
+
+                    new Thread(() => EscenarioDAO.updateColors(Session.User.Sala.Escenario.id, colorsHEX, colorsRGB)).Start();
+
+                    Session.User.Sala.Escenario.changeColors(Session);
+
+                    Session.User.PreLock__Proteccion_SQL = true;
                 }
             }
         }
         private static void RenombrarIsla(SessionInstance Session, string[,] Parameters)
         {
-            if (Session.User != null)
+            if (Session.User != null && Session.User.Sala == null && Session.User.PreLock__Proteccion_SQL != true)
             {
-                if (Session.User.PreLock__Proteccion_SQL == true) return;
-                if (Session.User.Sala != null) return;
-                IslaInstance Isla = IslasManager.ObtenerIsla(int.Parse(Parameters[0, 0]));
+                int islaId = int.Parse(Parameters[0, 0]);
+                string name = Parameters[1, 0];
+
+                IslaInstance Isla = IslasManager.ObtenerIsla(islaId);
                 if (Isla != null)
                 {
                     if (IslasManager.ControlDeSeguridad(Session.User, Isla))
                     {
-                        if (Utils.checkValidCharacters(Parameters[1, 0], false))
+                        if (Utils.checkValidCharacters(name, false))
                         {
-                            Packet_189_129(Session, Isla, Parameters[1, 0]);
+                            new Thread(() => IslaDAO.updateName(Isla.id, name)).Start();
+
+                            Isla.changeName(Session);
                         }
                         Session.User.PreLock__Proteccion_SQL = true;
                     }
@@ -81,19 +92,26 @@ namespace BoomBang.game.handler
         }
         private static void RenombrarZona(SessionInstance Session, string[,] Parameters)
         {
-            if (Session.User != null)
+            if (Session.User != null && Session.User.Sala == null && Session.User.PreLock__Proteccion_SQL != true)
             {
-                if (Session.User.PreLock__Proteccion_SQL == true) return;
-                if (Session.User.Sala != null) return;
-                EscenarioInstance Escenario = EscenariosManager.ObtenerEscenario(0, int.Parse(Parameters[1, 0]));
-                if (Escenario != null)
+                int escenarioId = int.Parse(Parameters[1, 0]);
+                string name = Parameters[2, 0];
+                EscenarioInstance Escenario = EscenariosManager.ObtenerEscenario(0, escenarioId);
+                if (Escenario != null && Escenario.es_categoria == 0)
                 {
                     if (EscenariosManager.ControlDeSeguridad(Session.User, Escenario))
                     {
-                        if (Utils.checkValidCharacters(Parameters[2, 0], false))
+                        if (Utils.checkValidCharacters(name, false))
                         {
-                            EscenariosManager.RenombrarEscenario(Escenario, Parameters[2, 0]);
+                            EscenarioDAO.updateName(Escenario.id, name);
+
+                            SalaInstance Sala = SalasManager.ObtenerSala(Escenario);
+                            if (Sala != null)
+                            {
+                                Sala.Escenario.nombre = name;
+                            }
                         }
+
                         Session.User.PreLock__Proteccion_SQL = true;
                     }
                 }
@@ -101,15 +119,27 @@ namespace BoomBang.game.handler
         }
         private static void EliminarZona(SessionInstance Session, string[,] Parameters)
         {
-            if (Session.User != null)
+            if (Session.User != null && Session.User.Sala == null)
             {
-                if (Session.User.Sala != null) return;
-                EscenarioInstance Escenario = EscenariosManager.ObtenerEscenario(0, int.Parse(Parameters[0, 0]));
+                int escenarioId = int.Parse(Parameters[0, 0]);
+
+                EscenarioInstance Escenario = EscenariosManager.ObtenerEscenario(0, escenarioId);
                 if (Escenario != null)
                 {
                     if (EscenariosManager.ControlDeSeguridad(Session.User, Escenario))
                     {
-                        EscenariosManager.EliminarEscenario(Escenario);
+                        foreach(BuyObjectInstance objectEscenario in BuyObjectDAO.islaObjects(Escenario.id).ToList()){
+                            objectEscenario.removeObjectSala(Session);
+                        }
+
+                        BuyObjectDAO.deleteObjectsEscenario(Escenario.id);
+                        EscenarioDAO.deleteEscenarioPrivado(Escenario.id);
+
+                        SalaInstance Sala = SalasManager.ObtenerSala(Escenario);
+                        if (Sala != null)
+                        {
+                            SalasManager.EliminarSala(Sala);
+                        }
                     }
                 }
             }
@@ -154,32 +184,7 @@ namespace BoomBang.game.handler
                 Packet_189_124(Session, int.Parse(Parameters[0, 0]));
             }
         }    
-        private static void Packet_189_146(SessionInstance Session, string HEX, string Dec)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(189);
-            server.AddHead(146);
-            server.AppendParameter(Session.User.Sala.Escenario.id);
-            server.AppendParameter(HEX);
-            server.AppendParameter(Dec);
-            Session.User.Sala.SendData(server, Session);
-        }
-        private static void Packet_189_129(SessionInstance Session, IslaInstance Isla, string Nombre)
-        {
-            ServerMessage server = new ServerMessage();
-            server.AddHead(189);
-            server.AddHead(129);
-            if (IslasManager.ObtenerIsla(Nombre) == null)
-            {
-                new Thread(() => IslasManager.RenombrarIsla(Isla, Nombre)).Start();
-                server.AppendParameter(1);
-            }
-            else
-            {
-                server.AppendParameter(0);
-            }
-            Session.SendData(server);
-        }
+
         private static void Packet_189_121(SessionInstance Session, EscenarioInstance Escenario)
         {
             ServerMessage server = new ServerMessage();

@@ -11,6 +11,26 @@ namespace BoomBang.game.dao
 {
     class BuyObjectDAO
     {
+        public static void deleteObjectsEscenario(int escenarioId)
+        {
+            mysql client = new mysql();
+            client.SetParameter("salaId", escenarioId);
+            client.SetParameter("newSalaId", "0");
+            client.ExecuteNonQuery("UPDATE objetos_comprados SET sala_id = @newSalaId WHERE sala_id = @id");
+        }
+        public static List<BuyObjectInstance> islaObjects(int escenarioId)
+        {
+            List<BuyObjectInstance> compras = new List<BuyObjectInstance>();
+
+            mysql client = new mysql();
+            client.SetParameter("id", escenarioId);
+            foreach (DataRow row in client.ExecuteQueryTable("SELECT * FROM objetos_comprados WHERE sala_id = @id").Rows)
+            {
+                compras.Add(new BuyObjectInstance(row));
+            }
+
+            return compras;
+        }
         public static void updateFlipObjectSala(BuyObjectInstance Compra)
         {
             mysql client = new mysql();

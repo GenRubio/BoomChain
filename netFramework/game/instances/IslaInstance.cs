@@ -25,5 +25,14 @@ namespace BoomBang.game.instances
             this.descripcion = (string)row["descripcion"];
             this.Creador = UserDAO.getUser((int)row["CreadorID"]);
         }
+
+        public void changeName(SessionInstance Session)
+        {
+            ServerMessage server = new ServerMessage();
+            server.AddHead(189);
+            server.AddHead(129);
+            server.AppendParameter(1);
+            Session.SendData(server);
+        }
     }
 }

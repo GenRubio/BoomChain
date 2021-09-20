@@ -1,3 +1,4 @@
+using BoomBang.game.dao;
 using BoomBang.game.instances;
 using BoomBang.game.manager;
 using BoomBang.server;
@@ -114,7 +115,19 @@ namespace BoomBang.game.handler
             if (Session.User != null)
             {
                 if (Session.User.Sala != null) return;
-                new Thread(() => Packet_154_32(Session)).Start();
+
+                ServerMessage server = new ServerMessage();
+                server.AddHead(154);
+                server.AddHead(32);
+                foreach (EscenarioInstance escenario in EscenarioDAO.getEscenariosAreas())
+                {
+                    server.AppendParameter(escenario.categoria);
+                    server.AppendParameter(escenario.es_categoria);
+                    server.AppendParameter(escenario.id);
+                    server.AppendParameter(escenario.nombre);
+                    server.AppendParameter(SalasManager.UsuariosEnSala(escenario));
+                }
+                Session.SendDataProtected(server);
             }
         }
         private static void Packet_187(SessionInstance Session) //Islas publicas
@@ -198,28 +211,6 @@ namespace BoomBang.game.handler
             }
             Session.SendDataProtected(server);
         }
-        private static void Packet_154_32(SessionInstance Session)
-        {
-            mysql client = new mysql();
-            Dictionary<int, int> areas = new Dictionary<int, int>();
-            ServerMessage server = new ServerMessage();
-            server.AddHead(154);
-            server.AddHead(32);
-            foreach (DataRow row in client.ExecuteQueryTable("SELECT * FROM escenarios_publicos WHERE visible = '1' ORDER BY Prioridad ASC").Rows)
-            {
-                areas.Add((int)row["id"], SalasManager.UsuariosEnSala(new EscenarioInstance(row)));
-            }
-            foreach (var escenario in areas.OrderByDescending(x => x.Value))
-            {
-                client.SetParameter("id", escenario.Key);
-                DataRow row = client.ExecuteQueryRow("SELECT * FROM escenarios_publicos WHERE id = @id");
-                server.AppendParameter(row["categoria"]);
-                server.AppendParameter(row["es_categoria"]);
-                server.AppendParameter(row["id"]);
-                server.AppendParameter(row["nombre"]);
-                server.AppendParameter(SalasManager.UsuariosEnSala(new EscenarioInstance(row)));
-            }
-            Session.SendDataProtected(server);
-        }
+        
     }
 }
