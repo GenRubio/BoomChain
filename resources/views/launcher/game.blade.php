@@ -22,11 +22,11 @@ integrity="sha384-toS6mmwu70G0fw54EGlWWeA4z3dyJ+dlXBtSURSKN4vyRFOcxd3Bzjj/AoOwY+
         const socket = io('http://127.0.0.1:3000');
         socketUser = socket;
 
-        socket.on('entrarSala-' + client.token_uid, (message) => {
+        socket.on('entrarSala-' + client.token_uid, () => {
             entrarSala();
         });
 
-        socket.on('salirSala-' + client.token_uid, (message) => {
+        socket.on('salirSala-' + client.token_uid, () => {
             salirSala();
         });
 
@@ -57,5 +57,9 @@ integrity="sha384-toS6mmwu70G0fw54EGlWWeA4z3dyJ+dlXBtSURSKN4vyRFOcxd3Bzjj/AoOwY+
 
     function isReady() {
         console.log("Login is ready")
+    }
+
+    function swfList(data) {
+       console.log(data)
     }
 </script>

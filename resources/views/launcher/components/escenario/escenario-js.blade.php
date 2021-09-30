@@ -3,25 +3,21 @@
         $(document).on("click", ".plus-ninjas", function() {
             removeOpenContainers();
 
-            $(".contenedor-trajes-ninja").removeClass("none");
-            $(".contenedor-trajes-ninja").addClass("block");
+            $(".contenedor-trajes-ninja").removeClass("none").addClass("block");
         });
 
         $(document).on("click", ".close-contenedor-trajes-ninja", function() {
-            $(".contenedor-trajes-ninja").removeClass("block");
-            $(".contenedor-trajes-ninja").addClass("none");
+            $(".contenedor-trajes-ninja").removeClass("block").addClass("none");
         });
 
         $(document).on('click', '.user-fichas-left-div', function() {
             removeOpenContainers();
 
-            $(".user-fichas-div").removeClass("none");
-            $(".user-fichas-div").addClass("block");
+            $(".user-fichas-div").removeClass("none").addClass("block");
         });
 
         $(document).on('click', '.close-contenedor-user-fichas', function() {
-            $(".user-fichas-div").removeClass("block");
-            $(".user-fichas-div").addClass("none");
+            $(".user-fichas-div").removeClass("block").addClass("none");
         });
       
     }, 1500);
@@ -31,13 +27,11 @@
         removeContenedorUserFichas();
 
         function removeContenedorUserFichas() {
-            $(".user-fichas-div").removeClass("block");
-            $(".user-fichas-div").addClass("none");
+            $(".user-fichas-div").removeClass("block").addClass("none");
         }
 
         function removeContenedorTrajesNinja() {
-            $(".contenedor-trajes-ninja").removeClass("block");
-            $(".contenedor-trajes-ninja").addClass("none");
+            $(".contenedor-trajes-ninja").removeClass("block").addClass("none");
         }
     }
 

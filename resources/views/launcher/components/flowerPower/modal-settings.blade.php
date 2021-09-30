@@ -9,7 +9,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                ...
+                <button class="btn btn-primary">Hola</button>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger log-out-button">Salir del juego</button>
