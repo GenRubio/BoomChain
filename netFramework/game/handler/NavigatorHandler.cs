@@ -45,7 +45,7 @@ namespace BoomBang.game.handler
                         SalaInstance.UsuariosEnObjetos.Remove(Session.User.id);
                     }
 
-                    SocketIO.sendData(SocketIO.WebSocket, "salirSala", Session.User.token_uid + ",null");
+                    SocketIO.sendData("salirSala", new string[] { Session.User.token_uid });
                     SalasManager.Salir_Sala(Session);
                 }
             }   
@@ -67,9 +67,7 @@ namespace BoomBang.game.handler
                     }
                     if (Session.User.Sala.Ring != null || Session.User.Sala.Cocos != null || Session.User.Sala.Sendero != null || Session.User.Sala.Camino != null) { return; }
               
-
-
-                    SocketIO.sendData(SocketIO.WebSocket, "entrarSala", Session.User.token_uid + ",null");
+                    SocketIO.sendData("entrarSala", new string[] { Session.User.token_uid });
                 }
             }     
         }

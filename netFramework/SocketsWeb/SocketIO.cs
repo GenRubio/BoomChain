@@ -14,14 +14,18 @@ namespace BoomBang.SocketsWeb
 {
     class SocketIO
     {
+        /**  Socket vercion 1.1 **/
         public static Socket WebSocket = null;
         private static bool ThreadReceivData = true;
+        private static readonly string serverIP = "127.0.0.1";
+        private static readonly int serverPort = 3300;
+        private static readonly bool webSocketListener = true;
         public static void Initialize()
         {
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 3300));
+            socket.Bind(new IPEndPoint(IPAddress.Parse(serverIP), serverPort));
             socket.Listen(0);
-            Emulator.Form.WriteLine("WebSocket connection open (Port: 3300)", "success");
+            Emulator.Form.WriteLine("WebSocket connection open (Port: " + serverPort + ")", "success");
 
             var client = socket.Accept();
             WebSocket = client;
@@ -32,21 +36,44 @@ namespace BoomBang.SocketsWeb
             }
         }
 
-        public static void sendData(Socket client, string idType, string parameters)
+        public static void sendData(string idType, string[] parameters)
         {
             try
             {
-                if (Emulator.WebSockets)
+                if (webSocketListener)
                 {
-                    var buffer = Encoding.UTF8.GetBytes(idType + "|" + parameters);
-                    client.Send(buffer, 0, buffer.Length, 0);
+                    var buffer = Encoding.UTF8.GetBytes(idType + "|" + prepareParameters(parameters));
+                    WebSocket.Send(buffer, 0, buffer.Length, 0);
                 }
             }
             catch(Exception e)
             {
                 Emulator.Form.WriteLine(e.Message, "error");
             }
-           
+        }
+        private static string prepareParameters(string[] parameters)
+        {
+            string prepareParameters = "";
+            if (parameters.Length > 1)
+            {
+                for (int a = 0; a < parameters.Length; a++)
+                {
+                    if (a == 0)
+                    {
+                        prepareParameters += parameters[a];
+                    }
+                    else
+                    {
+                        prepareParameters += "," + parameters[a];
+                    }
+                }
+            }
+            else
+            {
+                prepareParameters = parameters[0];
+            }
+
+            return prepareParameters;
         }
         private static void reciveData(Socket client)
         {
@@ -58,13 +85,23 @@ namespace BoomBang.SocketsWeb
 
                 string idType = getIdType(Encoding.UTF8.GetString(buffer));
                 string[] parameters = getParameters(Encoding.UTF8.GetString(buffer));
-                try
+
+                if (parameters.Length > 0)
                 {
-                    callPackage(session(parameters[0]), idType, parameters);
+                    string client_uid = parameters[0];
+
+                    if (getSession(client_uid) != null)
+                    {
+                        CallPackage.init(getSession(client_uid), idType, parameters);
+                    }
+                    else
+                    {
+                        Emulator.Form.WriteLine("No se ha podido obtener Session.", "error");
+                    }
                 }
-                catch
+                else
                 {
-                    callPackage(null, idType, parameters);
+                    Emulator.Form.WriteLine("No se ha podido obtener parametros.", "error");
                 }
             }
             catch
@@ -75,7 +112,7 @@ namespace BoomBang.SocketsWeb
             }
          
         }
-        private static SessionInstance session (string token_uid)
+        private static SessionInstance getSession (string token_uid)
         {
             foreach(SessionInstance session in UserManager.UsuariosOnline.Values.ToList())
             {
@@ -96,24 +133,6 @@ namespace BoomBang.SocketsWeb
             string[] data = buffer.Split('|');
             string[] parameters = data[1].Split(',');
             return parameters;
-        }
-        private static void callPackage(SessionInstance session, string idType, string[] parameters)
-        {
-            if (session != null)
-            {
-                switch (idType)
-                {
-                    case "yellow-alert":
-                       
-                        break;
-                    case "change-ninja":
-                     
-                        break;
-                    case "change-ficha-user":
-                    
-                        break;
-                }
-            }
         }
     }
 }

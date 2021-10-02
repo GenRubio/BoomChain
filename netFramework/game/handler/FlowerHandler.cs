@@ -30,7 +30,7 @@ namespace BoomBang.game.handler
         {
             if (Middleware.salaNone(Session))
             {
-                SocketIO.sendData(SocketIO.WebSocket, "entrarFlowerPower", Session.User.token_uid);
+                SocketIO.sendData("entrarFlowerPower", new string[] { Session.User.token_uid });
             }
         }
         private static void Method_120_143(SessionInstance Session, string[,] Parameters)

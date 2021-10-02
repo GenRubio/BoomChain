@@ -26,7 +26,6 @@ namespace BoomBang.Forms
         public static readonly Encoding Encoding = Encoding.GetEncoding("iso-8859-1");
         public static int puerto_server = 2002;
         public static Emulator Form;
-        public static bool WebSockets = true;
         public static bool activeAlertsPackets = true;
 
         public Emulator()

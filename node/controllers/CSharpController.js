@@ -2,15 +2,6 @@ const CSharpController = {
     init(io, clientC) {
         this.reciveDataCSharp(io, clientC)
     },
-    reciveDataCSharp(io, clientC){
-        clientC.on("data", function (data) {
-            dataDecrypt = data.toString("utf8");
-            const idType = CSharpController.getIdType(dataDecrypt);
-            const parameters = CSharpController.getParameters(dataDecrypt);
-        
-            CSharpController.sendDataToSocketIO(io, idType, parameters);
-        });
-    },
     sendDataToSocketIO(io, idType, parameters) {
         const client_uid = parameters[0];
 
@@ -25,6 +16,15 @@ const CSharpController = {
                 io.emit("entrarFlowerPower-" + client_uid);
                 break;
         }
+    },
+    reciveDataCSharp(io, clientC){
+        clientC.on("data", function (data) {
+            dataDecrypt = data.toString("utf8");
+            const idType = CSharpController.getIdType(dataDecrypt);
+            const parameters = CSharpController.getParameters(dataDecrypt);
+        
+            CSharpController.sendDataToSocketIO(io, idType, parameters);
+        });
     },
     getIdType(data) {
         let dataC = data.split("|");

@@ -11,6 +11,21 @@ namespace BoomBang.SocketsWeb
 {
     class CallPackage
     {
+        public static void init(SessionInstance session, string key, string[] parameters)
+        {
+            switch (key)
+            {
+                case "yellow-alert":
+
+                    break;
+                case "change-ninja":
+
+                    break;
+                case "change-ficha-user":
+
+                    break;
+            }
+        }
         public static void addItemUserBack(SessionInstance Session,
             CatalogObjectInstance Item,
             BuyObjectInstance Compra,
